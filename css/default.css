@@ -294,6 +294,20 @@ footer {
   margin-top: 1px;
 }
 
+footer .colophon,
+footer .rss {
+  max-width: 580px;
+  margin: 2em auto;
+}
+
+footer .rss {
+  text-align: center;
+}
+
+footer .rss p {
+  margin: 0;
+}
+
 /* } */
 
 /* About ------------------------------------------------------------------ { */
