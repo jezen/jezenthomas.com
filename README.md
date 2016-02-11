@@ -1,6 +1,6 @@
 ```bash
 # Start shell
-nix-env
+nix-shell
 
 # Compile app
 ghc -Wall --make site.hs
