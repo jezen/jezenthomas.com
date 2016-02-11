@@ -1,0 +1,462 @@
+/* jezenthomas.com
+ *
+ * The design of this blog isn't inspired by any one thing in particular, save
+ * for a few constraints like wanting to see 80 columns of pre-formatted text
+ * without horizontally scrolling for code snippets. That said, I drew some
+ * inspiration from the following sites:
+ *
+ * - stevelosh.com
+ * - nytimes.com
+ * - sudophilosophical.com
+ * - mechanical-elephant.com
+ * - v1.jontangerine.com/about/
+ */
+
+/* Scaffold --------------------------------------------------------------- { */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #fff;
+  color: #333;
+  font-family: georgia, serif;
+  font-size: 16px;
+}
+
+#main {
+  margin: auto;
+  max-width: 1040px;
+  overflow: hidden;
+  padding-bottom: 100px;
+}
+
+/* } */
+
+/* Header ----------------------------------------------------------------- { */
+
+header {
+  background: #333;
+  height: 40px;
+  margin: auto;
+}
+
+nav {
+  font-family: 'Helvetica Neue', sans-serif;
+  font-weight: 300;
+  text-align: right;
+}
+
+nav ul {
+  padding-right: 10px;
+}
+
+nav li {
+  display: inline-block;
+  margin: 0;
+}
+
+nav li a {
+  display: block;
+  font-family: georgia, serif;
+  font-variant: small-caps;
+  color: #fff;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  text-decoration: none;
+}
+
+.site-title {
+  border-right: 1px solid #fff;
+  font-family: 'Helvetica-Neue', sans-serif;
+  font-weight: bold;
+  float: left;
+  display: block;
+  text-decoration: none;
+  color: #fff;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 20px;
+}
+
+.site-title:hover {
+  background: #fa0;
+  color: #fff;
+}
+
+/* } */
+
+/* Sidebar ---------------------------------------------------------------- { */
+
+.sidebar {
+  border-bottom: 1px solid #bbb;
+  margin-left: 840px;
+  width: 200px;
+}
+
+.sidebar-segment {
+  border-top: 1px solid #ccc;
+  font-size: 1rem;
+  list-style-type: none;
+  margin-bottom: 1em;
+}
+
+.sidebar h2 {
+  font-size: 1em;
+  margin: 16px 0 1em;
+  text-transform: uppercase;
+}
+
+.sidebar p {
+  font-size: .8em;
+}
+
+.sidebar ul li.active::before {
+  content: '→';
+  margin: 0 4px 0 -10px;
+}
+
+.license {
+  text-align: right;
+}
+
+.tag-cloud {
+  text-align: justify;
+  font-size: 13px;
+}
+
+.tag-cloud a {
+  display: inline-block;
+  margin: 0 0 .2rem;
+  color: #666;
+}
+
+.recent-posts {
+  font-size: 13px;
+  line-height: 1.3em;
+  margin: 0 0 0 18px;
+}
+
+.subscribe .icon {
+  margin: 6px 8px 0 0;
+  position: relative;
+  top: 2px;
+}
+
+/* } */
+
+/* Article ---------------------------------------------------------------- { */
+
+.post {
+  border-top: 4px solid #333;
+  float: left;
+  max-width: 780px;
+  padding-top: 24px;
+}
+
+article {
+  overflow: hidden;
+}
+
+article p,
+article li {
+  font-size: 17px;
+}
+
+article .content {
+  margin-left: 200px;
+  max-width: 580px;
+  padding-bottom: 60px;
+}
+
+article h1 {
+  font-size: 2.5em;
+  margin: 1em 0 0;
+  max-width: 780px;
+  padding: 10px 0;
+}
+
+article .info {
+  float: left;
+  margin-top: 14px;
+  width: 150px;
+}
+
+article .info p {
+  font-size: 15px;
+}
+
+ol {
+  font-size: 1rem;
+  list-style: lower-roman;
+  padding: 0 0 0 20px;
+}
+
+#toc + ol {
+  list-style-type: upper-roman !important;
+}
+
+#toc + ol ol {
+  list-style-type: lower-roman !important;
+}
+
+/* } */
+
+/* Post Index ------------------------------------------------------------- { */
+
+#posts {
+  margin-top: 57px;
+  overflow: hidden;
+}
+
+#posts h1 {
+  font-family: Baskerville, "Palatino Linotype", Georgia, serif;
+  font-style: italic;
+  font-weight: 400;
+  margin: 0 0 .4em;
+}
+
+.posts {
+  border-top: 1px solid #bbb;
+  float: left;
+  list-style: none;
+  max-width: 780px;
+  margin: 0;
+}
+
+.posts li {
+  font-size: 18px;
+  border-bottom: 1px solid #bbb;
+  margin: 40px 0;
+}
+
+.post-meta {
+  float: left;
+  font-size: 15px;
+  width: 160px;
+}
+
+.post-meta .post-date {
+  border-right: 1px solid #bbb;
+  padding-right: 10px;
+}
+
+.post-item {
+  margin-left: 200px;
+  max-width: 580px;
+}
+
+.post-item h2 {
+  font-size: 1.2em;
+  line-height: 32px;
+  margin-top: 0;
+}
+
+.read-more {
+  text-align: right;
+  font-size: 16px;
+}
+
+/* } */
+
+/* Footer ----------------------------------------------------------------- { */
+
+.discussion {
+  border-bottom: 3px solid #000;
+  border-top: 1px dotted #000;
+  clear: both;
+  margin-top: 1.5em;
+  text-align: center;
+}
+
+.discussion h2 {
+  color: #444;
+  font-family: Baskerville, "Palatino Linotype", Georgia, serif;
+  font-size: 27px;
+  font-style: italic;
+  font-weight: 400;
+  margin: .8em 0;
+}
+
+footer {
+  border-top: 1px solid #000;
+  margin-top: 1px;
+}
+
+/* } */
+
+/* About ------------------------------------------------------------------ { */
+
+.about img {
+  border: 1px solid #000;
+  float: left;
+  margin: 0 20px 20px 0;
+  max-width: 200px;
+}
+
+.about-the-author,
+.about-the-site {
+  float: left;
+  width: 50%;
+  text-align: justify;
+}
+
+.about-the-author {
+  padding-right: 20px;
+}
+
+.about-the-site {
+  padding-left: 20px;
+}
+
+.about-the-site h4 {
+  margin-top: 1.3em;
+}
+
+/* } */
+
+/* Speaking --------------------------------------------------------------- { */
+
+.talks {
+  list-style: none;
+  margin: 0;
+}
+
+.talks li {
+  border-bottom: 1px solid #bbb;
+  margin: 2.5em 0;
+  overflow: hidden;
+}
+
+.talks p:first-child {
+  margin: 0;
+}
+
+.talks iframe,
+.talks img {
+  float: left;
+  margin: 0 20px 20px 0;
+}
+
+.talks h2 {
+  margin: 0 0 .5em;
+}
+
+.talks h3 {
+  color: #777;
+  font-family: georgia, serif;
+  font-variant: small-caps;
+  font-weight: 400;
+  margin: 0;
+}
+
+.talks .publication-name {
+  color: #333;
+}
+
+.talks .post-date {
+  line-height: 1em;
+  margin-bottom: 1.5em;
+}
+
+/* } */
+
+/* Typography ------------------------------------------------------------- { */
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Helvetica-Neue', sans-serif;
+  margin: 2.5em 0 1em;
+}
+
+.post-date {
+  color: #777;
+  font-style: italic;
+  margin: 0;
+}
+
+.post-tags {
+  font-variant: small-caps;
+  margin: 0;
+}
+
+a {
+  color: #777;
+}
+
+a:hover {
+  color: #fa0;
+  text-decoration: none;
+}
+
+p {
+  line-height: 1.6em;
+  margin: 1em 0 1.5em;
+}
+
+pre {
+  border-color: #999990;
+  border-style: dotted;
+  border-width: 1px 0;
+  font-size: 12px;
+  line-height: 16px;
+  overflow-x: auto;
+  padding: 16px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.sourceCode {
+  margin: 2em 0;
+}
+
+.run-in {
+  font-size: .8rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.run-in .drop {
+  float: left;
+  font-size: 4rem;
+  line-height: 3rem;
+  padding-right: 4px;
+}
+
+sup {
+  font-size: .7em;
+}
+
+ul {
+  margin: 1em 0 1.5em 40px;
+}
+
+li {
+  line-height: 1.6em;
+  margin: .4em 0;
+}
+
+.page h1 {
+  border-bottom: 4px solid #333;
+  font-size: 2.5em;
+  margin: 1em 0;
+  padding: 10px 0;
+}
+
+.icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  fill: currentColor;
+}
+
+/* } */
