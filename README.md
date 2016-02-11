@@ -1,4 +1,4 @@
-```
+```bash
 # Start shell
 nix-env
 
