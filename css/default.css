@@ -241,6 +241,15 @@ ol {
   margin: 40px 0;
 }
 
+.posts h2 a {
+  color: #333;
+  text-decoration: none;
+}
+
+.posts h2 a:hover {
+  color: #fa0;
+}
+
 .post-meta {
   float: left;
   font-size: 15px;
