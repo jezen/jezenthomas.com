@@ -468,6 +468,12 @@ li {
   margin: .4em 0;
 }
 
+blockquote {
+  padding: 0 1em;
+  border-left: 4px solid #fa0;
+  font-style: italic;
+}
+
 .page h1 {
   border-bottom: 4px solid #333;
   font-size: 2.5em;
