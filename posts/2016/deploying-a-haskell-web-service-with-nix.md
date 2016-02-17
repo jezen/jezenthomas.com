@@ -444,6 +444,7 @@ hearteache.
 The following references proved invaluable when learning how to set all this
 stuff up. Big thanks and kudos to the authors for writing all of this down.
 
+- Nixos.org. [User's Guide to the Haskell Infrastructure][nixopsdocs]
 - B. Long. [Live-coding/deploying a Yesod webapp][blong]
 - R. Blush. [Saluton Haskell & Nix][rblush]
 - J.P. Bernardy. [Nix for Haskell Development: HOWTO][jpbernardy]
@@ -456,3 +457,4 @@ stuff up. Big thanks and kudos to the authors for writing all of this down.
 [autoenv]: https://github.com/kennethreitz/autoenv
 [distributedbuild]: https://nixos.org/wiki/Distributed_build
 [contact]: mailto:jezen@jezenthomas.com?subject=Errata
+[nixopsdocs]: https://nixos.org/nixpkgs/manual/#users-guide-to-the-haskell-infrastructure
