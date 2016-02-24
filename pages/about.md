@@ -9,10 +9,11 @@ title: About
 My name is Jezen Thomas, and I am a software developer. I am originally from
 London, UK, though I currently live in Gdynia, Poland.
 
-I began my programming career in Gothenburg, Sweden, at production agency itiden
-in 2011. Since then, I have written sites and applications for several
-multinational companies in car manufacturing, marine navigation, security,
-fashion, sports, design, and finance.
+Since beginning my programming career in 2011, I have worked with clients in
+Sweden, Germany, Poland, The United Kingdom, and The United States. I have
+written sites and applications for several multinational companies in car
+manufacturing, marine navigation, security, fashion, sports, design, and
+finance.
 
 Elsewhere, I share sarcastic quips about computers being perpetually broken on
 [Twitter][twitter], and a photographic highlight reel of my adventures on
