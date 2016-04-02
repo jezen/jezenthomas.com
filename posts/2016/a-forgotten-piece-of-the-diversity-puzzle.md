@@ -69,5 +69,5 @@ less appealing for everyone else.
 
 A diverse biology produces a stronger animal, and a diverse set of ideas
 formulates a better social policy. I am absolutely convinced that a more
-diverse set of perspectives and a more diverse collation of problems will
+diverse set of perspectives and a more diverse collection of problems will
 ultimately provide better software for everyone.
