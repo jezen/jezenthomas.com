@@ -19,5 +19,5 @@ then just removed a few sides of the borders by making their colour
 transparent. The animation is just random degrees of rotation in keyframes,
 with an infinite transition time.
 
-<p data-height="340" data-theme-id="0" data-slug-hash="CAHsk" data-user="jezen" data-default-tab="result" data-safe="true" class='codepen'>See the Pen <a href='http://codepen.io/jezen/pen/CAHsk'>CAHsk</a> by Jezen Thomas (<a href='http://codepen.io/jezen'>@jezen</a>) on <a href='http://codepen.io'>CodePen</a></p>
-<script async src="http://codepen.io/assets/embed/ei.js"></script>
+<p data-height="340" data-theme-id="477" data-slug-hash="CAHsk" data-default-tab="result" data-user="jezen" class="codepen">See the Pen <a href="http://codepen.io/jezen/pen/CAHsk/">Arcify</a> by Jezen Thomas (<a href="http://codepen.io/jezen">@jezen</a>) on <a href="http://codepen.io">CodePen</a>.</p>
+<script async src="//s.codepen.io/assets/embed/ei.js"></script>
