@@ -406,7 +406,7 @@ ol {
 
 footer {
   border-top: 1px solid #000;
-  margin-top: 1px;
+  margin: 1px 20px 0;
 }
 
 footer .colophon,
