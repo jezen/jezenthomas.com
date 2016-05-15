@@ -4,6 +4,13 @@ title: About
 
 <div class="about">
 
+<div class="about-main">
+
+<div>
+  <img src="/static/img/falsyvalues.jpg">
+</div>
+<div>
+
 My name is Jezen Thomas, and I am a software developer. I am originally from
 London, UK, though I currently live in Gdynia, Poland.
 
@@ -23,7 +30,13 @@ Elsewhere, I share sarcastic quips about computers being perpetually broken on
 [Instagram][instagram]. If you want to get in touch with me, [email][email] is
 best.
 
+</div>
+</div>
+
+
 ### Press
+
+<div class="press">
 
 I have written for a few technical journals, and I am lucky enough to have been
 cited and interviewed a couple of times. To see me speak on stage, visit my
@@ -37,6 +50,8 @@ cited and interviewed a couple of times. To see me speak on stage, visit my
 - [Programming Is Opportunity][prestiz] in *Prestiz Magazine* (Polish)
 - [Where Are The Employment Opportunities For Female
   Programmers?][employmentforfemaleprogrammers] on *Business.com*
+
+</div>
 
 <div class="timeline">
 

@@ -429,15 +429,40 @@ footer .rss p {
 
 .about img {
   border: 1px solid #000;
-  float: left;
-  margin: 0 20px 20px 0;
-  max-width: 200px;
 }
 
 .about h3 {
-  clear: left;
   border-bottom: 1px solid #ddd;
   padding: .3em 0;
+}
+
+@media (min-width: 600px) {
+
+  .about-main {
+    display: flex;
+    flex-direction: row-reverse;
+  }
+
+  .about-main > div {
+    width: 50%;
+  }
+
+  .about-main p {
+    margin-top: 0;
+  }
+
+.about-main > div:last-child p {
+  padding-right: 20px;
+  }
+
+  .press {
+    display: flex;
+  }
+
+  .press > p,
+  .press > ul {
+    width: 50%;
+  }
 }
 
 /* } */
