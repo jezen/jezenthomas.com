@@ -2,12 +2,14 @@
 <ul class="posts">
   $for(posts)$
   <li>
+    <h2>
+      <a href="$url$">$title$</a>
+    </h2>
     <div class="post-meta">
       <p class="post-date">$date$</p>
       <p class="post-tags">$tags$</p>
     </div>
     <div class="post-item">
-      <h2><a href="$url$">$title$</a></h2>
       $if(excerpt)$
       <p>$excerpt$</p>
       $endif$

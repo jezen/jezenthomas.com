@@ -16,22 +16,34 @@
     <meta name="author" content="Jezen Thomas">
     <meta property="og:title" content="$title$">
     <meta property="og:description" content="$if(excerpt)$ $excerpt$ $else$ Thoughts on vim, unix, ruby, javascript, and more. $endif$">
+
+    <!--  -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+
     <meta property="og:type" content="article">
     <meta property="og:image" content="/static/img/portrait.jpg">
     <meta property="og:site_name" content="Jezen Thomas">
     <meta property="twitter:creator" content="@jezenthomas">
+
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
     <link rel="stylesheet" type="text/css" href="/css/default.css" />
+    <script type="text/javascript" src="/static/js/modernizr.min.js" />
   </head>
   <body>
     <div id="main">
       <header>
+        <div class="portrait">
+          <img src="/static/img/koszalin.png">
+        </div>
         <a class="site-title" href="/">Jezen Thomas</a>
+        <p class="mini-about">
+          Software Developer, writer, and occasional public speaker.
+        </p>
         <nav>
           <ul>
             <li class="active"><a href="/">Posts</a></li>
             <li><a href="/speaking/">Speaking</a></li>
-            <!--li><a href="/code-review/">Code Review</a></li-->
             <li><a href="/about/">About</a></li>
           </ul>
         </nav>
@@ -60,11 +72,11 @@
 
       [].slice.call(document.querySelectorAll('.post-date')).forEach(function(el) {
         var dateTokens = el.innerText.split(' ')
-        var formatted = []
-        formatted.push(dateTokens[0])
-        formatted.push(ordinal(parseInt(dateTokens[1], 10)) + ',')
-        formatted.push(dateTokens[2])
-        el.innerHTML = formatted.join(' ')
+        el.innerHTML = [
+          dateTokens[0],
+          ordinal(parseInt(dateTokens[1], 10)) + ',',
+          dateTokens[2]
+        ].join(' ');
       })
     </script>
     <!-- λ -->

@@ -36,7 +36,7 @@ body {
 
 #main {
   margin: auto;
-  max-width: 1040px;
+  max-width: 1060px;
   overflow: hidden;
   padding-bottom: 100px;
 }
@@ -50,15 +50,28 @@ img {
 /* Header ----------------------------------------------------------------- { */
 
 header {
-  background: #333;
-  height: 40px;
   margin: auto;
 }
 
+@media (min-width: 600px) {
+  header {
+    background: #333;
+    height: 40px;
+    margin: 0 20px;
+  }
+}
+
 nav {
+  display: none;
   font-family: 'Helvetica Neue', sans-serif;
   font-weight: 300;
   text-align: right;
+}
+
+@media (min-width: 600px) {
+  nav {
+    display: block;
+  }
 }
 
 nav ul {
@@ -81,22 +94,62 @@ nav li a {
   text-decoration: none;
 }
 
-.site-title {
-  border-right: 1px solid #fff;
-  font-family: 'Helvetica-Neue', sans-serif;
-  font-weight: bold;
-  float: left;
-  display: block;
-  text-decoration: none;
-  color: #fff;
-  height: 40px;
-  line-height: 40px;
-  padding: 0 20px;
+.portrait {
+  margin: 20px auto 0;
+  width: 100px;
 }
 
-.site-title:hover {
-  background: #fa0;
-  color: #fff;
+.portrait img {
+  border: 1px solid rgba(0, 0, 0, .3);
+  border-radius: 50%;
+}
+
+@media (min-width: 600px) {
+  .portrait {
+    display: none;
+  }
+}
+
+.mini-about {
+  color: #999;
+  margin: auto;
+  max-width: 240px;
+  text-align: center;
+}
+
+@media (min-width: 600px) {
+  .mini-about {
+    display: none;
+  }
+}
+
+.site-title {
+  font-family: 'Helvetica-Neue', sans-serif;
+  font-weight: bold;
+  display: block;
+  text-decoration: none;
+  color: #333;
+  padding: 12px;
+  text-align: center;
+  font-size: 1.4rem;
+}
+
+@media (min-width: 600px) {
+  .site-title {
+    border-right: 1px solid #fff;
+    color: #fff;
+    height: 40px;
+    line-height: 40px;
+    float: left;
+    padding: 0 20px;
+    text-align: left;
+    font-size: 1rem;
+  }
+
+  .no-touch .site-title:hover {
+    background: #fa0;
+    color: #fff;
+  }
 }
 
 /* } */
@@ -170,6 +223,7 @@ nav li a {
 }
 
 article {
+  margin: 0 20px;
   overflow: hidden;
 }
 
@@ -179,9 +233,14 @@ article li {
 }
 
 article .content {
-  margin-left: 200px;
   max-width: 580px;
   padding-bottom: 60px;
+}
+
+@media (min-width: 600px) {
+  article .content {
+    margin-left: 200px;
+  }
 }
 
 article h1 {
@@ -192,9 +251,14 @@ article h1 {
 }
 
 article .info {
-  float: left;
-  margin-top: 14px;
   width: 150px;
+}
+
+@media (min-width: 600px) {
+  article .info {
+    float: left;
+    margin-top: 14px;
+  }
 }
 
 article .info p {
@@ -220,8 +284,16 @@ ol {
 /* Post Index ------------------------------------------------------------- { */
 
 #posts {
-  margin-top: 57px;
   overflow: hidden;
+  margin: 20px;
+  padding: 20px;
+}
+
+@media (min-width: 600px) {
+  #posts {
+    margin-top: 57px;
+    padding: 0;
+  }
 }
 
 #posts h1 {
@@ -229,6 +301,13 @@ ol {
   font-style: italic;
   font-weight: 400;
   margin: 0 0 .4em;
+  font-size: 1.4rem;
+}
+
+@media (min-width: 600px) {
+  #posts h1 {
+    font-size: 2rem;
+  }
 }
 
 .posts {
@@ -243,6 +322,19 @@ ol {
   font-size: 18px;
   border-bottom: 1px solid #bbb;
   margin: 40px 0;
+  position: relative;
+}
+
+.posts h2 {
+  font-size: 1.4rem;
+  margin: 1em 0;
+}
+
+@media (min-width: 600px) {
+  .posts h2 {
+    font-size: 1.7rem;
+    margin: 2.5em 0 1em 200px;
+  }
 }
 
 .posts h2 a {
@@ -255,19 +347,31 @@ ol {
 }
 
 .post-meta {
-  float: left;
   font-size: 15px;
-  width: 160px;
 }
 
-.post-meta .post-date {
-  border-right: 1px solid #bbb;
-  padding-right: 10px;
+@media (min-width: 600px) {
+  .post-meta {
+    width: 160px;
+    position: absolute;
+    top: 0;
+  }
 }
 
+@media (min-width: 600px) {
+  .post-meta .post-date {
+    border-right: 1px solid #bbb;
+    padding-right: 10px;
+  }
+}
 .post-item {
-  margin-left: 200px;
   max-width: 580px;
+}
+
+@media (min-width: 600px) {
+  .post-item {
+    margin-left: 200px;
+  }
 }
 
 .post-item h2 {
@@ -421,7 +525,7 @@ a {
   color: #777;
 }
 
-a:hover {
+.no-touch a:hover {
   color: #fa0;
   text-decoration: none;
 }
@@ -476,6 +580,10 @@ blockquote {
   padding: 0 1em;
   border-left: 4px solid #fa0;
   font-style: italic;
+}
+
+.page {
+  margin: 0 20px;
 }
 
 .page h1 {
