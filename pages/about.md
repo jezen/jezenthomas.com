@@ -60,6 +60,11 @@ cited and interviewed a couple of times. To see me speak on stage, visit my
 - **Life** *May ’16* Bought a 1997 Polish Fiat 126 with some spare cash I had
   in my pocket. Within 24 hours of buying it, I burned through the clutch and
   rendered the car immobile.
+- **Life** *May ’16* Joined Syft. First official leadership position.
+- **Work** *Oct ’15* Presented a talk at Falsy Values in Warsaw, Poland. First
+  time speaking at a major conference.
+- **Work** *Sep ’15* First time one of my articles hit the front page of Hacker
+  News.
 - **Work** *Aug ’15* Joined UXPin, working full-time on a single-page
   application with React.js.
 - **Life** *Apr ’15* Attended the Precision Driving course at Porsche's racing
@@ -70,13 +75,21 @@ cited and interviewed a couple of times. To see me speak on stage, visit my
   Germany. First foray into functional programming with Scala, and first
   full-time remote job, working from home in Gothenburg, Sweden.
 - **Life** *Apr ’13* Flew to Berlin and bought a 2003 Porsche Boxster S.
+- **Work** *Aug ’12* Joined Rekyl Reklambyrå in Borås, Sweden. Used WordPress as
+  a hammer for which everything looks like a nail. Sadly.
 - **Work** *Sep ’11* Joined Itiden for my first real programming job in
   Gothenburg, Sweden. Lived on the floor of a friend's bedroom in a
   three-bedroom apartment that we shared with 10 other people.
+- **Work** *Jan ’11* Performed as a stilt-walker at the Qatar ExxonMobil Open
+  and AFC Asian Cup sporting events in Doha, Qatar.
 - **Life** *Jun ’10* Bought my first car, a red 1990 Mazda MX5. Rusted and
   broken in parts, though it did drive. I drove it from Calais, France to
   Gothenburg, Sweden the day I bought it, with the roof down the entire time,
   which looked slightly absurd on the Autobahn at night.
+- **Work** *Jun ’10* Performed as a drumming robot on stilts at World Ducati
+  Week in Misano Adriatico, Italy.
+- **Work** *Dec ’08* Joined a band and recorded an angsty teen rock album. Yes,
+  really.
 - **Life** *Jun ’08* Travelled to Gothenburg, Sweden, for a holiday. Decided to
   stay for seven years.
 - **School** *Sep ’06* Moved to Newcastle upon Tyne, UK. Started studying music
@@ -86,6 +99,8 @@ cited and interviewed a couple of times. To see me speak on stage, visit my
 - **School** *Sep ’05* Awarded scholarship to study music in the weekend school
   at The Sage, Gateshead.
 - **Life** *Feb ’05* Moved to Darlington, UK. I wouldn't recommend it.
+- **Life** *Feb ’04* Joined the 318 Squadron of the Australian Air Force Cadets.
+  Co-piloted a Piper PA-38 Tomahawk aeroplane.
 - **Life** *??? ’97* Moved to Sydney, Australia.
 - **Life** *Jun ’90* Born in London, UK, at Chase Farm Hospital. Mayhem ensues.
 
