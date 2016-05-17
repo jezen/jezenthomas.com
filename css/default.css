@@ -158,8 +158,15 @@ nav li a {
 
 .sidebar {
   border-bottom: 1px solid #bbb;
-  margin-left: 840px;
-  width: 200px;
+}
+
+@media (min-width: 600px) {
+  .sidebar {
+    width: 200px;
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
 }
 
 .sidebar-segment {
@@ -217,9 +224,23 @@ nav li a {
 
 .post {
   border-top: 4px solid #333;
-  float: left;
-  max-width: 780px;
   padding-top: 24px;
+  margin: 0;
+}
+
+@media (min-width: 600px) {
+  .post {
+    margin: 0 240px 0 0;
+  }
+}
+
+.article-wrapper {
+  position: relative;
+}
+
+.article-wrapper .sidebar {
+  top: 107px;
+  right: 20px;
 }
 
 article {
@@ -237,7 +258,7 @@ article .content {
   padding-bottom: 60px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 800px) {
   article .content {
     margin-left: 200px;
   }
@@ -254,7 +275,7 @@ article .info {
   width: 150px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 800px) {
   article .info {
     float: left;
     margin-top: 14px;
@@ -283,6 +304,10 @@ ol {
 
 /* Post Index ------------------------------------------------------------- { */
 
+.post-list {
+  position: relative;
+}
+
 #posts {
   overflow: hidden;
   margin: 20px;
@@ -310,10 +335,14 @@ ol {
 
 .posts {
   border-top: 1px solid #bbb;
-  float: left;
   list-style: none;
-  max-width: 780px;
   margin: 0;
+}
+
+@media (min-width: 600px) {
+  .posts {
+    margin: 0 240px 0 0;
+  }
 }
 
 .posts li {
@@ -328,7 +357,7 @@ ol {
   margin: 1em 0;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 800px) {
   .posts h2 {
     font-size: 1.7rem;
     margin: 2.5em 0 1em 200px;
@@ -348,7 +377,7 @@ ol {
   font-size: 15px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 800px) {
   .post-meta {
     width: 160px;
     position: absolute;
@@ -356,7 +385,7 @@ ol {
   }
 }
 
-@media (min-width: 600px) {
+@media (min-width: 800px) {
   .post-meta .post-date {
     border-right: 1px solid #bbb;
     padding-right: 10px;
@@ -366,7 +395,7 @@ ol {
   max-width: 580px;
 }
 
-@media (min-width: 600px) {
+@media (min-width: 800px) {
   .post-item {
     margin-left: 200px;
   }

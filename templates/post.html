@@ -1,13 +1,15 @@
-<article>
-  <h1>$title$</h1>
-  <div class="post">
-    <div class="info">
-      <p class="post-date">$date$</p>
-      <p class="post-tags">$tags$</p>
+<div class="article-wrapper">
+  <article>
+    <h1>$title$</h1>
+    <div class="post">
+      <div class="info">
+        <p class="post-date">$date$</p>
+        <p class="post-tags">$tags$</p>
+      </div>
+      <div class="content">$body$</div>
     </div>
-    <div class="content">$body$</div>
-  </div>
-  $partial("templates/sidebar.html")$
-  $partial("templates/discussion.html")$
-</article>
-$partial("templates/footer.html")$
+    $partial("templates/sidebar.html")$
+    $partial("templates/discussion.html")$
+  </article>
+  $partial("templates/footer.html")$
+</div>
