@@ -1,7 +1,7 @@
 ---
 title: Using UUIDs in Yesod
 date: 2016-06-13
-excerpt: How to use universally unique identifiers in your Yesod models.
+excerpt: There are many reasons to use UUIDs, but simply not giving hints as to the size of an application's database is enough for me. Here's how to use universally unique identifiers in your Yesod models.
 tags: haskell
 ---
 
