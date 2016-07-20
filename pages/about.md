@@ -57,6 +57,10 @@ cited and interviewed a couple of times. To see me speak on stage, visit my
 
 ### Timeline
 
+- **Work** *Jul ’16* Presented a talk about building web applications with
+  Haskell at Build Stuff conference in Odessa, Ukraine.
+- **Life** *Jun ’16* Bought a 2006 Porsche 911 Carrera S Cabriolet. Feels good
+  man.
 - **Life** *May ’16* Bought a 1997 Polish Fiat 126 with some spare cash I had
   in my pocket. Within 24 hours of buying it, I burned through the clutch and
   rendered the car immobile.
