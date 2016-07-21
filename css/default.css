@@ -152,6 +152,33 @@ nav li a {
   }
 }
 
+.notice {
+  background: #fa0;
+  color: #000;
+  font-family: 'Helvetica-Neue', sans-serif;
+  font-weight: bold;
+  margin: 20px 20px -20px;
+  padding: 20px;
+}
+
+.notice a {
+  border-bottom: 2px solid #000;
+  color: #000;
+  text-decoration: none;
+}
+
+.notice em {
+  font-family: Baskerville, "Palatino Linotype", Georgia, serif;
+  font-size: 1.4em;
+  font-style: italic;
+  font-variant: small-caps;
+  font-weight: 400;
+}
+
+.no-touch .notice a:hover {
+  color: #000;
+}
+
 /* } */
 
 /* Sidebar ---------------------------------------------------------------- { */
