@@ -17,3 +17,4 @@ cabal.sandbox.config
 _site
 _cache
 site
+.env
