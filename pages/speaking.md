@@ -2,7 +2,7 @@
 title: Speaking
 ---
 
-<ul class="talks">
+<ul class="speaking">
   <li>
   <iframe width="360" height="203" src="https://www.youtube.com/embed/JdqBbBazSPE?rel=0" frameborder="0" allowfullscreen></iframe>
 
@@ -12,7 +12,7 @@ title: Speaking
   <span class="publication-name">Falsy Values</span> — Warsaw, Poland
 </h3>
 
-<p class="post-date">October 12, 2015</p>
+<p class="post-date"><span>October 12, 2015</span></p>
 
 The front-end community has matured immensely in the past five years with
 automated build systems and package managers written in JavaScript becoming
@@ -32,7 +32,7 @@ doesn’t need to be this way.
   <span class="publication-name">Falsy Values</span> — Warsaw, Poland
 </h3>
 
-<p class="post-date">October 12, 2015</p>
+<p class="post-date"><span>October 12, 2015</span></p>
 
 A short talk on extracting repository statistics with Git and Bash, and
 visualising the data in a line graph generated with the D3.js JavaScript
@@ -50,7 +50,7 @@ project is growing and (hopefully!) shrinking over time.
   <span class="publication-name">Developer on Fire Podcast</span>
 </h3>
 
-<p class="post-date">December 31, 2015</p>
+<p class="post-date"><span>December 31, 2015</span></p>
 
 An interview for the Developer on Fire podcast where I chat with Dave Rael about
 great tools, mastering the command line, the primacy of simplicity, and geeking

@@ -27,33 +27,13 @@
     <meta property="twitter:creator" content="@jezenthomas">
 
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,400,300,600,700">
     <link rel="stylesheet" type="text/css" href="/css/default.css" />
     <script type="text/javascript" src="/static/js/modernizr.min.js" />
+    <script type="text/javascript" src="http://cdn.jsdelivr.net/walkway/0.0.5/walkway.min.js" />
   </head>
   <body>
     <div id="main">
-      <header>
-        <div class="portrait">
-          <img src="/static/img/koszalin.png">
-        </div>
-        <a class="site-title" href="/">Jezen Thomas</a>
-        <p class="mini-about">
-          Software Developer, writer, and occasional public speaker.
-        </p>
-        <nav>
-          <ul>
-            <li class="active"><a href="/">Posts</a></li>
-            <li><a href="/speaking/">Speaking</a></li>
-            <li><a href="/about/">About</a></li>
-          </ul>
-        </nav>
-      </header>
-      <p class="notice">
-        Heads up! I'm writing a book! It's called <em>Haskell, But
-        Quickly</em>, and it's a guide to building and deploying web
-        applications with Haskell and Yesod. Want to know when it's released?
-        <a href="https://haskellbutquickly.com">Click here</a>.</p>
-      </p>
       $body$
     </div>
 
@@ -76,7 +56,7 @@
          return n + '<sup> ' + (s[(v-20)%10]||s[v]||s[0]) + '</sup>';
       }
 
-      [].slice.call(document.querySelectorAll('.post-date')).forEach(function(el) {
+      [].slice.call(document.querySelectorAll('.post-date span')).forEach(function(el) {
         var dateTokens = el.innerText.split(' ')
         el.innerHTML = [
           dateTokens[0],
