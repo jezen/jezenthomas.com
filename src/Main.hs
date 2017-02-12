@@ -2,6 +2,7 @@
 {-# LANGUAGE OverloadedStrings #-}
 import           Control.Monad (forM_, forM)
 import qualified Data.Map as M
+import           Data.Monoid ((<>))
 import           Hakyll
 import           Data.List              (isSuffixOf, intercalate, sort)
 import           System.FilePath.Posix  (takeBaseName, takeDirectory, (</>))
@@ -62,6 +63,21 @@ site = do
   match "posts/*/*" (postRules postCtx)
   match "drafts/*/*" (postRules postCtx)
 
+  create ["posts/index.html"] $ do
+      route idRoute
+      compile $ do
+          posts <- recentFirst =<< loadAll "posts/*/*"
+          let ctx = constField "title" "All Posts" <>
+                      listField "posts" (postCtx) (return posts) <>
+                      field "allTags" (\_ -> renderTagCloud 100 100 tags) <>
+                      defaultContext
+          makeItem ""
+              >>= loadAndApplyTemplate "templates/posts.html" ctx
+              >>= loadAndApplyTemplate "templates/post-content.html" ctx
+              >>= loadAndApplyTemplate "templates/default.html" ctx
+              >>= relativizeUrls
+              >>= cleanIndexUrls
+
   match "pages/*" $ do
          route   $ cleanRoute `composeRoutes` (gsubRoute "pages/" (const ""))
          compile $ pandocCompiler
@@ -88,6 +104,7 @@ site = do
             >>= loadAndApplyTemplate "templates/default.html" indexCtx
             >>= relativizeUrls
             >>= cleanIndexUrls
+
 
   forM_ years $ \(year, _)->
       create [yearId year] $ do

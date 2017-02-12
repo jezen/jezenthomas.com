@@ -4,24 +4,23 @@
   <ul class="posts">
     $for(posts)$
     <li>
-      <h2>
-        <a href="$url$">$title$</a>
-      </h2>
-      <div class="post-meta">
-        <p class="post-date">$date$</p>
-        <p class="post-tags">$tags$</p>
-      </div>
-      <div class="post-item">
+      <a href="$url$">
+        <div class="row">
+          <div class="six columns">
+            <p>$title$</p>
+          </div>
+          <div class="six columns">
+            <p class="post-date">$date$</p>
+          </div>
+        </div>
+      </a>
+      <!--p class="post-tags">$tags$</p-->
+      <!--div class="post-item">
         $if(excerpt)$
         <p>$excerpt$</p>
         $endif$
-        <p class="read-more">
-          <a href="$url$">Read more →</a>
-        </p>
-      </div>
+      </div-->
     </li>
     $endfor$
   </ul>
-
-  $partial("templates/sidebar.html")$
 </div>

@@ -28,21 +28,25 @@ body {
 }
 
 body {
-  background: #fff;
-  color: #333;
-  font-family: 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  background: #f3f1f1;
+  color: #3c3c3c;
+  font-family: 'Georgia', sans-serif;
   font-size: 16px;
 }
 
 #main {
-  margin: auto;
-  max-width: 800px;
   overflow: hidden;
   padding-bottom: 100px;
 }
 
 img {
+  border: 8px solid #fff;
   max-width: 100%;
+}
+
+.hide {
+  display: none;
 }
 
 /* } */
@@ -52,6 +56,7 @@ img {
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Helvetica-Neue', sans-serif;
   margin: 2.5em 0 1em;
+  font-weight: bold;
 }
 
 .post-date {
@@ -66,7 +71,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 a {
-  color: #777;
+  color: #3c3c3c;
 }
 
 .no-touch a:hover {
@@ -80,14 +85,22 @@ p {
 }
 
 pre {
-  border-color: #999990;
-  border-style: dotted;
-  border-width: 1px 0;
+  background: #f5f5f5;
+  border: 1px solid #E1E1E1;
+  border-radius: 4px;
   font-size: 12px;
   line-height: 16px;
   overflow-x: auto;
-  padding: 16px;
   -webkit-overflow-scrolling: touch;
+}
+
+pre > code {
+  background: #f5f5f5;
+  border: none;
+}
+
+code {
+  background: #f5f5f5;
 }
 
 .sourceCode {
@@ -95,7 +108,6 @@ pre {
 }
 
 .run-in {
-  font-size: .8rem;
   letter-spacing: 2px;
   text-transform: uppercase;
 }
@@ -126,13 +138,10 @@ blockquote {
   font-style: italic;
 }
 
-.page {
-  margin: 0 20px;
-}
-
 .page h1 {
-  border-bottom: 4px solid #333;
+  border-bottom: 1px solid #dadada;
   font-size: 2.5em;
+  font-weight: bold;
   margin: 1em 0;
   padding: 10px 0;
 }
@@ -149,51 +158,48 @@ blockquote {
 /* Header ----------------------------------------------------------------- { */
 
 header {
+  background: #fff;
+  border-bottom: 1px solid #dadada;
   margin: auto;
-  text-align: center;
+  position: relative;
 }
 
-@media (min-width: 600px) {
-  header {
-    margin: 40px auto;
-  }
-}
-
-.portrait {
-  margin: 20px auto 0;
-  width: 100px;
-}
-
-.portrait a {
-  display: block;
-}
-
-.no-touch .portrait a:hover img {
-  border: 1px solid #000;
-}
-
-.portrait img {
-  border: 1px solid rgba(0, 0, 0, .3);
-  border-radius: 50%;
-  -webkit-transition: all .2s;
-  transition: all .2s;
-}
-
-.mini-about {
-  color: #999;
-  margin: auto;
-  max-width: 240px;
-  text-align: center;
-}
-
-.site-title {
-  font-family: 'Helvetica-Neue', sans-serif;
+header h1 {
+  color: #333;
+  font-size: 1.4em;
   font-weight: bold;
+  margin: 1em 0 0;
+  text-decoration: none;
+}
+
+header a {
+  color: #777;
   display: inline-block;
   text-decoration: none;
-  color: #333;
-  padding: 12px;
-  font-size: 1.4rem;
+}
+
+header p {
+  font-style: italic;
+  margin: 0 0 1em;
+}
+
+header ul {
+  font-family: 'Helvetica-Neue', sans-serif;
+  font-weight: bold;
+  list-style: none;
+  margin: 0;
+  text-align: right;
+}
+
+header li {
+  display: inline-block;
+  line-height: 90px;
+  margin: 0 0 0 1em;
+}
+
+header li a {
+  color: #9b9b9b;
+  display: inline;
 }
 
 /* } */
@@ -254,24 +260,12 @@ header {
 
 /* Article ---------------------------------------------------------------- { */
 
-.post {
-  border-top: 4px solid #333;
-  padding-top: 24px;
-  margin: 0;
-}
-
-.article-wrapper {
-  position: relative;
-}
-
-.article-wrapper .sidebar {
-  top: 107px;
-  right: 20px;
-}
-
 article {
-  margin: 0 20px;
-  overflow: hidden;
+  margin-top: 3em;
+}
+
+article h2 {
+  font-size: 1.25em;
 }
 
 article p,
@@ -279,22 +273,17 @@ article li {
   font-size: 17px;
 }
 
-article .content {
-  max-width: 580px;
-  padding-bottom: 20px;
-}
-
-@media (min-width: 800px) {
-  article .content {
-    margin-left: 200px;
-  }
-}
-
 article h1 {
-  font-size: 2.5em;
-  margin: 1em 0 0;
-  max-width: 780px;
-  padding: 10px 0;
+  border-bottom: 1px solid #dadada;
+  font-size: 1.5em;
+  font-weight: bold;
+  padding: 0 0 12px;
+}
+
+@media (min-width: 550px) {
+  article h1 {
+    text-align: right;
+  }
 }
 
 article .info {
@@ -324,40 +313,37 @@ ol {
 
 /* } */
 
-/* Index ------------------------------------------------------------- { */
+/* Posts ------------------------------------------------------------------ { */
 
-.index {
-  font-size: 0;
+.posts {
   list-style: none;
   margin: 0;
-  padding: 0;
 }
 
+.posts a {
+  display: block;
+}
+
+.posts p {
+  margin: 0;
+}
+
+/* } */
+
+/* Index ------------------------------------------------------------- { */
+
 .index h2 {
-  font-size: 1.1em;
-  margin: 1em 0 .2em;
+  font-size: 1.2em;
+  font-weight: bold;
+  margin: 1.5em 0 .2em;
 }
 
 .index ul {
   list-style: none;
   margin: 0;
-  padding: 0;
 }
 
-.index > li {
-  display: inline-block;
-  font-size: 1rem;
-  padding: 0 20px;
-  vertical-align: top;
-}
-
-@media (min-width: 600px) {
-  .index > li {
-    width: 50%;
-  }
-}
-
-.index ul li {
+.index li {
   margin: 0;
 }
 
@@ -369,42 +355,46 @@ ol {
 
 /* Footer ----------------------------------------------------------------- { */
 
-.discussion {
-  border-bottom: 3px solid #000;
-  border-top: 1px dotted #000;
-  clear: both;
-  margin-top: 1.5em;
-  text-align: center;
-}
-
-.discussion h2 {
-  color: #444;
-  font-family: Baskerville, "Palatino Linotype", Georgia, serif;
-  font-size: 27px;
-  font-style: italic;
-  font-weight: 400;
-  margin: .8em 0;
-}
-
 footer {
-  border-top: 1px solid #000;
-  margin: 1px 20px 0;
+  margin-top: 3em;
 }
 
-footer .colophon,
-footer .rss {
-  max-width: 580px;
-  margin: 2em auto;
+footer .container {
+  border-top: 1px solid #dadada;
 }
 
-footer .rss {
-  text-align: center;
+footer .row {
+  padding-top: 1em;
 }
 
-footer .rss p {
+footer h6 {
+  color: #adadad;
+  font-size: .8em;
+  font-weight: bold;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+footer ul {
+  list-style: none;
+  margin: 0 0 1em;
+}
+
+footer li {
   margin: 0;
 }
 
+footer ul a {
+  text-decoration: none;
+}
+
+footer .license {
+  font-size: .8em;
+}
+
+.pgp-key a {
+  text-decoration: none;
+}
 /* } */
 
 /* About ------------------------------------------------------------------ { */
@@ -446,54 +436,6 @@ footer .rss p {
     width: 50%;
   }
 }
-
-/* } */
-
-/* Speaking --------------------------------------------------------------- { */
-
-.speaking {
-  list-style: none;
-  margin: 0;
-}
-
-.speaking li {
-  border-bottom: 1px solid #bbb;
-  margin: 2.5em 0;
-  overflow: hidden;
-}
-
-.speaking p:first-child {
-  margin: 0;
-}
-
-.speaking iframe,
-.speaking img {
-  float: left;
-  margin: 0 20px 20px 0;
-}
-
-.speaking h2 {
-  margin: 0 0 .5em;
-}
-
-.speaking h3 {
-  color: #777;
-  font-family: georgia, serif;
-  font-variant: small-caps;
-  font-weight: 400;
-  margin: 0;
-}
-
-.speaking .publication-name {
-  color: #333;
-}
-
-.speaking .post-date {
-  line-height: 1em;
-  margin-bottom: 1.5em;
-}
-
-/* } */
 
 .about .timeline {
   float: none;
@@ -541,12 +483,78 @@ footer .rss p {
   left: 4px;
   top: 20px;
 }
+/* } */
+
+/* Speaking --------------------------------------------------------------- { */
+
+@media (min-width: 550px) {
+  .speaking .row {
+    display: flex;
+  }
+}
+
+.speaking .talk {
+  background: #fff;
+  padding: 20px;
+  margin-bottom: 40px;
+}
+
+.speaking img {
+  border: 1px solid #bbb;
+  width: 100%;
+}
+
+.speaking a img:hover {
+  border-color: #333;
+}
+
+.speaking h2 {
+  font-size: 1.25em;
+  margin: 1em 0 0;
+}
+
+.speaking h3 {
+  color: #777;
+  font-size: 1.1em;
+  margin: 0;
+  font-weight: normal;
+}
+
+.speaking .publication-name {
+  color: #333;
+  font-family: 'Georgia', serif;
+  font-style: italic;
+}
+
+.speaking h4 {
+  line-height: 1em;
+  color: #777;
+  font-family: 'Georgia', serif;
+  font-weight: normal;
+  margin: .2em 0;
+  font-size: 1.1em;
+}
+
+.speaking p:last-child {
+  margin-bottom: 0;
+}
+
+.speaking p a {
+  text-decoration: none;
+  border-bottom: 1px solid #dadada;
+  font-family: 'Helvetica-Neue', sans-serif;
+  font-weight: bold;
+  color: #333;
+}
+
+/* } */
 
 /* Haskell But Quickly ---------------------------------------------------- { */
 
 .notice {
   background: #fa0;
   border-radius: 4px;
+  border: 8px solid #fff;
   color: #000;
   font-family: 'Helvetica-Neue', sans-serif;
   font-weight: bold;
@@ -615,3 +623,4 @@ footer .rss p {
 }
 
 /* } */
+

@@ -1,40 +1,49 @@
 $partial("templates/header.html")$
 
-<ul class="index">
-  <li>
-    <h2>Latest articles</h2>
-    <ul class="latest-articles">
-      $for(posts)$
-      <li><a href="$url$">$title$</a></li>
-      $endfor$
-    </ul>
-    <h2>Popular articles</h2>
-    <ul class="popular-articles">
-      <li><a href="/how-i-write-invoices-in-vim">How I Write Invoices in Vim</a></li>
-      <li><a href="/deploying-a-haskell-web-service-with-nix">Deploying A Haskell Web Service With Nix</a></li>
-      <li><a href="/using-git-to-manage-todos">Using Git To Manage TODOs</a></li>
-      <li><a href="/my-uncomplicated-git-workflow">My Uncomplicated Git Workflow</a></li>
-      <li><a href="/code-review-done-right">Code Review Done Right</a></li>
-    </ul>
-  </li>
-  <li>
-    <h2>Talks</h2>
-    <ul class="talks">
-      <li><a href="https://www.youtube.com/watch?v=YuQdCw5Mqnw&feature=youtu.be">Haskell On Rails</a></li>
-      <li><a href="https://www.youtube.com/watch?v=JdqBbBazSPE">The World's Most Boring Build System</a></li>
-      <li><a href="https://www.youtube.com/watch?v=c9CoBR6_OkI">Repository Statistics With Git and D3</a></li>
-      <li><a href="http://developeronfire.com/episode-078-jezen-thomas-simplicity-master">Developer On Fire: Simplicity Master</a></li>
-    </ul>
-    <h2>Projects</h2>
-    <ul class="projects">
-      <li><a href="https://haskellbutquickly.com/">Haskell, But Quickly</a></li>
-      <li><a href="https://asimpleform.com/">A Simple Form</a></li>
-    </ul>
-    <h2>Elsewhere</h2>
-    <ul class="elsewhere">
-      <li><a href="https://twitter.com/jezenthomas">Twitter</a></li>
-      <li><a href="https://www.instagram.com/jezenthomas/">Instagram</a></li>
-      <li><a href="https://github.com/jezen">GitHub</a></li>
-    </ul>
-  </li>
-</ul>
+<div class="index">
+  <div class="container">
+    <div class="row">
+      <div class="six columns">
+        <h2>Latest articles</h2>
+        <ul class="latest-articles">
+          $for(posts)$
+          <li><a href="$url$">$title$</a></li>
+          $endfor$
+        </ul>
+
+        <h2>Popular articles</h2>
+        <ul class="popular-articles">
+          <li><a href="/how-i-write-invoices-in-vim">How I Write Invoices in Vim</a></li>
+          <li><a href="/deploying-a-haskell-web-service-with-nix">Deploying A Haskell Web Service With Nix</a></li>
+          <li><a href="/using-git-to-manage-todos">Using Git To Manage TODOs</a></li>
+          <li><a href="/my-uncomplicated-git-workflow">My Uncomplicated Git Workflow</a></li>
+          <li><a href="/code-review-done-right">Code Review Done Right</a></li>
+        </ul>
+      </div>
+      <div class="six columns">
+        <h2>Talks</h2>
+        <ul class="talks">
+          <li><a href="https://www.youtube.com/watch?v=YuQdCw5Mqnw&feature=youtu.be">Haskell On Rails</a></li>
+          <li><a href="https://www.youtube.com/watch?v=JdqBbBazSPE">The World's Most Boring Build System</a></li>
+          <li><a href="https://www.youtube.com/watch?v=c9CoBR6_OkI">Repository Statistics With Git and D3</a></li>
+          <li><a href="http://developeronfire.com/episode-078-jezen-thomas-simplicity-master">Developer On Fire: Simplicity Master</a></li>
+        </ul>
+
+        <h2>Projects</h2>
+        <ul class="projects">
+          <li><a href="https://haskellbutquickly.com/">Haskell, But Quickly</a></li>
+          <li><a href="https://asimpleform.com/">A Simple Form</a></li>
+        </ul>
+
+        <h2>Elsewhere</h2>
+        <ul class="elsewhere">
+          <li><a href="https://twitter.com/jezenthomas">Twitter</a></li>
+          <li><a href="https://www.instagram.com/jezenthomas/">Instagram</a></li>
+          <li><a href="https://github.com/jezen">GitHub</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+$partial("templates/footer.html")$

@@ -1,6 +1,6 @@
 ```bash
 # Compile app
-stack ghc -Wall --make site.hs
+stack build
 
 # Build/Rebuild/Watch/Deploy
 stack exec site <build|rebuild|watch|deploy>
