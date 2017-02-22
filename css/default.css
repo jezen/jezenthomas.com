@@ -204,47 +204,7 @@ header li a {
 
 /* } */
 
-/* Sidebar ---------------------------------------------------------------- { */
-
-.sidebar {
-  border-bottom: 1px solid #bbb;
-}
-
-.sidebar img {
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  display: block;
-}
-
-.sidebar-segment {
-  border-top: 1px solid #ccc;
-  font-size: 1rem;
-  list-style-type: none;
-  margin-bottom: 1em;
-}
-
-.sidebar ul {
-  list-style: square;
-  margin: 1em 0 1em 24px;
-}
-
-.sidebar ul li {
-  font-size: 1rem;
-}
-
-.sidebar h2 {
-  font-size: 1em;
-  margin: 16px 0 1em;
-  text-transform: uppercase;
-}
-
-.sidebar p {
-  font-size: .8em;
-}
-
-.sidebar a {
-  text-decoration: none;
-}
+/* Subscribe -------------------------------------------------------------- { */
 
 .subscribe {
   font-size: .9em;
@@ -330,7 +290,7 @@ ol {
 
 /* } */
 
-/* Index ------------------------------------------------------------- { */
+/* Index ------------------------------------------------------------------ { */
 
 .index h2 {
   font-size: 1.2em;
@@ -549,77 +509,24 @@ footer .license {
 
 /* } */
 
-/* Haskell But Quickly ---------------------------------------------------- { */
+/* Haskell, But Quickly --------------------------------------------------- { */
 
-.notice {
-  background: #fa0;
-  border-radius: 4px;
-  border: 8px solid #fff;
-  color: #000;
-  font-family: 'Helvetica-Neue', sans-serif;
-  font-weight: bold;
-  margin: 20px 20px 0;
-  padding: 20px;
-  position: relative;
+.hbq {
+  text-align: center;
 }
 
-.notice .haskell-logo {
-  height: 100px;
-  margin: 0 auto;
-  overflow: hidden;
-  top: 50%;
-  width: 100px;
+.hbq img {
+  border: none;
+  max-width: 160px;
 }
 
-@media (min-width: 600px) {
-  .notice .haskell-logo {
-    margin: -50px 0 0;
-    position: absolute;
-  }
+.hbq h2 {
+  margin-top: 0;
 }
 
-.notice .haskell-logo svg {
-  height: 100%;
-  width: 100%;
-}
-
-.notice .haskell-logo svg path,
-.notice .haskell-logo svg line,
-.notice .haskell-logo svg polyline {
-  stroke: #fff;
-  stroke-width: 16px;
-}
-
-.notice .haskell-logo svg path {
-  fill: transparent;
-}
-
-.notice p {
-  margin: .4em 0;
-}
-
-@media (min-width: 600px) {
-  .notice p {
-    margin: .4em 0 .4em 120px;
-  }
-}
-
-.notice a {
-  border-bottom: 2px solid #000;
-  color: #000;
-  text-decoration: none;
-}
-
-.notice em {
-  font-size: 1.4em;
-  font-style: italic;
-  font-variant: small-caps;
-  font-weight: bold;
-  letter-spacing: -.4px;
-}
-
-.no-touch .notice a:hover {
-  color: #000;
+.hbq h2,
+.hbq p {
+  text-align: left;
 }
 
 /* } */
