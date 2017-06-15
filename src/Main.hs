@@ -93,7 +93,7 @@ site = do
            posts <- fmap (take 5) . recentFirst =<< loadAll "posts/*/*"
            let indexCtx = mconcat
                           [ listField "posts" postCtx (return posts)
-                          , constField "title" "Recent posts"
+                          , constField "title" "Jezen Thomas"
                           , field "allTags" (\_ -> renderTagCloud 100 100 tags)
                           , field "archiveYears" (\_ -> renderYears years)
                           , defaultContext

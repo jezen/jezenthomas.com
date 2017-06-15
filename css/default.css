@@ -10,6 +10,7 @@
  * - sudophilosophical.com
  * - mechanical-elephant.com
  * - v1.jontangerine.com/about/
+ * - stackingthebricks.com
  */
 
 /* Scaffold --------------------------------------------------------------- { */
@@ -29,15 +30,24 @@ body {
 
 body {
   -webkit-font-smoothing: antialiased;
-  background: #f3f1f1;
   color: #3c3c3c;
   font-family: 'Georgia', sans-serif;
   font-size: 16px;
 }
 
+.container {
+  max-width: 750px;
+  padding: 0 20px;
+}
+
+@media (min-width: 800px) {
+  .container {
+    padding: 0 70px;
+  }
+}
+
 #main {
   overflow: hidden;
-  padding-bottom: 100px;
 }
 
 img {
@@ -59,10 +69,28 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: bold;
 }
 
+h2 {
+  display: inline-block;
+  padding: 0;
+  position: relative;
+  text-transform: uppercase;
+}
+
+h2::after {
+  content: '';
+  position: absolute;
+  left: -3em;
+  width: calc(100% + 3em);
+  height: .4em;
+  bottom: -.3em;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAgAAAAICAYAAADED76LAAAAAXNSR0IArs4c6QAAACFJREFUGBljZMABvi25+x+HFAMDSBKngkEnCfIGTtdC5QBmcDPsXQdqOgAAAABJRU5ErkJggg==) repeat;
+  background-size: 4px 4px;
+}
+
 .post-date {
   color: #777;
   font-style: italic;
-  margin: 0;
+  margin: 1em 0 2em;
 }
 
 .post-tags {
@@ -82,6 +110,7 @@ a {
 p {
   line-height: 1.6em;
   margin: 1em 0 1.5em;
+  font-size: 18px;
 }
 
 pre {
@@ -138,6 +167,10 @@ blockquote {
   font-style: italic;
 }
 
+.page {
+  min-height: 200px;
+}
+
 .page h1 {
   border-bottom: 1px solid #dadada;
   font-size: 2.5em;
@@ -158,17 +191,53 @@ blockquote {
 /* Header ----------------------------------------------------------------- { */
 
 header {
-  background: #fff;
-  border-bottom: 1px solid #dadada;
-  margin: auto;
+  background-image: url(/static/img/banner.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  border-bottom: 1px solid #333;
+  margin: 0 auto 72px;
+  height: 180px;
   position: relative;
 }
 
-header h1 {
+.portrait {
+  border: 2px solid #fff;
+  height: 148px;
+  border-radius: 50%;
+  width: 148px;
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  -webkit-transform: translate(-50%, 50%);
+  transform: translate(-50%, 50%);
+}
+
+.portrait a {
+  display: block;
+}
+
+.no-touch .portrait a:hover img {
+  border: 1px solid #000;
+}
+
+.portrait img {
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  -webkit-transition: all .2s;
+  transition: all .2s;
+}
+
+.site-title {
   color: #333;
-  font-size: 1.4em;
+  display: inline-block;
+  font-family: 'Helvetica-Neue', sans-serif;
+  font-size: 2.4rem;
+  margin: .5em 0 .2em;
   font-weight: bold;
-  margin: 1em 0 0;
+  text-decoration: none;
+}
+
+.site-title a {
   text-decoration: none;
 }
 
@@ -179,27 +248,18 @@ header a {
 }
 
 header p {
+  color: #fff;
+}
+
+.intro {
+  text-align: center;
+}
+
+.intro p {
+  color: #777;
   font-style: italic;
-  margin: 0 0 1em;
-}
-
-header ul {
-  font-family: 'Helvetica-Neue', sans-serif;
-  font-weight: bold;
-  list-style: none;
+  font-size: 17px;
   margin: 0;
-  text-align: right;
-}
-
-header li {
-  display: inline-block;
-  line-height: 90px;
-  margin: 0 0 0 1em;
-}
-
-header li a {
-  color: #9b9b9b;
-  display: inline;
 }
 
 /* } */
@@ -234,27 +294,11 @@ article li {
 }
 
 article h1 {
-  border-bottom: 1px solid #dadada;
-  font-size: 1.5em;
+  font-size: 3.5em;
   font-weight: bold;
-  padding: 0 0 12px;
-}
-
-@media (min-width: 550px) {
-  article h1 {
-    text-align: right;
-  }
-}
-
-article .info {
-  width: 150px;
-}
-
-@media (min-width: 800px) {
-  article .info {
-    float: left;
-    margin-top: 14px;
-  }
+  padding: 0 1em 1em;
+  text-align: center;
+  margin: 0;
 }
 
 ol {
@@ -290,37 +334,13 @@ ol {
 
 /* } */
 
-/* Index ------------------------------------------------------------------ { */
-
-.index h2 {
-  font-size: 1.2em;
-  font-weight: bold;
-  margin: 1.5em 0 .2em;
-}
-
-.index ul {
-  list-style: none;
-  margin: 0;
-}
-
-.index li {
-  margin: 0;
-}
-
-.index li a {
-  text-decoration: none;
-}
-
-/* } */
-
 /* Footer ----------------------------------------------------------------- { */
 
 footer {
+  background: #f4f4f4;
+  border-top: 1px solid #ddd;
   margin-top: 3em;
-}
-
-footer .container {
-  border-top: 1px solid #dadada;
+  padding: 2em 0 4em;
 }
 
 footer .row {
@@ -348,13 +368,11 @@ footer ul a {
   text-decoration: none;
 }
 
-footer .license {
+footer .license p {
+  font-family: 'Helvetica-Neue', sans-serif;
   font-size: .8em;
 }
 
-.pgp-key a {
-  text-decoration: none;
-}
 /* } */
 
 /* About ------------------------------------------------------------------ { */
@@ -445,35 +463,177 @@ footer .license {
 }
 /* } */
 
-/* Speaking --------------------------------------------------------------- { */
 
-@media (min-width: 550px) {
-  .speaking .row {
-    display: flex;
-  }
+/* Articles --------------------------------------------------------------- { */
+
+.articles p {
+  font-size: 22px;
+  margin-top: 0;
+  text-align: center;
 }
 
-.speaking .talk {
+.articles li::before {
+  content: '+';
+  color: #ccc;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.articles li {
+  list-style: none;
+  font-size: 18px;
+  margin: 1em 0;
+}
+
+.articles a {
+  border-bottom: 2px solid #ddd;
+  text-decoration: none;
+  padding: 2px;
+}
+
+.articles a:hover {
+  border: none;
+  background: #333;
+  color: #fff;
+}
+
+/* } */
+
+/* Projects --------------------------------------------------------------- { */
+
+.project {
+  margin-bottom: 5em;
+  padding-bottom: 2em;
+  position: relative;
+}
+
+.project::before {
   background: #fff;
-  padding: 20px;
-  margin-bottom: 40px;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  bottom: 0;
+  content: '';
+  display: block;
+  height: 8px;
+  left: 50%;
+  outline: 4px solid #fff;
+  position: absolute;
+  -webkit-transform: translate(-50%, 50%);
+  transform: translate(-50%, 50%);
+  width: 8px;
+  z-index: 200;
+}
+
+.project::after {
+  border-top: 1px solid #ddd;
+  bottom: 0;
+  content: '';
+  display: block;
+  left: 50%;
+  position: absolute;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: 50%;
+  z-index: 100;
+}
+
+.project img {
+  float: left;
+  border: 1px solid #bbb;
+  width: 33%;
+  margin-right: 1em;
+}
+
+.project a img:hover {
+  border-color: #333;
+}
+
+.project h3 {
+  font-size: 1.25em;
+  margin: 1em 0 0;
+}
+
+.project p:last-child {
+  margin-bottom: 0;
+  text-align: right;
+}
+
+.project p a {
+  border-bottom: 2px solid #ddd;
+  color: #333;
+  font-family: 'Helvetica-Neue', sans-serif;
+  font-weight: bold;
+  padding: 2px;
+  text-decoration: none;
+}
+
+.project p a:hover {
+  border: none;
+  background: #333;
+  color: #fff;
+}
+
+/* } */
+
+/* Speaking --------------------------------------------------------------- { */
+
+.speaking .talk {
+  margin-bottom: 5em;
+  padding-bottom: 2em;
+  position: relative;
+}
+
+.talk::before {
+  background: #fff;
+  border-radius: 50%;
+  border: 1px solid #ccc;
+  bottom: 0;
+  content: '';
+  display: block;
+  height: 8px;
+  left: 50%;
+  outline: 4px solid #fff;
+  position: absolute;
+  -webkit-transform: translate(-50%, 50%);
+  transform: translate(-50%, 50%);
+  width: 8px;
+  z-index: 200;
+}
+
+.talk::after {
+  border-top: 1px solid #ddd;
+  bottom: 0;
+  content: '';
+  display: block;
+  left: 50%;
+  position: absolute;
+  -webkit-transform: translateX(-50%);
+  transform: translateX(-50%);
+  width: 50%;
+  z-index: 100;
+}
+
+.speaking h2 {
+  margin-bottom: 1em;
 }
 
 .speaking img {
+  float: left;
   border: 1px solid #bbb;
-  width: 100%;
+  width: 33%;
+  margin-right: 1em;
 }
 
 .speaking a img:hover {
   border-color: #333;
 }
 
-.speaking h2 {
+.speaking h3 {
   font-size: 1.25em;
   margin: 1em 0 0;
 }
 
-.speaking h3 {
+.speaking h4 {
   color: #777;
   font-size: 1.1em;
   margin: 0;
@@ -486,7 +646,7 @@ footer .license {
   font-style: italic;
 }
 
-.speaking h4 {
+.speaking h5 {
   line-height: 1em;
   color: #777;
   font-family: 'Georgia', serif;
@@ -497,36 +657,22 @@ footer .license {
 
 .speaking p:last-child {
   margin-bottom: 0;
+  text-align: right;
 }
 
 .speaking p a {
-  text-decoration: none;
-  border-bottom: 1px solid #dadada;
+  border-bottom: 2px solid #ddd;
+  color: #333;
   font-family: 'Helvetica-Neue', sans-serif;
   font-weight: bold;
-  color: #333;
+  padding: 2px;
+  text-decoration: none;
 }
 
-/* } */
-
-/* Haskell, But Quickly --------------------------------------------------- { */
-
-.hbq {
-  text-align: center;
-}
-
-.hbq img {
+.speaking p a:hover {
   border: none;
-  max-width: 160px;
-}
-
-.hbq h2 {
-  margin-top: 0;
-}
-
-.hbq h2,
-.hbq p {
-  text-align: left;
+  background: #333;
+  color: #fff;
 }
 
 /* } */

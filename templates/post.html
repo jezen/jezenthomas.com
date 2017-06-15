@@ -2,26 +2,9 @@ $partial("templates/header.html")$
 
 <div class="container">
   <article>
-    <div class="row">
-      <div class="four columns">
-        <h1>$title$</h1>
-        <p class="post-date">Written on <span>$date$</span</p>
-        <hr>
-        <div class="hbq">
-          <img src="/static/img/hbq-3d.png" alt="Haskell, But Quickly">
-          <h2>Heads Up!</h2>
-          <p>
-          I'm writing a book about building and deploying web applications with
-          Haskell and Yesod. Want to know when it's released? <a href="https://haskellbutquickly.com/">Click here</a>.
-          </p>
-        </div>
-        <!--p class="post-tags">$tags$</p-->
-      </div>
-
-      <div class="eight columns">
-        $body$
-      </div>
-    </div>
+    <h1>$title$</h1>
+    <p class="post-date">Written on <span>$date$</span</p>
+    $body$
   </article>
 </div>
 

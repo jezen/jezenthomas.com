@@ -10,7 +10,7 @@
 -->
 <html lang="en">
   <head>
-    <title>$title$ &#183; Jezen Thomas</title>
+    <title>$title$</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="description" content="$if(excerpt)$ $excerpt$ $else$ Thoughts on vim, unix, ruby, javascript, and more. $endif$">
     <meta name="author" content="Jezen Thomas">
@@ -66,11 +66,6 @@
           dateTokens[2]
         ].join(' ');
       })
-
-      document.querySelector('#contact').addEventListener('click', function(event) {
-        event.preventDefault();
-        document.querySelector('.pgp-key').classList.remove('hide');
-      });
     </script>
     <!-- λ -->
   </body>
