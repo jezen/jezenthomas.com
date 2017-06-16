@@ -191,6 +191,7 @@ blockquote {
 /* Header ----------------------------------------------------------------- { */
 
 header {
+  background-color: #565656;
   background-image: url(/static/img/banner.jpg);
   background-repeat: no-repeat;
   background-size: cover;
