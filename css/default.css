@@ -114,18 +114,21 @@ p {
 }
 
 pre {
-  background: #f5f5f5;
+  background: #fbfbfb;
   border: 1px solid #E1E1E1;
   border-radius: 4px;
   font-size: 12px;
   line-height: 16px;
   overflow-x: auto;
+  padding: 0 0 1em;
   -webkit-overflow-scrolling: touch;
 }
 
 pre > code {
-  background: #f5f5f5;
+  background: transparent;
   border: none;
+  font-size: 14px;
+  line-height: 18px;
 }
 
 code {
@@ -313,11 +316,18 @@ article li {
 }
 
 article h1 {
-  font-size: 3.5em;
+  font-size: 2.5em;
   font-weight: bold;
-  padding: 0 1em 1em;
+  padding: 0 0 1em;
   text-align: center;
   margin: 0;
+}
+
+@media (min-width: 800px) {
+  article h1 {
+    font-size: 3.5em;
+    padding: 0 1em 1em;
+  }
 }
 
 ol {
@@ -491,17 +501,26 @@ footer .license p {
   text-align: center;
 }
 
+@media (max-width: 799px) {
+  .articles .popular-articles {
+    margin: 0;
+  }
+}
+
+.articles li {
+  font-size: 18px;
+  list-style: none;
+  margin: 1em 0;
+  padding-left: 22px;
+  position: relative;
+}
+
 .articles li::before {
   content: '+';
   color: #ccc;
   font-weight: bold;
-  margin-right: 8px;
-}
-
-.articles li {
-  list-style: none;
-  font-size: 18px;
-  margin: 1em 0;
+  position: absolute;
+  left: 0;
 }
 
 .articles a {
@@ -557,10 +576,15 @@ footer .license p {
 }
 
 .project img {
-  float: left;
   border: 1px solid #bbb;
-  width: 33%;
-  margin-right: 1em;
+}
+
+@media (min-width: 480px) {
+  .project img {
+    float: left;
+    margin-right: 1em;
+    width: 33%;
+  }
 }
 
 .project a img:hover {
@@ -637,11 +661,17 @@ footer .license p {
 }
 
 .speaking img {
-  float: left;
   border: 1px solid #bbb;
-  width: 33%;
-  margin-right: 1em;
 }
+
+@media (min-width: 480px) {
+  .speaking img {
+    float: left;
+    margin-right: 1em;
+    width: 33%;
+  }
+}
+
 
 .speaking a img:hover {
   border-color: #333;
