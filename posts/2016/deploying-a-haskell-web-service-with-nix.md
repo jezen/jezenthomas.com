@@ -47,8 +47,12 @@ Installation is the process which takes the most time, but you can typically be
 up and running in about 15 minutes, depending on the speed of your Internet
 connection.
 
-There is only one prerequisite; you will need to have the Xcode Command Line
-Tools installed. You do *not* need to have the Haskell platform installed.
+~~There is only one prerequisite; you will need to have the Xcode Command Line
+Tools installed. You do *not* need to have the Haskell platform installed.~~
+
+**Update 2018/01/31**: I haven't tested this but apparently, Nix on Darwin no
+longer requires Xcode; it's now a 100% pure build. Thanks Samuel Leathers for
+writing in!
 
 Since it runs over the network — and the network is inherently unreliable — the
 installation is prone to failure. This shouldn't matter though, because Nix is
