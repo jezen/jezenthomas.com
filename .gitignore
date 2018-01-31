@@ -18,3 +18,4 @@ _site
 _cache
 site
 .env
+node_modules

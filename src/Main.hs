@@ -35,7 +35,7 @@ copyFiles = [ "static/img/*"
 
 config :: Configuration
 config = defaultConfiguration
-    { deployCommand = "cd _site && surge . jezenthomas.com" }
+    { deployCommand = "yarn surge _site jezenthomas.com" }
 
 main :: IO ()
 main = hakyllWith config site
