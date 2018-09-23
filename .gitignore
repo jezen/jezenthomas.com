@@ -19,3 +19,4 @@ _cache
 site
 .env
 node_modules
+result

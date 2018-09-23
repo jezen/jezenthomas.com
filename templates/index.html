@@ -1,131 +1,151 @@
-$partial("templates/header.html")$
+<div class="index">
+  <h1 class="site-title">Jezen Thomas</h1>
 
-<div class="container articles">
-  <h2>Articles</h2>
-  <p>
-  A collection of my most popular blog posts that are sometimes useful guides,
-  sometimes sarcastic rants, and always in some way related to software
-  development.
-  </p>
-  <ul class="popular-articles">
-    <li><a href="/how-i-write-invoices-in-vim">How I Write Invoices in Vim</a></li>
-    <li><a href="/showing-the-weather-in-tmux">Showing The Weather In Tmux</a></li>
-    <li><a href="/using-git-to-manage-todos">Using Git To Manage TODOs</a></li>
-    <li><a href="/how-many-levels-of-javascript-are-you-on">How Many Levels Of JavaScript Are You On?</a></li>
-    <li><a href="/my-uncomplicated-git-workflow">My Uncomplicated Git Workflow</a></li>
-    <li><a href="/code-review-done-right">Code Review Done Right</a></li>
-    <li><a href="javascript-is-not-expressive">JavaScript Is Not Expressive</a></li>
-  </ul>
-</div>
-
-<div class="container projects">
-  <h2>Projects</h2>
-  <div class="project">
-    <a href="https://newbusinessmonitor.co.uk/">
-      <img alt="NewBusinessMonitor" src="/static/img/nbm.jpg">
-    </a>
-    <h3>NewBusinessMonitor</h3>
+  <div class="container about">
+    <img alt="Jezen Thomas" src="/static/img/prestiz.jpg">
     <p>
-    A business intelligence service for the UK market that provides the latest
-    UK company data from Companies House. It sorts, filters, and geocodes all
-    of the data, enabling you to quickly find highly-targeted B2B sales leads.
-    Companies can be queried from the dashboard for active marketing, and
-    regular reports can be emailed to you, saving you time and effort.
+    I'm a Haskell/Elm programmer,
+    <a href="#newbusinessmonitor">founder of NewBusinessMonitor</a>,
+    <a href="#comparestack">co-founder &amp; CTO at Comparestack</a>,
+    <a href="#speaking">public speaker</a>,
+    occasionally I <a href="#writing">write about technology</a>,
+    and currently I am perpetually travelling the world.
     </p>
-    <p><a href="https://newbusinessmonitor.co.uk/">Learn more &rarr;</a></p>
+    <p>Find me <a href="https://www.instagram.com/jezenthomas/">on Instagram</a>, or <a href="mailto:jezen@jezenthomas.com">write me an email</a>.
   </div>
 
-  <div class="project">
-    <a href="https://haskellbutquickly.com/">
-      <img alt="Haskell, But Quickly" src="/static/img/hbq.jpg">
-    </a>
-    <h3>Haskell, But Quickly</h3>
+  <div class="container">
+    <h2 id="newbusinessmonitor">Founder of NewBusinessMonitor</h2>
     <p>
-    I'm writing a book about building and deploying web applications with
-    Haskell and Yesod. The book takes a pragmatic approach, allowing you to
-    immediately get your hands dirty and produce something tangible quickly.
-    </p>
-    <p><a href="https://haskellbutquickly.com/">Get the book when it's ready &rarr;</a></p>
-  </div>
-</div>
-
-<div id="speaking" class="container speaking">
-  <h2>Speaking</h2>
-  <div class="talk">
-    <a href="https://www.youtube.com/watch?v=YuQdCw5Mqnw">
-      <img src="/static/img/buildstuff.jpg" alt="Haskell on Rails at Falsy Values conference, Warsaw">
-    </a>
-    <h3>Haskell on Rails</h3>
-    <h4 class="talk-location"><span class="publication-name">Build Stuff</span> — Odessa, Ukraine</h4>
-    <h5><span>July 12, 2016</span></h5>
-    <p>
-    For years, Rails has been the framework of choice for developers who need
-    to <em>Get Things Done</em>. But what happens when the complexity of the system
-    inevitably grows? We write tests, and more tests, and even more tests, and
-    still we're on our knees, fighting fires and debugging. We need better
-    tools. In this talk I show how build web applications with one of the
-    fastest and most stable languages in the industry: Haskell.
+    <a href="https://newbusinessmonitor.co.uk/">NewBusinessMonitor</a>
+    is the best way to do B2B marketing in the UK. Over 12,000 new companies are
+    registered in the UK every week. This Software-as-a-Service product provides
+    the latest data on businesses registered every day, and a range of filters to
+    quickly target your ideal customer base. You can then send sales letters
+    directly to your target market through the platform, and all printing,
+    enveloping, and sending is handled behind the scenes.
     </p>
     <p>
-      <a href="https://www.youtube.com/watch?v=YuQdCw5Mqnw">Watch talk on YouTube &rarr;</a>
+    NewBusinessMonitor is currently taking part in the YCombinator Startup School
+    programme.
     </p>
   </div>
 
-  <div class="talk">
-    <a href="https://www.youtube.com/watch?v=JdqBbBazSPE">
-      <img src="/static/img/falsyvalues1.jpg" alt="The World's Most Boring Build System at Falsy Values conference, Warsaw">
-    </a>
-    <h3>The World's Most Boring Build System</h3>
-    <h4 class="talk-location"><span class="publication-name">Falsy Values</span> — Warsaw, Poland</h4>
-    <h5><span>October 12, 2015</span></h5>
+  <div class="container">
+    <h2 id="comparestack">Co-Founder &amp; CTO of Comparestack</h2>
     <p>
-    The front-end community has matured immensely in the past five years with
-    automated build systems and package managers written in JavaScript
-    becoming commonplace. But how did we get here? And what has this really
-    cost us? We know every line of code is a liability, and the best line of
-    code is the one that doesn’t exist. JavaScript build systems are
-    complicated and verbose, and it doesn’t need to be this way.
+    <a href="https://comparestack.com/">Comparestack</a>
+    is a technology platform enabling great product switching experiences for
+    challenger Price Comparison Websites, FinTech innovators and other leading
+    disruptors. Our platform and provider partnerships make it easy for clients
+    to instantly unlock new revenue streams.
     </p>
     <p>
-      <a href="https://www.youtube.com/watch?v=JdqBbBazSPE">Watch talk on YouTube &rarr;</a>
+    The first instance of a Comparestack product is Moneygains — a free to use
+    service for consumers that enables them to compare the majority of
+    residential electricity tariffs available in the Northern Ireland market.
     </p>
   </div>
 
-  <div class="talk">
-    <a href="https://www.youtube.com/watch?v=c9CoBR6_OkI">
-      <img src="/static/img/falsyvalues2.jpg" alt="Repository Statistics with Git and D3 at Falsy Values conference, Warsaw">
-    </a>
-    <h3>Repository Statistics with Git and D3</h3>
-    <h4 class="talk-location"><span class="publication-name">Falsy Values</span> — Warsaw, Poland</h4>
-    <h5><span>October 12, 2015</span></h5>
+  <div class="container">
+    <h2 id="writing">Technical Writing</h2>
     <p>
-    A short talk on extracting repository statistics with Git and Bash, and
-    visualising the data in a line graph generated with the D3.js JavaScript
-    library. This is useful for developing an understanding of how your
-    software project is growing and (hopefully!) shrinking over time.
+    Occasionally I write technical articles, and some of them have
+    <strike>made other programmers mad</strike>
+    enjoyed time on the front page of Hacker News. Some of the more popular
+    articles include
+    <a href="/how-i-write-invoices-in-vim">How I Write Invoices in Vim</a>,
+    <a href="/showing-the-weather-in-tmux">Showing The Weather In Tmux</a>,
+    and <a href="/using-git-to-manage-todos">Using Git To Manage TODOs</a>.
     </p>
+
     <p>
-      <a href="https://www.youtube.com/watch?v=c9CoBR6_OkI">Watch talk on YouTube &rarr;</a>
+    I'm also writing
+    <a href="https://haskellbutquickly.com/">Haskell, But Quickly</a>
+    — a book about building and deploying web applications with Haskell and
+    Yesod. The book takes a pragmatic approach, allowing you to immediately get
+    your hands dirty and produce something tangible quickly.
     </p>
   </div>
 
-  <div class="talk">
-    <a href="http://developeronfire.com/episode-078-jezen-thomas-simplicity-master">
-      <img src="/static/img/developeronfire.jpg">
-    </a>
-    <h3>Simplicity Master</h3>
-    <h4 class="talk-location"><span class="publication-name">Developer on Fire Podcast</span></h4>
-    <h5><span>December 31, 2015</span></h5>
-    <p>
-    An interview for the Developer on Fire podcast where I chat with Dave
-    Rael about great tools, mastering the command line, the primacy of
-    simplicity, and geeking out about the rotation axes of the arms when
-    typing. Includes rants about JavaScript, stories of failure, and advice
-    for broadening your skills as a developer.
-    </p>
-    <p>
-      <a href="http://developeronfire.com/episode-078-jezen-thomas-simplicity-master">Listen to the interview &rarr;</a>
-    </p>
+  <div id="speaking" class="container speaking">
+    <h2>Speaking</h2>
+    <div class="talk">
+      <a href="https://www.youtube.com/watch?v=YuQdCw5Mqnw">
+        <img src="/static/img/buildstuff.jpg" alt="Haskell on Rails at Falsy Values conference, Warsaw">
+      </a>
+      <h3>Haskell on Rails</h3>
+      <h4 class="talk-location"><span class="publication-name">Build Stuff</span> — Odessa, Ukraine</h4>
+      <h5><span>July 12, 2016</span></h5>
+      <p>
+      For years, Rails has been the framework of choice for developers who need
+      to <em>Get Things Done</em>. But what happens when the complexity of the system
+      inevitably grows? We write tests, and more tests, and even more tests, and
+      still we're on our knees, fighting fires and debugging. We need better
+      tools. In this talk I show how build web applications with one of the
+      fastest and most stable languages in the industry: Haskell.
+      </p>
+      <p>
+        <a href="https://www.youtube.com/watch?v=YuQdCw5Mqnw">Watch talk on YouTube &rarr;</a>
+      </p>
+    </div>
+
+    <div class="talk">
+      <a href="https://www.youtube.com/watch?v=JdqBbBazSPE">
+        <img src="/static/img/falsyvalues1.jpg" alt="The World's Most Boring Build System at Falsy Values conference, Warsaw">
+      </a>
+      <h3>The World's Most Boring Build System</h3>
+      <h4 class="talk-location"><span class="publication-name">Falsy Values</span> — Warsaw, Poland</h4>
+      <h5><span>October 12, 2015</span></h5>
+      <p>
+      The front-end community has matured immensely in the past five years with
+      automated build systems and package managers written in JavaScript
+      becoming commonplace. But how did we get here? And what has this really
+      cost us? We know every line of code is a liability, and the best line of
+      code is the one that doesn’t exist. JavaScript build systems are
+      complicated and verbose, and it doesn’t need to be this way.
+      </p>
+      <p>
+        <a href="https://www.youtube.com/watch?v=JdqBbBazSPE">Watch talk on YouTube &rarr;</a>
+      </p>
+    </div>
+
+    <div class="talk">
+      <a href="https://www.youtube.com/watch?v=c9CoBR6_OkI">
+        <img src="/static/img/falsyvalues2.jpg" alt="Repository Statistics with Git and D3 at Falsy Values conference, Warsaw">
+      </a>
+      <h3>Repository Statistics with Git and D3</h3>
+      <h4 class="talk-location"><span class="publication-name">Falsy Values</span> — Warsaw, Poland</h4>
+      <h5><span>October 12, 2015</span></h5>
+      <p>
+      A short talk on extracting repository statistics with Git and Bash, and
+      visualising the data in a line graph generated with the D3.js JavaScript
+      library. This is useful for developing an understanding of how your
+      software project is growing and (hopefully!) shrinking over time.
+      </p>
+      <p>
+        <a href="https://www.youtube.com/watch?v=c9CoBR6_OkI">Watch talk on YouTube &rarr;</a>
+      </p>
+    </div>
+
+    <div class="talk">
+      <a href="http://developeronfire.com/episode-078-jezen-thomas-simplicity-master">
+        <img src="/static/img/developeronfire.jpg">
+      </a>
+      <h3>Simplicity Master</h3>
+      <h4 class="talk-location"><span class="publication-name">Developer on Fire Podcast</span></h4>
+      <h5><span>December 31, 2015</span></h5>
+      <p>
+      An interview for the Developer on Fire podcast where I chat with Dave
+      Rael about great tools, mastering the command line, the primacy of
+      simplicity, and geeking out about the rotation axes of the arms when
+      typing. Includes rants about JavaScript, stories of failure, and advice
+      for broadening your skills as a developer.
+      </p>
+      <p>
+        <a href="http://developeronfire.com/episode-078-jezen-thomas-simplicity-master">Listen to the interview &rarr;</a>
+      </p>
+    </div>
   </div>
 </div>
 
