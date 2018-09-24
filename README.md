@@ -1,9 +1,12 @@
 ```bash
 # Compile app
-stack build
+nix-build
 
-# Build/Rebuild/Watch/Deploy
-stack exec site <build|rebuild|watch|deploy>
+# Development server
+./result/bin/jgt watch
+
+# Publish
+make
 ```
 
 ![Computers in a nutshell](/static/img/robotfail.gif)

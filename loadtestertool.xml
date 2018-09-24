@@ -1,7 +1,0 @@
-<?xml version="1.0"?>
-<ipaddresses>
-	<!-- this wildcard allows all IP addresses to load test your website -->
-	<ipaddress>*</ipaddress>
-	<!-- this setting allows only specific IP addresses to load test your website -->
-	<ipaddress>93.105.178.33</ipaddress>
-</ipaddresses>
