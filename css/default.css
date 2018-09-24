@@ -325,6 +325,9 @@ ol {
   }
 }
 
+.speaking a {
+  border: none;
+}
 
 .speaking a img:hover {
   border-color: #333;
