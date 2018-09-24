@@ -191,8 +191,10 @@ blockquote {
 
 /* Index ---------------------------------------------------------------- {{{ */
 
-.index p {
-  text-align: justify;
+@media (min-width: 800px) {
+  .index p {
+    text-align: justify;
+  }
 }
 
 .site-title {
