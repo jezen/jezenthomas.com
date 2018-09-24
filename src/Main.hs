@@ -54,36 +54,36 @@ site = do
   match "posts/*/*" (postRules postCtx)
 
   create ["index.html"] $ do
-         route   idRoute
-         compile $ do
-           posts <- fmap (take 5) . recentFirst =<< loadAll "posts/*/*"
-           let indexCtx = mconcat
-                          [ listField "posts" postCtx (return posts)
-                          , constField "title" "Jezen Thomas"
-                          , defaultContext
-                          ]
+    route idRoute
+    compile $ do
+      posts <- fmap (take 5) . recentFirst =<< loadAll "posts/*/*"
+      let indexCtx = mconcat
+            [ listField "posts" postCtx (return posts)
+            , constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
+            , defaultContext
+            ]
 
-           makeItem ""
-            >>= loadAndApplyTemplate "templates/index.html" indexCtx
-            >>= loadAndApplyTemplate "templates/default.html" indexCtx
-            >>= relativizeUrls
-            >>= cleanIndexUrls
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/index.html" indexCtx
+        >>= loadAndApplyTemplate "templates/default.html" indexCtx
+        >>= relativizeUrls
+        >>= cleanIndexUrls
 
   create ["sitemap.xml"] $ do
-         route   idRoute
-         compile $ do
-           posts <- recentFirst =<< loadAll "posts/*/*"
+    route idRoute
+    compile $ do
+      posts <- recentFirst =<< loadAll "posts/*/*"
 
-           let allPosts = return posts
-           let sitemapCtx = mconcat
-                            [ listField "entries" pageCtx allPosts
-                            , constField "host" host
-                            , defaultContext
-                            ]
+      let allPosts = return posts
+      let sitemapCtx = mconcat
+                       [ listField "entries" pageCtx allPosts
+                       , constField "host" host
+                       , defaultContext
+                       ]
 
-           makeItem ""
-            >>= loadAndApplyTemplate "templates/sitemap.xml" sitemapCtx
-            >>= cleanIndexHtmls
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/sitemap.xml" sitemapCtx
+        >>= cleanIndexHtmls
 
   create ["feed.xml"] $ do
          route   idRoute
