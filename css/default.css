@@ -60,7 +60,6 @@ img {
 }
 
 /* }}} */
-
 /* Typography ----------------------------------------------------------- {{{ */
 
 h1, h2, h3, h4, h5, h6 {
@@ -188,7 +187,6 @@ blockquote {
 }
 
 /* }}} */
-
 /* Index ---------------------------------------------------------------- {{{ */
 
 @media (min-width: 800px) {
@@ -224,7 +222,6 @@ blockquote {
   text-align: left;
 }
 /* }}} */
-
 /* Article -------------------------------------------------------------- {{{ */
 
 article {
@@ -270,10 +267,9 @@ ol {
 }
 
 /* }}} */
-
 /* Speaking ------------------------------------------------------------- {{{ */
 
-.speaking .talk {
+#speaking .talk {
   margin-bottom: 5em;
   padding-bottom: 2em;
   position: relative;
@@ -309,49 +305,49 @@ ol {
   z-index: 100;
 }
 
-.speaking h2 {
+#speaking h2 {
   margin-bottom: 1em;
 }
 
-.speaking img {
+#speaking img {
   border: 1px solid #bbb;
 }
 
 @media (min-width: 480px) {
-  .speaking img {
+  #speaking img {
     float: left;
     margin-right: 1em;
     width: 33%;
   }
 }
 
-.speaking a {
+#speaking a {
   border: none;
 }
 
-.speaking a img:hover {
+#speaking a img:hover {
   border-color: #333;
 }
 
-.speaking h3 {
+#speaking h3 {
   font-size: 1.25em;
   margin: 1em 0 0;
 }
 
-.speaking h4 {
+#speaking h4 {
   color: #777;
   font-size: 1.1em;
   margin: 0;
   font-weight: normal;
 }
 
-.speaking .publication-name {
+#speaking .publication-name {
   color: #333;
   font-family: 'Georgia', serif;
   font-style: italic;
 }
 
-.speaking h5 {
+#speaking h5 {
   line-height: 1em;
   color: #777;
   font-family: 'Georgia', serif;
@@ -360,12 +356,12 @@ ol {
   font-size: 1.1em;
 }
 
-.speaking p:last-child {
+#speaking p:last-child {
   margin-bottom: 0;
   text-align: right;
 }
 
-.speaking p a {
+#speaking p a {
   border-bottom: 2px solid #ddd;
   color: #333;
   font-family: 'Helvetica-Neue', sans-serif;
@@ -374,14 +370,13 @@ ol {
   text-decoration: none;
 }
 
-.speaking p a:hover {
+#speaking p a:hover {
   border: none;
   background: #333;
   color: #fff;
 }
 
 /* }}} */
-
 /* Footer --------------------------------------------------------------- {{{ */
 
 footer {
