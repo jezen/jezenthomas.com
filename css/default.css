@@ -186,6 +186,8 @@ blockquote {
   fill: currentColor;
 }
 
+.strike { text-decoration: line-through; }
+
 /* }}} */
 /* Index ---------------------------------------------------------------- {{{ */
 
