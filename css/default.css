@@ -14,7 +14,6 @@
  */
 
 /* Scaffold ------------------------------------------------------------- {{{ */
-
 *,
 *::before,
 *::after {
@@ -30,20 +29,14 @@ body {
 
 body {
   -webkit-font-smoothing: antialiased;
-  color: #3c3c3c;
-  font-family: 'Georgia', sans-serif;
+  color: #000;
   font-size: 16px;
 }
 
 .container {
-  max-width: 750px;
+  max-width: 540px;
   padding: 0 20px;
-}
-
-@media (min-width: 800px) {
-  .container {
-    padding: 0 70px;
-  }
+  width: 100%;
 }
 
 #main {
@@ -58,9 +51,11 @@ img {
 .hide {
   display: none;
 }
-
 /* }}} */
 /* Typography ----------------------------------------------------------- {{{ */
+body {
+  font-family: Palatino, "Palatino Linotype", "Palatino LT STD", "Book Antiqua", Georgia, serif;
+}
 
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Open Sans', sans-serif;
@@ -69,7 +64,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h2 {
-  color: #444;
+  color: #333;
   font-size: 2.4rem;
   margin: 3em 0 1em;
 }
@@ -77,7 +72,7 @@ h2 {
 .post-date {
   color: #777;
   font-style: italic;
-  margin: 1em 0 2em;
+  margin: 0 0 2em;
 }
 
 .post-tags {
@@ -87,6 +82,7 @@ h2 {
 
 a {
   color: #3c3c3c;
+  cursor: pointer;
   border-bottom: 1px dotted #888;
   text-decoration: none;
 }
@@ -103,9 +99,8 @@ a:hover {
 }
 
 p {
-  font-family: 'Merriweather', serif;
   font-size: 1.6rem;
-  line-height: 2.6rem;
+  line-height: 2.7rem;
   margin: 1em 0 1.5em;
 }
 
@@ -123,7 +118,7 @@ pre {
 pre > code {
   background: transparent;
   border: none;
-  font-size: 14px;
+  font-size: 13px;
   line-height: 18px;
   padding: 0 1.5rem;
 }
@@ -133,19 +128,8 @@ code {
 }
 
 .sourceCode {
+  font-size: 13px;
   margin: 2em 0;
-}
-
-.run-in {
-  letter-spacing: 2px;
-  text-transform: uppercase;
-}
-
-.run-in .drop {
-  float: left;
-  font-size: 4rem;
-  line-height: 3rem;
-  padding-right: 4px;
 }
 
 sup {
@@ -153,6 +137,7 @@ sup {
 }
 
 ul {
+  list-style: disc;
   margin: 1em 0 1.5em 40px;
 }
 
@@ -187,45 +172,71 @@ blockquote {
 }
 
 .strike { text-decoration: line-through; }
-
 /* }}} */
 /* Index ---------------------------------------------------------------- {{{ */
-
 @media (min-width: 800px) {
   .index p {
     text-align: justify;
   }
 }
-
+/* }}} */
+/* Header --------------------------------------------------------------- {{{ */
 .site-title {
   color: #444;
   font-family: 'Mogra', cursive;
-  font-size: 4.4rem;
+  font-size: 3.4rem;
   font-weight: bold;
-  margin: 2em 0;
+  margin: 1.5em 0;
   text-align: center;
   text-transform: uppercase;
 }
 
-.about img {
-  border: 1px solid #000;
-  float: left;
-  margin: 8px 20px 20px 0;
-  max-width: 100px;
+.site-title a {
+  border-bottom: none;
 }
 
-@media (min-width: 480px) {
+.about {
+  border-color: #d1d1d1;
+  border-style: solid;
+  border-width: 1px 0;
+  padding: 20px 0;
+}
+
+.about img {
+  border: none;
+  margin: 0;
+  width: 100%;
+}
+
+.about img.desktop { display: none; }
+
+@media (min-width: 500px) {
   .about img {
-    max-width: 160px;
+    float: left;
+    width: 184px;
   }
+
+  .about img.desktop { display: block; }
+  .about img.mobile { display: none; }
 }
 
 .about p {
-  text-align: left;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 1.3rem;
+  line-height: 2rem;
+  margin: 0;
+}
+
+@media (min-width: 500px) {
+  .about p {
+    border-left: 1px solid #d1d1d1;
+    margin: 0 0 0 204px;
+    padding-left: 20px;
+    text-align: justify;
+  }
 }
 /* }}} */
 /* Article -------------------------------------------------------------- {{{ */
-
 article {
   margin-top: 3em;
 }
@@ -240,18 +251,10 @@ article li {
 }
 
 article h1 {
-  font-size: 2.5em;
+  font-size: 2rem;
   font-weight: bold;
-  padding: 0 0 1em;
-  text-align: center;
+  padding: 0;
   margin: 0;
-}
-
-@media (min-width: 800px) {
-  article h1 {
-    font-size: 3.5em;
-    padding: 0 1em 1em;
-  }
 }
 
 ol {
@@ -267,10 +270,8 @@ ol {
 #toc + ol ol {
   list-style-type: lower-roman !important;
 }
-
 /* }}} */
 /* Speaking ------------------------------------------------------------- {{{ */
-
 #speaking .talk {
   margin-bottom: 5em;
   padding-bottom: 2em;
@@ -377,15 +378,12 @@ ol {
   background: #333;
   color: #fff;
 }
-
 /* }}} */
 /* Footer --------------------------------------------------------------- {{{ */
-
 footer {
-  background: #f4f4f4;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid #d1d1d1;
   margin-top: 3em;
-  padding: 2em 0 4em;
+  padding: 1em 0 4em;
 }
 
 footer .row {
@@ -422,5 +420,4 @@ footer .license p {
 footer .license a {
   border: none
 }
-
 /* }}} */
