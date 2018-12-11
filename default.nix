@@ -3,24 +3,17 @@ let
   nixpkgs = fetchFromGitHub {
     owner = "NixOS";
     repo = "nixpkgs";
-    rev = "7283740218a5178185a8c1bf0ecfa861f5f9f0f7";
-    sha256 = "1rch0whlswwqfj4z9ijwc0hj9xrbwc04zzgrd4y52fw87s4r4zz5";
+    rev = "a4c4cbb613cc3e15186de0fdb04082fa7e38f6a0";
+    sha256 = "1lagfycy2lvfc8cdxk98dz2rxjlrbmv9hj42x0x40sy66bck1w0y";
   };
   pkgs = import nixpkgs {};
-
-  haskellPackages = pkgs.haskellPackages.override {
-    overrides = self: super: {
-      happy = pkgs.haskell.lib.dontCheck super.happy;
-    };
-  };
-
 in
   pkgs.stdenv.mkDerivation {
     name = "jgt";
     src = ./src;
     phases = "unpackPhase buildPhase";
     buildInputs = [
-      (haskellPackages.ghcWithPackages (p: with p; [ hakyll ]))
+      (pkgs.haskellPackages.ghcWithPackages (p: with p; [ hakyll ]))
     ];
     buildPhase = ''
       mkdir -p $out/bin
