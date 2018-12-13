@@ -1,18 +1,3 @@
-/* jezenthomas.com
- *
- * The design of this blog isn't inspired by any one thing in particular, save
- * for a few constraints like wanting to see 80 columns of pre-formatted text
- * without horizontally scrolling for code snippets. That said, I drew some
- * inspiration from the following sites:
- *
- * - stevelosh.com
- * - nytimes.com
- * - sudophilosophical.com
- * - mechanical-elephant.com
- * - v1.jontangerine.com/about/
- * - stackingthebricks.com
- */
-
 /* Scaffold ------------------------------------------------------------- {{{ */
 *,
 *::before,
@@ -44,7 +29,6 @@ body {
 }
 
 img {
-  border: 8px solid #fff;
   max-width: 100%;
 }
 
@@ -72,7 +56,7 @@ h2 {
 .post-date {
   color: #777;
   font-style: italic;
-  margin: 0 0 2em;
+  margin: 0 0 1em;
 }
 
 .post-tags {

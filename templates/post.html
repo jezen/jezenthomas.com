@@ -3,7 +3,10 @@ $partial("templates/header.html")$
 <div class="container">
   <article>
     <h1>$title$</h1>
-    <p class="post-date">Written on <span>$date$</span</p>
+    <p class="post-date"><span>$date$</span></p>
+    $if(banner)$
+    <img src="/static/img/$banner$">
+    $endif$
     $body$
   </article>
 </div>

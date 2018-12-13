@@ -3,6 +3,7 @@ title: Yesod is a Minimal Web Framework
 date: 2018-12-13
 location: London, UK
 tags: haskell
+banner: foundation.jpg
 ---
 
 Software developers have a natural affinity for minimalism. This manifests
