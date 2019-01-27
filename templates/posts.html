@@ -1,0 +1,14 @@
+$partial("templates/header.html")$
+
+<div class="container">
+  <h2>All Posts</h2>
+  <ul class="posts">
+    $for(posts)$
+    <li>
+      <a href="$url$">$title$</a>
+    </li>
+    $endfor$
+  </ul>
+</div>
+
+$partial("templates/footer.html")$

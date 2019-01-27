@@ -69,6 +69,21 @@ site = do
         >>= relativizeUrls
         >>= cleanIndexUrls
 
+  create ["posts/index.html"] $ do
+    route idRoute
+    compile $ do
+      posts <- loadAll "posts/*/*" >>= recentFirst
+      let ctx =  constField "title" "All Posts | Jezen Thomas"
+              <> listField "posts" postCtx (return posts)
+              <> defaultContext
+
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/posts.html" ctx
+        >>= loadAndApplyTemplate "templates/post-content.html" ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
+        >>= relativizeUrls
+        >>= cleanIndexUrls
+
   create ["sitemap.xml"] $ do
     route idRoute
     compile $ do
