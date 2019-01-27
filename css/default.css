@@ -171,6 +171,21 @@ blockquote {
 .strike { text-decoration: line-through; }
 /* }}} */
 /* Index ---------------------------------------------------------------- {{{ */
+#newbusinessmonitor a,
+#comparestack a {
+  border: none;
+}
+
+#newbusinessmonitor p a,
+#comparestack p a {
+  border-bottom: 1px dotted #888;
+}
+
+#newbusinessmonitor p a:hover,
+#comparestack p a:hover {
+  border-bottom: 1px solid #000;
+}
+
 #newbusinessmonitor img {
   max-width: 260px;
   margin: 60px 0 -20px -20px;
@@ -178,7 +193,7 @@ blockquote {
 
 #comparestack img {
   max-width: 250px;
-  margin-top: 40px;
+  margin-top: 60px;
 }
 
 @media (min-width: 800px) {
