@@ -176,6 +176,11 @@ blockquote {
   margin: 60px 0 -20px -20px;
 }
 
+#comparestack img {
+  max-width: 250px;
+  margin-top: 40px;
+}
+
 @media (min-width: 800px) {
   .index p {
     text-align: justify;
