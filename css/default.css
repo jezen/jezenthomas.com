@@ -116,6 +116,10 @@ code {
   margin: 2em 0;
 }
 
+.sourceCode .sourceCode {
+  margin: 0;
+}
+
 sup {
   font-size: .7em;
 }
