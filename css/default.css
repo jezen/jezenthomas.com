@@ -171,6 +171,11 @@ blockquote {
 .strike { text-decoration: line-through; }
 /* }}} */
 /* Index ---------------------------------------------------------------- {{{ */
+#newbusinessmonitor img {
+  max-width: 260px;
+  margin: 60px 0 -20px -20px;
+}
+
 @media (min-width: 800px) {
   .index p {
     text-align: justify;
