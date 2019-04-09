@@ -93,7 +93,7 @@ a:hover {
 
 p {
   font-size: 1.6rem;
-  line-height: 2.7rem;
+  line-height: 2.4rem;
   margin: 1em 0 1.5em;
 }
 
@@ -147,6 +147,10 @@ blockquote {
   padding: 0 1em;
   border-left: 4px solid #fa0;
   font-style: italic;
+}
+
+blockquote p em {
+  font-weight: bold;
 }
 
 .page {
@@ -261,10 +265,6 @@ article {
 
 article h2 {
   font-size: 1.25em;
-}
-
-article p {
-  text-align: justify;
 }
 
 article p,
