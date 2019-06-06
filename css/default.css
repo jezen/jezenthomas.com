@@ -175,14 +175,18 @@ blockquote p em {
 .strike { text-decoration: line-through; }
 /* }}} */
 /* Index ---------------------------------------------------------------- {{{ */
+#riskbook a,
 #newbusinessmonitor a,
 #comparestack a {
   border: none;
+  display: inline-block;
 }
 
+#riskbook p a,
 #newbusinessmonitor p a,
 #comparestack p a {
   border-bottom: 1px dotted #888;
+  display: inline;
 }
 
 #newbusinessmonitor p a:hover,
@@ -190,22 +194,33 @@ blockquote p em {
   border-bottom: 1px solid #000;
 }
 
+#riskbook img,
+#newbusinessmonitor img,
+#comparestack img {
+  filter: saturate(90%);
+}
+
+#riskbook img {
+  max-width: 190px;
+  margin: 60px 0 -10px -22px;
+}
+
 #newbusinessmonitor img {
   max-width: 190px;
-  margin: 60px 0 -10px -16px;
+  margin: 40px 0 -10px -16px;
 }
 
 #comparestack img {
   max-width: 190px;
-  margin-top: 60px;
+  margin-top: 40px;
 }
 /* }}} */
 /* Header --------------------------------------------------------------- {{{ */
 .site-title {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 3rem;
+  font-size: 2rem;
   font-weight: bold;
-  margin: 1.5em auto 1rem;
+  margin: 1rem auto;
 }
 
 .site-title a {
@@ -218,45 +233,31 @@ blockquote p em {
 }
 
 .about {
-  border-color: #d1d1d1;
-  border-style: solid;
-  border-width: 1px 0;
-  padding: 20px 0;
+  padding: 40px 0 20px;
+  text-align: center;
+}
+
+.about a:first-child {
+  border: none;
+  display: inline-block;
 }
 
 .about img {
-  border: none;
-  margin: 0;
-  width: 100%;
-}
-
-.about img.desktop { display: none; }
-
-@media (min-width: 500px) {
-  .about img {
-    float: left;
-    width: 184px;
-  }
-
-  .about img.desktop { display: block; }
-  .about img.mobile { display: none; }
+  border-radius: 50%;
+  border: 1px solid #c7c5c5;
+  box-shadow: 0px 1px 2px 1px rgba(0, 0, 0, 0.2);
+  display: inline-block;
+  width: 100px;
 }
 
 .about p {
   font-family: 'Open Sans', sans-serif;
   font-size: 1.3rem;
   line-height: 2rem;
-  margin: 0;
+  margin: auto;
+  max-width: 300px;
 }
 
-@media (min-width: 500px) {
-  .about p {
-    border-left: 1px solid #d1d1d1;
-    margin: 0 0 0 204px;
-    padding-left: 20px;
-    text-align: justify;
-  }
-}
 /* }}} */
 /* Article -------------------------------------------------------------- {{{ */
 article {
@@ -336,6 +337,7 @@ ol {
 
 #speaking img {
   border: 1px solid #bbb;
+  filter: grayscale(1);
 }
 
 @media (min-width: 480px) {
