@@ -84,6 +84,7 @@ a {
 .sourceCode a:hover {
   border: none;
   color: inherit;
+  cursor: default;
 }
 
 a:hover {
