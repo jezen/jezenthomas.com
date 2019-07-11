@@ -176,17 +176,16 @@ enough at the outer WAI layer.
 
 addRequestId :: Middleware
 addRequestId app req sendRes = do
-  requestId <- UUID.toASCIIBytes <$> UUID.nextRandom
-  let hs = ("Request-ID", requestId) : WAI.requestHeaders req
+  reqId <- UUID.toASCIIBytes <$> UUID.nextRandom
+  let hs = ("Request-ID", reqId) : WAI.requestHeaders req
   app (req { WAI.requestHeaders = hs }) sendRes
 ```
 
 The first line uses the `uuid` package to generate a UUIDv4, and then converts
-it to a human-readable bytestring. We then use the record update syntax to
-construct a new request value `req'` based on the old value `req`. The new
-value just has the new header prepended to the list of existing request
-headers. We then use the new `req'` value for the rest of the request
-lifecycle.
+it to a human-readable bytestring. We then construct a new value for the
+request headers — here marked as `hs` — which is just the new header prepended
+to the list of existing request headers. We then continue with the rest of the
+request lifecycle, sending along a modified request with the new headers.
 
 As before, don't forget to add this new middleware to the appropriate chain.
 This would be our WAI middleware chain, _not_ the Yesod middleware chain we
