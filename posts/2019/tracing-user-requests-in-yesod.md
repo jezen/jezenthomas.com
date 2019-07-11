@@ -175,11 +175,10 @@ enough at the outer WAI layer.
 -- ./src/Application.hs
 
 addRequestId :: Middleware
-addRequestId app req sendResponse = do
+addRequestId app req sendRes = do
   requestId <- UUID.toASCIIBytes <$> UUID.nextRandom
-  let newHeaders = ("Request-ID", requestId) : WAI.requestHeaders req
-      req' = req { WAI.requestHeaders = newHeaders }
-  app req' $ \rsp -> sendResponse rsp
+  let hs = ("Request-ID", requestId) : WAI.requestHeaders req
+  app (req { WAI.requestHeaders = hs }) sendRes
 ```
 
 The first line uses the `uuid` package to generate a UUIDv4, and then converts
