@@ -95,19 +95,31 @@ Adding Yesod middleware is trivial:
 
 addUserIdToResponseHeadersMiddleware :: Handler a -> Handler a
 addUserIdToResponseHeadersMiddleware handler = do
-  mUser <- maybeAuth
-  let renderEntityKey = toStrict . decodeUtf8 . Data.Aeson.encode
-  maybe (pure ()) (addHeader "User-ID" . renderEntityKey . entityKey) mUser
+  let toKey = UUID.toText . unUserUUID . userUuid . entityVal
+  mUserId <- toKey <<$>> maybeAuth
+  traverse_ (addHeader "User-ID") mUserId
   handler
 ```
 
-In this middleware — which is just a polymorphic handler which composes with
+In this middleware — which is just a polymorphic handler that composes with
 any other handler — we use `maybeAuth` to get a value of `Maybe (Entity User)`.
-If the user is _not_ authenticated, this value will be `Nothing`, in which case
-we _do_ nothing. That's the `pure ()` part. If the user _is_ authenticated, we
-extract their ID from the Persistent `Entity` type, render it as JSON (and do
-some mundane Haskell string munging), and add it to a response header with a
-key of `User-ID`.
+We have a function `toKey` which takes a user's ID from an `Entity User`, and
+since our user entity is wrapped in a `Maybe`, and then again wrapped in a
+monadic action that retrieves that value from the database, we need to `fmap`
+_twice_ over `maybeAuth` to get our `Maybe UserUUID` in one pass. The custom
+operator `<<$>>` gives us this double `fmap`, and is defined as such:
+
+```haskell
+infixl 4 <<$>>
+(<<$>>) :: (Functor f, Functor g) => (a -> b) -> f (g a) -> f (g b)
+(<<$>>) = fmap . fmap
+```
+
+If the user is _not_ authenticated, the value of `mUserId` will be `Nothing`,
+in which case we _do_ nothing. If the user _is_ authenticated, we add their ID
+it to a response header with a key of `User-ID`. The `traverse_` function in
+this context gives us this behaviour of "if the value is a `Just` then do
+something with it, otherwise do nothing".
 
 We also need to _apply_ our middleware, which is just a case of tacking it onto
 whatever other middleware chain we already have.
@@ -119,7 +131,7 @@ instance Yesod App where
   -- ...Other stuff is probably here
 
   yesodMiddleware = defaultYesodMiddleware
-    >> addUserIdToResponseHeadersMiddleware
+    . addUserIdToResponseHeadersMiddleware
 
   -- ...More stuff
 ```
