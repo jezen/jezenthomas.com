@@ -80,6 +80,12 @@ a {
   text-decoration: none;
 }
 
+abbrev {
+  color: #3c3c3c;
+  cursor: help;
+  border-bottom: 1px dotted #888;
+}
+
 .sourceCode a,
 .sourceCode a:hover {
   border: none;
