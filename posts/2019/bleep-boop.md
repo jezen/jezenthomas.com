@@ -19,7 +19,7 @@ ran in a third-party iOS application, and we couldn't just run it in a
 simulator.
 
 The company could do all sorts of programmatic anti-money laundering and fraud
-prevent verification on the user, the recipient, the transaction, _etc._, but
+prevention verification on the user, the recipient, the transaction, _etc._, but
 we had to actually _physically press_ a button on the screen of a smart
 telephone to approve the transaction. There was no programmatic way around
 this.
