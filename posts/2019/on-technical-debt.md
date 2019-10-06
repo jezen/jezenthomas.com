@@ -41,5 +41,11 @@ write is an investment, and you and/or the business should expect to see a
 return on it. Technical debt is an excellent way to limit potential losses from
 investing in a feature or system which turns out not to be profitable.
 
+Reader of this blog Emil Oppeln-Bronikowski wrote in with the following:
+
+> Programming is story writing about data. As data changes, so does your
+story. It's a constant draft. You just need to put your red pen to it from time
+to time to not get lost.
+
 Debt is not a bad thing. Debt is what allows you to live in your house before
 you can actually pay for all of it.
