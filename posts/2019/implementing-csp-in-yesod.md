@@ -20,11 +20,12 @@ It also doesn't help that documentation you might assume to be authoritative is
 sometimes [misleading][1]. In fact, following various tutorials on the Internet
 — many of which are contradictory — initially lead me to implement a CSP using
 host-based whitelisting. The benefit of this approach is that you can just
-hardcode your whitelist, and implement your CSP in nginx without touching your
-application. There are a number of drawbacks though; not only are host-based
-whitelists cumbersome to maintain, they're also generally insecure as evidenced
-in a [Google research paper][2]. The short story is that it's [better to use a
-nonce-based approach][3].
+hardcode your whitelist, and implement your CSP in
+[nginx](https://www.nginx.com/) without touching your application. There are a
+number of drawbacks though; not only are host-based whitelists cumbersome to
+maintain, they're also generally insecure as evidenced in a [Google research
+paper][2]. The short story is that it's [better to use a nonce-based
+approach][3].
 
 This presents its own set of problems though. For a nonce to be effective, it
 must be:
