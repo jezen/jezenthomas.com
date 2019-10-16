@@ -69,6 +69,20 @@ site = do
         >>= relativizeUrls
         >>= cleanIndexUrls
 
+  create ["meet/index.html"] $ do
+    route idRoute
+    compile $ do
+      let ctx = mconcat
+            [ constField "title" "Arrange a Meeting with Jezen Thomas"
+            , defaultContext
+            ]
+
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/meet.html" ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
+        >>= relativizeUrls
+        >>= cleanIndexUrls
+
   create ["posts/index.html"] $ do
     route idRoute
     compile $ do
