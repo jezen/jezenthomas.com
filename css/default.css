@@ -18,8 +18,13 @@ body {
 }
 
 #main {
-  margin-left: 300px;
   overflow: hidden;
+}
+
+@media (min-width: 920px) {
+  #main {
+    margin-left: 300px;
+  }
 }
 
 img {
@@ -182,10 +187,11 @@ blockquote p em {
 /* Index ---------------------------------------------------------------- {{{ */
 .index p {
   font-family: 'Nanum Pen Script',cursive;
-  font-size: 54px;
-  margin: 170px 170px 20px;
+  font-size: 36px;
+  line-height: 34px;
+  margin: 20px 20px 20px;
   max-width: 520px;
-  line-height: 44px;
+  max-width: 520px;
 }
 
 .index p a {
@@ -193,10 +199,23 @@ blockquote p em {
 }
 
 .index p.lol {
-  font-size: 24px;
-  margin: 0 170px;
+  font-size: 16px;
+  margin: 10px;
   text-align: right;
   transform: rotate(-1deg);
+}
+
+@media (min-width: 920px) {
+  .index p {
+    font-size: 54px;
+    line-height: 44px;
+    margin: 170px 170px 20px;
+  }
+
+  .index p.lol {
+    font-size: 24px;
+    margin: 0 170px;
+  }
 }
 /* }}} */
 /* Projects ------------------------------------------------------------- {{{ */
@@ -311,8 +330,13 @@ blockquote p em {
   left: 0;
   max-width: 300px;
   padding: 40px;
-  position: fixed;
   top: 0;
+}
+
+@media (min-width: 920px) {
+  .about {
+    position: fixed;
+  }
 }
 
 .about::after {
