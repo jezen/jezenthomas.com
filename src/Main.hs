@@ -97,6 +97,20 @@ site = do
         >>= relativizeUrls
         >>= cleanIndexUrls
 
+  create ["twitter/index.html"] $ do
+    route idRoute
+    compile $ do
+      let ctx = mconcat
+            [ constField "title" "Twitter | Jezen Thomas"
+            , defaultContext
+            ]
+
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/twitter.html" ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
+        >>= relativizeUrls
+        >>= cleanIndexUrls
+
   create ["posts/index.html"] $ do
     route idRoute
     compile $ do

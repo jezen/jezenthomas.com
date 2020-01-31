@@ -258,7 +258,7 @@ blockquote p em {
   margin-top: 40px;
 }
 /* }}} */
-/* Projects ------------------------------------------------------------- {{{ */
+/* Contact -------------------------------------------------------------- {{{ */
 .contact {
   max-width: 560px;
   padding: 40px 20px;
@@ -269,6 +269,28 @@ blockquote p em {
 }
 
 .contact p {
+  font-size: 16px;
+}
+/* }}} */
+/* Twitter -------------------------------------------------------------- {{{ */
+.twitter {
+  max-width: 560px;
+  padding: 40px 20px;
+}
+
+.twitter h2 {
+  font-size: 1.6rem;
+  margin: 0 0 4rem;
+}
+.twitter blockquote {
+  margin-bottom: 4em;
+}
+
+.twitter blockquote p {
+    margin: 1em 0;
+}
+
+.twitter p {
   font-size: 16px;
 }
 /* }}} */
