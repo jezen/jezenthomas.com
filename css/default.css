@@ -50,6 +50,13 @@ body {
   font-family: Georgia, serif;
 }
 
+hr {
+  border-style: double;
+  border-width: 3px 0 0;
+  border-color: #ddd;
+  max-width: 560px;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 2.5em 0 1em;
@@ -111,12 +118,22 @@ p {
 
 pre {
   background: #fbfbfb;
-  border: 1px solid #E1E1E1;
+  border-width: 1px 0;
+  border-style: solid;
+  border-color: #e1e1e1;
+  margin: 0 -20px;
   font-size: 12px;
   line-height: 16px;
   overflow-x: auto;
   padding: 20px;
   -webkit-overflow-scrolling: touch;
+}
+
+@media (min-width: 920px) {
+  pre {
+    border-width: 1px 0 1px 1px;
+    margin: 0;
+  }
 }
 
 pre > code {
@@ -393,8 +410,14 @@ blockquote p em {
 /* }}} */
 /* Article -------------------------------------------------------------- {{{ */
 article {
-  padding: 40px 0 20px 20px;
+  padding: 40px 20px 20px;
   position: relative;
+}
+
+@media (min-width: 920px) {
+  article {
+    padding: 40px 0 20px 20px;
+  }
 }
 
 article h2 {
@@ -412,6 +435,18 @@ article h1 {
   font-weight: bold;
   padding: 0;
   margin: 0;
+}
+
+article figure {
+  margin: 3em 0px;
+  max-width: 560px;
+}
+
+article figure figcaption {
+  color: #777;
+  font-size: 14px;
+  font-style: italic;
+  margin: 10px 0;
 }
 
 ol {
