@@ -237,7 +237,7 @@ blockquote p em {
 /* }}} */
 /* Projects ------------------------------------------------------------- {{{ */
 .projects {
-  padding: 40px 0 20px 20px;
+  padding: 40px 20px 20px 20px;
 }
 
 .projects h3 {
@@ -307,6 +307,12 @@ blockquote p em {
 .contact p {
   font-size: 16px;
 }
+
+@media (max-width: 320px) {
+  .calendly-inline-widget {
+    margin-left: -20px;
+  }
+}
 /* }}} */
 /* Twitter -------------------------------------------------------------- {{{ */
 .twitter {
@@ -335,7 +341,13 @@ blockquote p em {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 20px;
   font-weight: bold;
-  margin: 1rem auto;
+  margin: 0 auto 1rem;
+}
+
+@media (min-width: 920px) {
+  .site-title {
+    margin: 1rem auto;
+  }
 }
 
 .site-title a {
@@ -345,62 +357,82 @@ blockquote p em {
 
 .about {
   left: 0;
-  max-width: 300px;
-  padding: 40px;
+  padding: 20px 20px 0;
   top: 0;
+}
+
+.about .portrait {
+  display: none;
 }
 
 @media (min-width: 920px) {
   .about {
+    display: block;
+    max-width: 300px;
+    padding: 40px;
     position: fixed;
   }
-}
 
-.about::after {
-  background: #ddd;
-  content: '';
-  display: block;
-  position: absolute;
-  width: 1px;
-  height: 60px;
-  top: 40px;
-  right: 0;
-}
+  .about::after {
+    background: #ddd;
+    content: '';
+    display: block;
+    position: absolute;
+    width: 1px;
+    height: 60px;
+    top: 40px;
+    right: 0;
+  }
 
-.about a:first-child {
-  display: inline-block;
-}
-
-.about > a:first-child {
-  border: none;
+  .about .portrait {
+    border: none;
+    display: block;
+  }
 }
 
 .about p {
   font-family: 'Open Sans', sans-serif;
   font-size: 12px;
   line-height: 20px;
-  margin: auto;
   max-width: 300px;
 }
 
 .navigation {
+  border-style: solid;
+  border-color: #ddd;
+  border-width: 1px 0;
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 15px;
   list-style: none;
-  margin: 40px 0;
-  padding: 10px 0;
+  margin: 20px 0;
   position: relative;
 }
 
-.navigation::before {
-  background: #ddd;
-  content: '';
-  display: block;
-  height: 1px;
-  left: 0;
-  position: absolute;
-  top: 0;
-  width: 40px;
+.navigation li {
+  display: inline-block;
+}
+
+@media (min-width: 920px) {
+  .navigation {
+    border: none;
+    margin: 40px 0;
+    padding: 10px 0;
+  }
+
+  .navigation li {
+    display: block;
+  }
+
+  .navigation::before {
+    background: #ddd;
+    content: '';
+    display: block;
+    height: 1px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 40px;
+  }
 }
 
 .navigation a {
@@ -410,7 +442,7 @@ blockquote p em {
 /* }}} */
 /* Article -------------------------------------------------------------- {{{ */
 article {
-  padding: 40px 20px 20px;
+  padding: 20px;
   position: relative;
 }
 
@@ -466,7 +498,7 @@ ol {
 /* Footer --------------------------------------------------------------- {{{ */
 footer {
   border-top: 3px double #ddd;
-  margin: 3em 0 20px 20px;
+  margin: 3em 20px 20px;
   max-width: 560px;
   padding: 1em 0 4em;
 }
