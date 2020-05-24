@@ -1,41 +1,45 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import           Control.Monad                   (forM, forM_)
-import           Data.List                       (intercalate, isSuffixOf, sort)
-import qualified Data.Map                        as M
-import           Data.Monoid                     ((<>))
-import           Hakyll                          hiding (host)
-import           System.FilePath.Posix           (takeBaseName, takeDirectory,
-                                                  (</>))
-import           Text.Blaze.Html                 (toHtml, toValue, (!))
-import           Text.Blaze.Html.Renderer.String (renderHtml)
-import qualified Text.Blaze.Html5                as H
-import qualified Text.Blaze.Html5.Attributes     as A
+import qualified Data.Map as M
+import qualified Text.Blaze.Html5 as H
+import qualified Text.Blaze.Html5.Attributes as A
+
+import Data.Time.Clock
+import Data.Time.Calendar
+import Control.Monad (forM, forM_)
+import Data.List (intercalate, isSuffixOf, sort, groupBy)
+import Data.Monoid ((<>))
+import Data.Time.Locale.Compat (defaultTimeLocale)
+import Hakyll hiding (host)
+import System.FilePath.Posix (takeBaseName, takeDirectory, (</>))
+import Text.Blaze.Html (toHtml, toValue, (!))
+import Text.Blaze.Html.Renderer.String (renderHtml)
 
 host :: String
 host = "http://jezenthomas.com"
 
 myFeedConfiguration :: FeedConfiguration
 myFeedConfiguration = FeedConfiguration
-    { feedTitle = "jezenthomas.com"
-    , feedDescription = "Thoughts on Haskell, Business, Unix, and more."
-    , feedAuthorName = "Jezen Thomas"
-    , feedAuthorEmail = "jezen@jezenthomas.com"
-    , feedRoot = host
-    }
+  { feedTitle = "jezenthomas.com"
+  , feedDescription = "Thoughts on Haskell, Business, Unix, and more."
+  , feedAuthorName = "Jezen Thomas"
+  , feedAuthorEmail = "jezen@jezenthomas.com"
+  , feedRoot = host
+  }
 
 copyFiles :: [Pattern]
-copyFiles = [ "static/img/*"
-            , "static/js/*"
-            , "404.html"
-            , "robots.txt"
-            , "favicon.ico"
-            , "loadtestertool.xml"
-            ]
+copyFiles =
+  [ "static/img/*"
+  , "static/js/*"
+  , "404.html"
+  , "robots.txt"
+  , "favicon.ico"
+  , "loadtestertool.xml"
+  ]
 
 config :: Configuration
 config = defaultConfiguration
-    { deployCommand = "yarn surge _site jezenthomas.com" }
+  { deployCommand = "yarn surge _site jezenthomas.com" }
 
 main :: IO ()
 main = hakyllWith config site
@@ -117,6 +121,7 @@ site = do
       posts <- loadAll "posts/*/*" >>= recentFirst
       let ctx =  constField "title" "All Posts | Jezen Thomas"
               <> listField "posts" postCtx (return posts)
+              <> publishedGroupField "years" posts postCtx
               <> defaultContext
 
       makeItem ""
@@ -156,11 +161,11 @@ site = do
 --------------------------------------------------------------------------------
 pageCtx :: Context String
 pageCtx = mconcat
-    [ modificationTimeField "mtime" "%U"
-    , constField "host" host
-    , dateField "date" "%B %e, %Y"
-    , defaultContext
-    ]
+  [ modificationTimeField "mtime" "%U"
+  , constField "host" host
+  , dateField "date" "%B %e, %Y"
+  , defaultContext
+  ]
 
 postRules :: Context String -> Rules ()
 postRules ctx = do
@@ -182,8 +187,9 @@ postCleanRoute = cleanRoute
 cleanRoute :: Routes
 cleanRoute = customRoute createIndexRoute
   where
-    createIndexRoute ident = takeDirectory p </> takeBaseName p </> "index.html"
-                            where p = toFilePath ident
+    createIndexRoute ident =
+      takeDirectory p </> takeBaseName p </> "index.html"
+        where p = toFilePath ident
 
 cleanIndexUrls :: Item String -> Compiler (Item String)
 cleanIndexUrls = return . fmap (withUrls cleanIndex)
@@ -207,3 +213,30 @@ postSlugField :: String -> Context a
 postSlugField key = field key $ return . baseName
   where baseName = takeBaseName . toFilePath . itemIdentifier
 
+publishedGroupField :: String           -- name
+                    -> [Item String]    -- posts
+                    -> Context String   -- Post context
+                    -> Context String   -- output context
+publishedGroupField name posts postContext = listField name groupCtx $ do
+    tuples <- traverse extractYear posts
+    let grouped = groupByYear tuples
+    let merged = fmap merge $ grouped
+    let itemized = fmap makeItem $ merged
+
+    sequence itemized
+
+    where groupCtx = field "year" (return . show . fst . itemBody)
+                  <> listFieldWith "posts" postContext (return . snd . itemBody)
+
+          merge :: [(Integer, [Item String])]  -> (Integer, [Item String])
+          merge gs = let conv (year, acc) (_, toAcc) = (year, toAcc ++ acc)
+                      in  foldr conv (head gs) (tail gs)
+
+
+          groupByYear = groupBy (\(y, _) (y', _) -> y == y')
+
+          extractYear :: Item a -> Compiler (Integer,  [Item a])
+          extractYear item = do
+             time <- getItemUTC defaultTimeLocale (itemIdentifier item)
+             let    (year, _, _) = (toGregorian . utctDay) time
+             return (year, [item])

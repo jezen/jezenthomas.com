@@ -1,10 +1,13 @@
 <div class="container post-index">
   <h2>All Posts</h2>
-  <ul class="posts">
-    $for(posts)$
-    <li>
-      <a href="$url$">$title$</a>
-    </li>
-    $endfor$
-  </ul>
+  $for(years)$
+  <h4><span>$year$</span></h4>
+    <ul class="posts">
+      $for(posts)$
+      <li>
+        <a href="$url$">$title$</a>
+      </li>
+      $endfor$
+    </ul>
+  $endfor$
 </div>
