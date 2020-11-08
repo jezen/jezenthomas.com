@@ -1,22 +1,17 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import qualified Data.Map as M
-import qualified Text.Blaze.Html5 as H
-import qualified Text.Blaze.Html5.Attributes as A
-
-import Data.Time.Clock
-import Data.Time.Calendar
-import Control.Monad (forM, forM_)
-import Data.List (intercalate, isSuffixOf, sort, groupBy)
+import Control.Monad (forM_)
+import Data.List (groupBy, isSuffixOf, sortOn)
 import Data.Monoid ((<>))
+import Data.Ord (Down(..), comparing)
+import Data.Time.Calendar (toGregorian)
+import Data.Time.Clock (UTCTime, utctDay)
 import Data.Time.Locale.Compat (defaultTimeLocale)
 import Hakyll hiding (host)
 import System.FilePath.Posix (takeBaseName, takeDirectory, (</>))
-import Text.Blaze.Html (toHtml, toValue, (!))
-import Text.Blaze.Html.Renderer.String (renderHtml)
 
 host :: String
-host = "http://jezenthomas.com"
+host = "https://jezenthomas.com"
 
 myFeedConfiguration :: FeedConfiguration
 myFeedConfiguration = FeedConfiguration
@@ -46,8 +41,8 @@ main = hakyllWith config site
 
 site :: Rules ()
 site = do
-  forM_ copyFiles $ \pattern ->
-    match pattern $ do
+  forM_ copyFiles $ \ptrn ->
+    match ptrn $ do
       route idRoute
       compile copyFileCompiler
 
@@ -60,17 +55,14 @@ site = do
   create ["index.html"] $ do
     route idRoute
     compile $ do
-      posts <- fmap (take 5) . recentFirst =<< loadAll "posts/*/*"
       let indexCtx = mconcat
-            [ listField "posts" postCtx (return posts)
-            , constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
+            [ constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
             , defaultContext
             ]
 
       makeItem ""
         >>= loadAndApplyTemplate "templates/index.html" indexCtx
         >>= loadAndApplyTemplate "templates/default.html" indexCtx
-        >>= relativizeUrls
         >>= cleanIndexUrls
 
   create ["meet/index.html"] $ do
@@ -84,7 +76,6 @@ site = do
       makeItem ""
         >>= loadAndApplyTemplate "templates/meet.html" ctx
         >>= loadAndApplyTemplate "templates/default.html" ctx
-        >>= relativizeUrls
         >>= cleanIndexUrls
 
   create ["projects/index.html"] $ do
@@ -98,7 +89,6 @@ site = do
       makeItem ""
         >>= loadAndApplyTemplate "templates/projects.html" ctx
         >>= loadAndApplyTemplate "templates/default.html" ctx
-        >>= relativizeUrls
         >>= cleanIndexUrls
 
   create ["twitter/index.html"] $ do
@@ -112,15 +102,13 @@ site = do
       makeItem ""
         >>= loadAndApplyTemplate "templates/twitter.html" ctx
         >>= loadAndApplyTemplate "templates/default.html" ctx
-        >>= relativizeUrls
         >>= cleanIndexUrls
 
   create ["posts/index.html"] $ do
     route idRoute
     compile $ do
-      posts <- loadAll "posts/*/*" >>= recentFirst
+      posts <- recentFirst =<< loadAll "posts/*/*"
       let ctx =  constField "title" "All Posts | Jezen Thomas"
-              <> listField "posts" postCtx (return posts)
               <> publishedGroupField "years" posts postCtx
               <> defaultContext
 
@@ -128,7 +116,6 @@ site = do
         >>= loadAndApplyTemplate "templates/posts.html" ctx
         >>= loadAndApplyTemplate "templates/post-content.html" ctx
         >>= loadAndApplyTemplate "templates/default.html" ctx
-        >>= relativizeUrls
         >>= cleanIndexUrls
 
   create ["sitemap.xml"] $ do
@@ -150,7 +137,7 @@ site = do
   create ["feed.xml"] $ do
          route   idRoute
          compile $ do
-           let feedCtx = pageCtx `mappend` bodyField "description"
+           let feedCtx = pageCtx <> bodyField "description"
            posts <- fmap (take 10) . recentFirst =<<
                    loadAllSnapshots "posts/*/*" "content"
            renderRss myFeedConfiguration feedCtx posts
@@ -169,20 +156,19 @@ pageCtx = mconcat
 
 postRules :: Context String -> Rules ()
 postRules ctx = do
-  route   $ postCleanRoute
+  route postCleanRoute
   compile $ pandocCompiler
     >>= loadAndApplyTemplate "templates/post-content.html" ctx
     >>= saveSnapshot "content"
     >>= loadAndApplyTemplate "templates/post.html" ctx
     >>= loadAndApplyTemplate "templates/default.html" ctx
-    >>= relativizeUrls
     >>= cleanIndexUrls
 
 -- custom routes
 --------------------------------------------------------------------------------
 postCleanRoute :: Routes
 postCleanRoute = cleanRoute
- `composeRoutes` (gsubRoute "(posts|drafts)/[0-9]{4}/" (const ""))
+ `composeRoutes` gsubRoute "(posts|drafts)/[0-9]{4}/" (const "")
 
 cleanRoute :: Routes
 cleanRoute = customRoute createIndexRoute
@@ -195,9 +181,9 @@ cleanIndexUrls :: Item String -> Compiler (Item String)
 cleanIndexUrls = return . fmap (withUrls cleanIndex)
 
 cleanIndexHtmls :: Item String -> Compiler (Item String)
-cleanIndexHtmls = return . fmap (replaceAll pattern replacement)
+cleanIndexHtmls = return . fmap (replaceAll ptrn replacement)
   where
-    pattern = "/index.html"
+    ptrn = "/index.html"
     replacement = const "/"
 
 cleanIndex :: String -> String
@@ -208,35 +194,35 @@ cleanIndex url
 
 -- utils
 --------------------------------------------------------------------------------
-
 postSlugField :: String -> Context a
 postSlugField key = field key $ return . baseName
   where baseName = takeBaseName . toFilePath . itemIdentifier
 
-publishedGroupField :: String           -- name
-                    -> [Item String]    -- posts
-                    -> Context String   -- Post context
-                    -> Context String   -- output context
+publishedGroupField ::
+     String           -- name
+  -> [Item String]    -- posts
+  -> Context String   -- Post context
+  -> Context String   -- output context
 publishedGroupField name posts postContext = listField name groupCtx $ do
-    tuples <- traverse extractYear posts
-    let grouped = groupByYear tuples
-    let merged = fmap merge $ grouped
-    let itemized = fmap makeItem $ merged
-
-    sequence itemized
-
-    where groupCtx = field "year" (return . show . fst . itemBody)
+    traverse extractTime posts
+      >>= mapM makeItem . fmap merge . groupByYear
+    where
+      groupCtx = field "year" (return . show . getYear . fst . itemBody)
                   <> listFieldWith "posts" postContext (return . snd . itemBody)
 
-          merge :: [(Integer, [Item String])]  -> (Integer, [Item String])
-          merge gs = let conv (year, acc) (_, toAcc) = (year, toAcc ++ acc)
-                      in  foldr conv (head gs) (tail gs)
+      merge :: [(UTCTime, Item a)] -> (UTCTime, [Item a])
+      merge gs = (fst (head gs), snd <$> sortByTime gs)
 
+      groupByYear :: [(UTCTime, Item a)] -> [[(UTCTime, Item a)]]
+      groupByYear = groupBy (\(a, _) (b, _) -> getYear a == getYear b)
 
-          groupByYear = groupBy (\(y, _) (y', _) -> y == y')
+      sortByTime :: [(UTCTime, a)] -> [(UTCTime, a)]
+      sortByTime = sortOn (Down . fst)
 
-          extractYear :: Item a -> Compiler (Integer,  [Item a])
-          extractYear item = do
-             time <- getItemUTC defaultTimeLocale (itemIdentifier item)
-             let    (year, _, _) = (toGregorian . utctDay) time
-             return (year, [item])
+      getYear :: UTCTime -> Integer
+      getYear time = year
+        where (year, _, _) = (toGregorian . utctDay) time
+
+      extractTime :: Item a -> Compiler (UTCTime, Item a)
+      extractTime item = getItemUTC defaultTimeLocale (itemIdentifier item)
+        >>= \time -> pure (time, item)
