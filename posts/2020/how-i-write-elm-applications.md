@@ -167,7 +167,8 @@ like this:
 
 ```elm
 updatePersonalInformation
-   : Model
+   : PersonalInformationMsg
+  -> Model
   -> (PersonalInformationModel, Cmd PersonalInformationMsg)
   -> (Model, Cmd Msg)
 ```
