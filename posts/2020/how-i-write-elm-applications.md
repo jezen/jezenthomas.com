@@ -335,8 +335,9 @@ blue arrow is the lens that we will want to use in our
 `updatePersonalInformation` function, and we get this bigger lens by composing
 the three smaller lenses together.
 
-We can write these functions with a handy library called [`elm-monocle`][0],
-and they would look something like the following:
+We can write these functions with a handy library called [`elm-monocle`][0]
+(and of course other libraries are available), and they would look something
+like the following:
 
 ```elm
 import Monocle.Compose
@@ -372,8 +373,10 @@ the first line of the applicant's address.
 
 Writing out all of these lenses is admittedly somewhat tedious and it's mostly
 boilerplate — which makes me wonder if these couldn't be generated in some way;
-a research topic for another day. Once we have these lenses though, we're able
-to drastically clean up our update functions.
+a research topic for another day. It's at least easy enough to just stick all
+this boilerplate in its own file somewhere and not clutter up the parts of the
+code where more interesting things happen. Once we have these lenses though,
+we're able to drastically clean up our update functions.
 
 Instead of the mess we had earlier, we could have something like this:
 
@@ -408,6 +411,21 @@ updateExampleFields msg model = case msg of
     |> montyPythonBreakfastEggsL.set eggs
     |> flip Tuple.pair Cmd.none
 ```
+
+Writing composable setter functions is possible without a lens library, but the
+code you end up writing will look so similar to idiomatic usage of elm-monocle
+anyway so I see no reason not to use the library and standardise on a
+consistent API across your project.
+
+I have seen several people recommend avoiding having to write lenses by just
+not having the _problem_ of deeply-nested record types in the first place, and
+instead to have as shallow a model as possible. I don't agree with this kind of
+hand-waving as it fails to take into account the possibility for types to be
+generated on the backend so the shape of the model never goes out of sync
+across that boundary. For a non-trivial application, I believe it's cheaper to
+use code generation to derive the type definitions, JSON encoders, and JSON
+decoders than it is to manually write all of it and try to make sure everyone
+on your team is disciplined enough to always make those changes.
 
 As a brief aside, I will at this point sympathise with people who have
 criticised Elm in the past for some of its most vocal proponents being
@@ -466,11 +484,11 @@ described above in a number of Elm projects, each of which span several
 thousand lines of code. 
 
 There are a couple of other things you can do to better manage Elm applications
-as they grow. At Riskbook for example, we use [`elm-bridge`][2] to generate our
+as they grow. At Riskbook for example, we use [`haskell-to-elm`][2] to generate our
 Elm types, JSON encoders, and JSON decoders from our Haskell backend. This has
 worked tremendously for us and I would recommend it, though it's outside of the
 scope of this article.
 
 [0]: https://package.elm-lang.org/packages/arturopala/elm-monocle/latest/
 [1]: https://discourse.elm-lang.org/t/updating-nested-records-again/1488/9
-[2]: https://hackage.haskell.org/package/elm-bridge
+[2]: https://hackage.haskell.org/package/haskell-to-elm
