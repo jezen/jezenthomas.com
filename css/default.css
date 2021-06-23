@@ -254,14 +254,14 @@ blockquote p em {
   max-width: 560px;
 }
 
-#riskbook a,
+#supercede a,
 #newbusinessmonitor a,
 #comparestack a {
   border: none;
   display: inline-block;
 }
 
-#riskbook p a,
+#supercede p a,
 #newbusinessmonitor p a,
 #comparestack p a {
   border-bottom: 1px dotted #888;
@@ -273,13 +273,13 @@ blockquote p em {
   border-bottom: 1px solid #000;
 }
 
-#riskbook img,
+#supercede img,
 #newbusinessmonitor img,
 #comparestack img {
   filter: saturate(90%);
 }
 
-#riskbook img {
+#supercede img {
   max-width: 190px;
   margin: 40px 0 -10px 1px;
 }
