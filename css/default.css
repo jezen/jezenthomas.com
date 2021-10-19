@@ -388,6 +388,10 @@ blockquote p em {
     border: none;
     display: block;
   }
+
+  .about .portrait img {
+    border: 1px solid #e3e3e3;
+  }
 }
 
 .about p {
