@@ -1,6 +1,7 @@
 ---
 title: Using Git to Manage Todos
 date: 2015-10-19
+location: Gdynia, Poland
 excerpt: The TODO comments in your codebase will linger and rot, but this small bash script will coerce your team into cleaning up after themselves.
 tags: git, bash
 ---

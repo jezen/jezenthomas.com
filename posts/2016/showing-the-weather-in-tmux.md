@@ -2,6 +2,7 @@
 title: Showing The Weather In Tmux
 date: 2016-09-23
 excerpt: Bash scripting for fun and profit. And the weather, obviously.
+location: Gdynia, Poland
 tags: bash
 ---
 

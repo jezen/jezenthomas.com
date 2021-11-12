@@ -1,6 +1,7 @@
 ---
 title: Arcify
 date: 2013-08-08
+location: Göteborg, Sweden
 description: You spin me right ’round, baby
 image: arcify
 excerpt: Animating the border-radius property with CSS3 for fun and profit.

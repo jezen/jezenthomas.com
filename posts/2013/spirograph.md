@@ -1,6 +1,7 @@
 ---
 title: Spirograph
 date: 2013-12-09
+location: Göteborg, Sweden
 description: If you look long enough, it turns into a squirrel
 excerpt: A visualisation experiment in Sass using loops and animation.
 tags: css

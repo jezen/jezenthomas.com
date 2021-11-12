@@ -12,17 +12,17 @@
   <head>
     <title>$title$</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="$if(excerpt)$ $excerpt$ $else$Haskell programmer, entrepreneur, co-founder & CTO of Supercede.$endif$">
+    <meta name="description" content="$if(excerpt)$$excerpt$$else$Haskell programmer, entrepreneur, co-founder & CTO of Supercede.$endif$">
     <meta name="author" content="Jezen Thomas">
     <meta property="og:title" content="$title$">
-    <meta property="og:description" content="$if(excerpt)$ $excerpt$ $else$Haskell programmer, entrepreneur, co-founder & CTO of Supercede.$endif$">
+    <meta property="og:description" content="$if(excerpt)$$excerpt$$else$Haskell programmer, entrepreneur, co-founder & CTO of Supercede.$endif$">
 
     <!--  -->
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 
     <meta property="og:type" content="article">
-    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:image" content="$if(image)$/static/img/$image$$else$/static/img/prestiz.jpg$endif$">
     <meta property="og:site_name" content="Jezen Thomas">
 
     <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">

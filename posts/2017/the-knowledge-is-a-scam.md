@@ -1,6 +1,7 @@
 ---
 title: The Knowledge Is A Scam
 date: 2017-01-30
+location: Gdynia, Poland
 tags: javascript, tdd, software craftsmanship
 ---
 

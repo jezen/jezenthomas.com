@@ -1,6 +1,7 @@
 ---
 title: The World's Most Boring Build System
 date: 2015-11-11
+location: Warsaw, Poland
 excerpt: My talk about JavaScript build systems at Falsy Values conference in Warsaw, Poland
 tags: javascript, make, bash, unix
 ---

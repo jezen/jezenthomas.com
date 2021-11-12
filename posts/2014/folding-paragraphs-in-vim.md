@@ -1,6 +1,7 @@
 ---
 title: Folding Paragraphs in Vim
 date: 2014-10-29
+location: Göteborg, Sweden
 excerpt: Tame hairy text files with a fold expression.
 tags: vim
 ---

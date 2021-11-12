@@ -1,6 +1,7 @@
 ---
 title: Moving to the Beginning of the Line
 date: 2015-05-26
+location: Gdynia, Poland
 excerpt: A nice little Vim function that moves the cursor to the first non-whitespace character on the current line, or the first column if it was already on the first character.
 tags: vim
 ---

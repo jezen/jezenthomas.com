@@ -1,6 +1,7 @@
 ---
 title: The Case Against Dynamic Typing
 date: 2016-01-26
+location: Gdynia, Poland
 excerpt: You can have your cake, you can eat your cake, and you can automatically verify the fundamental correctness of the pâtisserie at bake-time.
 tags: code, ruby, haskell, scala
 ---

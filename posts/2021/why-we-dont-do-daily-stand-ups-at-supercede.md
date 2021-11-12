@@ -2,13 +2,18 @@
 title: Why We Don't Do Daily Stand-Ups at Supercede
 date: 2021-08-30
 location: Warsaw, Poland
+excerpt:
+  A hard look at the motivations for — and inevitable realities of — the Cult
+  of Agile daily stand-up. This toxic workplace ritual is designed to demoralise
+  engineers and perpetuate micromanagement. Stop doing them.
+image: daily-standup.jpg
 tags: business
 ---
 
-The engineers at Supercede don't do daily stand-ups, and we have no intention to
-start. There are a few reasons for this, some practical and some philosophical,
-but in the latter case by no means divorced from the reality of how it feels to
-work effectively with smart people every day.
+The engineers at Supercede don't do daily stand-ups, and we have no intention
+to start. There are a few reasons for this, some practical and some
+philosophical, but in the latter case by no means divorced from the reality of
+how it feels to work effectively with smart people every day.
 
 Supercede has been a distributed team from day zero. We've had people working
 not only from all across the European continent, but also from Canada, the
@@ -50,9 +55,9 @@ status meetings. Inevitably (and in my experience rather quickly), the ceremony
 becomes a monotony of disengaged developers who trot out the same canned lines.
 
 > Yesterday I worked on the widget.
-> 
+>
 > Today I will work on the widget.
-> 
+>
 > I have no blockers.
 
 Are you asleep yet? The developers are. You promise them an intellectually
@@ -118,4 +123,4 @@ Daily stand-ups?
 
 Thanks, but no.
 
-[0]:https://en.wikipedia.org/wiki/Pointy-haired_Bos://en.wikipedia.org/wiki/Pointy-haired_Boss 
+[0]:https://en.wikipedia.org/wiki/Pointy-haired_Bos://en.wikipedia.org/wiki/Pointy-haired_Boss

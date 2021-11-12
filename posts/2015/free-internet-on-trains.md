@@ -1,6 +1,7 @@
 ---
 title: Free Internet on Trains
 date: 2015-05-07
+location: London, United Kingdom
 excerpt: A bash function for changing your MAC address on OSX which usually works around Internet access time limits on public WiFi hotspots.
 tags: code, osx, bash
 ---

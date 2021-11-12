@@ -1,6 +1,7 @@
 ---
 title: Deploying A Haskell Web Service With Nix
 date: 2016-02-01
+location: Gdynia, Poland
 excerpt: The entire process from zero to “Hello, Haskell!” running on a cheap Amazon EC2 instance.
 tags: haskell, operations
 ---

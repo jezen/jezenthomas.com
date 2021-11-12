@@ -1,6 +1,7 @@
 ---
 title: Shell Script Static Analysis in Vim
 date: 2015-05-17
+location: Gdynia, Poland
 excerpt: How to configure Vim to provide immediate feedback on the quality of your shell scripts.
 tags: code, vim, bash
 ---

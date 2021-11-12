@@ -1,6 +1,7 @@
 ---
 title: How I Find and Replace in Vim
 date: 2015-09-02
+location: Gdynia, Poland
 excerpt: A simple and effective way to find and replace across an entire project with plain Vim, without plugins.
 tags: vim
 ---

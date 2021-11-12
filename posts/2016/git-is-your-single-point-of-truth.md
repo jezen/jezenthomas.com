@@ -1,6 +1,7 @@
 ---
 title: Git Is Your Single Point Of Truth
 date: 2016-08-19
+location: Gdynia, Poland
 excerpt: Not all project management tools are created equal, and most of them are fundamentally flawed with regards to one of the most important aspects of a software development project. Here's one that isn't.
 tags: git
 ---

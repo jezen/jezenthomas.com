@@ -1,6 +1,7 @@
 ---
 title: Working In The Dark
 date: 2016-03-06
+location: Gdynia, Poland
 excerpt: It's not uncommon to work unsociable hours, be that because of deadlines, midnight inspiration, or just skipping a few timezones. But that doesn't mean your eyes have to suffer. Here's how I protect mine.
 tags: productivity
 ---

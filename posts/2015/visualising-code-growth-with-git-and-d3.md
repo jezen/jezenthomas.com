@@ -1,6 +1,7 @@
 ---
 title: Visualising Code Growth with Git and D3.js
 date: 2015-10-25
+location: Warsaw, Poland
 excerpt: Combine Git, Bash, and JavaScript to see a 10,000 foot view of the growth of your codebase over time.
 tags: git, javascript, bash
 ---

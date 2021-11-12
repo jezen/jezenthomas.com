@@ -44,6 +44,26 @@ img {
   list-style: none;
   margin: 1em 0 1.5em;
 }
+
+.posts .post {
+  margin-bottom: 2em;
+}
+
+.posts .post-title {
+  font-family: 'Open Sans', sans-serif;
+  font-weight: bold;
+}
+
+.posts .post-date {
+  margin-bottom: 4px;
+}
+
+.posts .post-excerpt {
+  color: #222;
+  font-size: 15px;
+  margin: 0;
+  max-width: 560px;
+}
 /* }}} */
 /* Typography ----------------------------------------------------------- {{{ */
 body {
@@ -233,65 +253,6 @@ blockquote p em {
     font-size: 24px;
     margin: 0 170px;
   }
-}
-/* }}} */
-/* Projects ------------------------------------------------------------- {{{ */
-.projects {
-  padding: 40px 20px 20px 20px;
-}
-
-.projects h3 {
-  font-size: 1.6rem;
-  margin: 0;
-}
-
-.project {
-  max-width: 560px;
-}
-
-.project p {
-  font-size: 16px;
-  max-width: 560px;
-}
-
-#supercede a,
-#newbusinessmonitor a,
-#comparestack a {
-  border: none;
-  display: inline-block;
-}
-
-#supercede p a,
-#newbusinessmonitor p a,
-#comparestack p a {
-  border-bottom: 1px dotted #888;
-  display: inline;
-}
-
-#newbusinessmonitor p a:hover,
-#comparestack p a:hover {
-  border-bottom: 1px solid #000;
-}
-
-#supercede img,
-#newbusinessmonitor img,
-#comparestack img {
-  filter: saturate(90%);
-}
-
-#supercede img {
-  max-width: 190px;
-  margin: 40px 0 -10px 1px;
-}
-
-#newbusinessmonitor img {
-  max-width: 190px;
-  margin: 30px 0 -10px -16px;
-}
-
-#comparestack img {
-  max-width: 190px;
-  margin-top: 40px;
 }
 /* }}} */
 /* Contact -------------------------------------------------------------- {{{ */

@@ -1,6 +1,7 @@
 ---
 title: Red, Green, WTF?
 date: 2014-05-08
+location: Göteborg, Sweden
 description: The Problem with Most TDD Literature
 excerpt: In order to reason about any particular concept, the concept needs to be analysed at a reasonable level of abstraction. Here’s what we’re getting wrong when introducing test-driven JavaScript development.
 tags: javascript, tdd

@@ -1,6 +1,7 @@
 ---
 title: Code Review Done Right
 date: 2015-11-24
+location: Gdynia, Poland
 excerpt: Code review is an oddly bureacratic process for a team of software developers to follow. What follows are my non-technical thoughts on conducting constructive, humane reviews of code.
 tags: code, humans
 ---

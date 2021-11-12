@@ -1,6 +1,7 @@
 ---
 title: How I Write Invoices in Vim
 date: 2015-09-05
+location: Gdynia, Poland
 excerpt: I use Vim for writing code, composing emails, taking notes, and just about everything. It makes sense to use it for building business paperwork too.
 tags: vim
 ---

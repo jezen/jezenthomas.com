@@ -1,6 +1,7 @@
 ---
 title: Automatic Quality Assurance with Git Hooks
 date: 2015-06-22
+location: Gdynia, Poland
 excerpt: How to use a pre-commit hook in Git to make sure every commit passes all tests and style checks.
 tags: git, bash, ruby
 ---

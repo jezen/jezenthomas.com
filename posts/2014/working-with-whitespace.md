@@ -1,6 +1,7 @@
 ---
 title: Working with Whitespace
 date: 2014-12-21
+location: Göteborg, Sweden
 excerpt: A couple of tips for weeding out trailing whitespace and unnecessary blank lines in Vim.
 tags: vim
 ---

@@ -1,6 +1,7 @@
 ---
 title: The Setup
 date: 2013-07-02
+location: Göteborg, Sweden
 description: Tools I use to Get Stuff Done™
 excerpt: A brief overview of the hardware and software I use to Get Stuff Done™.
 tags: gear

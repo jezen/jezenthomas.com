@@ -1,6 +1,7 @@
 ---
 title: My Uncomplicated Git Workflow
 date: 2015-11-12
+location: Gdynia, Poland
 excerpt: Stop screwing around with version control ceremony and learn to love Git from the command line.
 tags: git, unix
 ---

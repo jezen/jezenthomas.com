@@ -1,6 +1,7 @@
 ---
 title: JavaScript Is Not Expressive
 date: 2016-05-28
+location: Gdynia, Poland
 excerpt: Some fuel to stoke the flames of the language wars.
 tags: javascript, code
 ---
