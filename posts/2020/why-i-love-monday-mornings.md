@@ -2,6 +2,10 @@
 title: Why I Love Monday Mornings
 date: 2020-05-22
 location: Đà Nẵng, Vietnam
+excerpt:
+  An exercise in gratitude and inclusivity. An explicit, recurring opportunity
+  for everyone on the team to speak up. It costs nothing, and yet it changes
+  everything. Try it!
 tags: business
 ---
 

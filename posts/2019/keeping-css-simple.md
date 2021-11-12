@@ -3,6 +3,9 @@ title: Keeping CSS Simple
 date: 2019-01-12
 location: Kaliningrad, Russia
 tags: css
+excerpt:
+  Modern CSS tooling gives you so much added power. But are you sure it's more
+  power that you want? Perhaps it's time we stop digging ourselves a deeper hole.
 banner: dominoes.jpg
 ---
 

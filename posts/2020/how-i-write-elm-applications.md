@@ -2,6 +2,10 @@
 title: How I Write Elm Applications
 date: 2020-11-07
 location: Gdańsk, Poland
+excerpt:
+  This covers a few patterns that I often lean on when writing non-trivial
+  single-page applications in Elm. The bulk of this is breaking apart the
+  application state, and then traversing it with lenses.
 tags: elm
 ---
 
