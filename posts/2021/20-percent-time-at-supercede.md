@@ -2,6 +2,10 @@
 title: 20% Time at Supercede
 date: 2021-06-23
 location: Odessa, Ukraine
+excerpt:
+  Software development is all about discovery and invention, and it'd be
+  foolish for a business to relegate that time to evenings and weekends. At
+  Supercede, we set explicit work time for this every week.
 tags: business
 ---
 

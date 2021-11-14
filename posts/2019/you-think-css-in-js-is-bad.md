@@ -2,6 +2,9 @@
 title: You Think CSS-in-JS is Bad?
 date: 2019-01-30
 location: Gdynia, Poland
+excerpt:
+  Yes, web development really was this crazy a decade ago. And this only
+  scratches the surface!
 tags: css, javascript
 banner: bsod.jpg
 ---

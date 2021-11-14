@@ -2,6 +2,10 @@
 title: Rewriting Routes in Yesod
 date: 2020-01-22
 location: Kaliningrad, Russia
+excerpt:
+  Routes that are clear and comprehensible to the user are fundamental to good
+  web application design. With a bit of care, we can tidy up some routes that
+  would typically be noisy in a Yesod application.
 tags: haskell
 banner: writing.jpg
 ---

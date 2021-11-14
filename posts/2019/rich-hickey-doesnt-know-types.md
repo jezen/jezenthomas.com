@@ -2,6 +2,10 @@
 title: Rich Hickey Doesn't Know Types
 date: 2019-04-09
 location: Sopot, Poland
+excerpt:
+  Sorry Rich, typing preferences are one thing, but the implication that
+  parametricity is effectively useless is just a bridge too far. You can't expect
+  to say something wrong on the Internet and get away with it!
 tags: clojure, haskell
 banner: hickey.jpg
 ---

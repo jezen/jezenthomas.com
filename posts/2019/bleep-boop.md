@@ -2,6 +2,9 @@
 title: Bleep. Bloop. I Am Approving Your Transaction.
 date: 2019-10-05
 location: Gdynia, Poland
+excerpt:
+  Sometimes what you really need in your software system is a helping hand from
+  a tiny robotic friend.
 tags: business
 banner: robot.jpg
 ---

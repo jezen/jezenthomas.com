@@ -2,6 +2,10 @@
 title: How I Work From Anywhere in the World
 date: 2020-02-02
 location: Kaliningrad, Russia
+excerpt:
+  There are many wonderful places to be in the world, but few that are nice to
+  be in year round, at least in terms of climate and economics. I'm using a few
+  specific tools to help navigate this.
 tags: business
 ---
 
