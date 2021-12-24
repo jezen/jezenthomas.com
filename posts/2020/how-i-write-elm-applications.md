@@ -94,7 +94,7 @@ our `Msg` type.
 The naïve way to model the messages our application should support is with one
 big sum type, which might look something like this:
 
-```elm
+```haskell
 type Page
   = PersonalInformationPage
   | LoanPurposePage
@@ -135,7 +135,7 @@ _Don't do that!_
 The way to break these groups of constructors out is by first nesting them
 inside the `Msg` type, like this:
 
-```elm
+```haskell
 type PersonalInformationMsg
   = SetFirstName String
   | SetLastName String
@@ -169,7 +169,7 @@ sneaking in. These functions almost inevitably end up needing _something_ from
 the top-level application-wide state, so you'll often see some type signature
 like this:
 
-```elm
+```haskell
 updatePersonalInformation
    : PersonalInformationMsg
   -> Model
@@ -184,7 +184,7 @@ The far simpler way to do this is to have every nested `update` function take a
 page-specific message, the _entire_ application state, and return the same type
 for that state along with the top-level `Msg` type, like this:
 
-```elm
+```haskell
 updatePersonalInformation : PersonalInformationMsg -> Model -> (Model, Cmd Msg)
 updatePersonalInformation msg model = case msg of
   SetFirstName a    -> -- …
@@ -213,7 +213,7 @@ Near the inception of the project, all of our individual bits of state might
 exist at the top level of our `Model`, which is typically represented as a
 record. Perhaps something like this:
 
-```elm
+```haskell
 type alias Model =
   { page : Page
   , firstName : String
@@ -236,7 +236,7 @@ and extracting these fields is typically rather intuitive. We can start by
 grouping page-specific parts of the state together, and then group further
 until it no longer _feels_ messy.
 
-```elm
+```haskell
 type alias Address =
   { line1 : String
   , line2 : String
@@ -276,14 +276,14 @@ line of the applicant's address.
 Retrieving the value of this field is no problem, as we can use Elm's dot
 syntax to succinctly get us all the way there, like this:
 
-```elm
+```haskell
 model.personalInformation.address.line1
 ```
 
 What we _can't_ do here however is _update_ that field in a similar fashion,
 _i.e._, Elm won't allow us to write something like this:
 
-```elm
+```haskell
 -- This won't work
 { model.personalInformation.address | line1 = newLine1 }
 
@@ -294,7 +294,7 @@ _i.e._, Elm won't allow us to write something like this:
 The naïve way to unwrap and subsequently update the field in this record is to
 write something like this:
 
-```elm
+```haskell
 updatePersonalInformation : PersonalInformationMsg -> Model -> (Model, Cmd Msg)
 updatePersonalInformation msg model = case msg of
   SetFirstName _ -> -- …
@@ -343,7 +343,7 @@ We can write these functions with a handy library called [`elm-monocle`][0]
 (and of course other libraries are available), and they would look something
 like the following:
 
-```elm
+```haskell
 import Monocle.Compose
 import Monocle.Lens exposing (Lens)
 
@@ -384,7 +384,7 @@ we're able to drastically clean up our update functions.
 
 Instead of the mess we had earlier, we could have something like this:
 
-```elm
+```haskell
 updatePersonalInformation : PersonalInformationMsg -> Model -> (Model, Cmd Msg)
 updatePersonalInformation msg model = case msg of
   SetFirstName _ -> -- …
@@ -401,7 +401,7 @@ This is much more elegant, and the nature of this API means it works even more
 beautifully when updating several fields at once. You could write something
 like the following contrivance, for example:
 
-```elm
+```haskell
 flip : (a -> b -> c) -> b -> a -> c
 flip f b a = f a b
 
@@ -473,7 +473,7 @@ together.
 If we consider a view function that renders an input for modifying the first
 line of the applicant's address as before, we might write it like this:
 
-```elm
+```haskell
 addressLine1Input : Model -> Html Msg
 addressLine1Input model =
   input
