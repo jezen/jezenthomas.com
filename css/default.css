@@ -373,7 +373,7 @@ blockquote p em {
     border: 1px solid #e3e3e3;
   }
 
-  .about p {
+  .about .bio {
     background: #f8f6ff;
     border-color: #ebebeb;
     border-style: solid;
@@ -513,3 +513,70 @@ footer .license a {
   border: none
 }
 /* }}} */
+
+.newsletter {
+  margin-top: 40px;
+  overflow: hidden;
+  padding: 10px 0;
+  position: relative;
+}
+
+@media (min-width: 920px) {
+  .newsletter::before {
+    background: #ddd;
+    content: '';
+    display: block;
+    height: 1px;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 40px;
+  }
+}
+
+.newsletter h2 {
+  font-size: 14px;
+  margin: 10px 0 4px;
+}
+
+.embeddable-buttondown-form label {
+  color: #333;
+  display: block;
+  font-size: 11px;
+  line-height: 14px;
+  margin-bottom: 6px;
+}
+
+.embeddable-buttondown-form input[type="email"] {
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  font-size: 12px;
+  margin: 4px 0;
+  padding: 8px;
+  width: 100%;
+}
+
+.embeddable-buttondown-form input[type="submit"] {
+  background: #ff4136;
+  border-radius: 4px;
+  border: none;
+  color: #fff;
+  float: right;
+  font-size: 13px;
+  font-weight: bold;
+  height: 28px;
+  line-height: 28px;
+  margin-top: 6px;
+  padding: 0 12px;
+  transition: all .2s;
+}
+
+.embeddable-buttondown-form p {
+  color: #484848;
+  font-size: 8px;
+  margin: 2px 0;
+}
+
+.footnotes {
+  max-width: 560px;
+}
