@@ -54,12 +54,19 @@
       }
 
       [].slice.call(document.querySelectorAll('.post-date span')).forEach(function(el) {
-        var dateTokens = el.innerText.split(' ')
+        var dateTokens = el.innerText.split(' ');
         el.innerHTML = [
           dateTokens[0],
           ordinal(parseInt(dateTokens[1], 10)) + ',',
           dateTokens[2]
         ].join(' ');
+      })
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
       })
     </script>
   </body>

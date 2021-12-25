@@ -52,6 +52,7 @@ img {
 }
 
 .posts .post-title {
+  border: none;
   font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-weight: bold;
 }
@@ -63,7 +64,7 @@ img {
 .posts .post-excerpt {
   color: #000;
   font-size: 14px;
-  margin: 0;
+  margin: 8px 0 10px;
   max-width: 560px;
 }
 /* }}} */
@@ -97,9 +98,8 @@ h3 {
 
 .post-date {
   color: #777;
-  font-size: 14px;
-  /*font-style: italic;*/
-  margin: 0 0 1em;
+  font-size: 13px;
+  margin: 10px 0 1em;
 }
 
 .post-tags {
@@ -172,7 +172,13 @@ code {
 
 .sourceCode {
   font-size: 13px;
-  margin: 3em 0;
+  margin: 3em -20px;
+}
+
+@media (min-width: 920px) {
+  .sourceCode {
+    margin: 3em 0;
+  }
 }
 
 .sourceCode .sourceCode {
@@ -223,6 +229,16 @@ blockquote p em {
 }
 
 .strike { text-decoration: line-through; }
+
+.footnote-ref {
+  border: none;
+  margin: 0 0 0 4px;
+  letter-spacing: 1px;
+}
+
+.footnote-back {
+  border: none;
+}
 /* }}} */
 /* Index ---------------------------------------------------------------- {{{ */
 .index p {
@@ -356,19 +372,22 @@ blockquote p em {
   .about .portrait img {
     border: 1px solid #e3e3e3;
   }
+
+  .about p {
+    background: #f8f6ff;
+    border-color: #ebebeb;
+    border-style: solid;
+    border-width: 1px 1px 1px 0;
+    margin-left: -40px;
+    padding: 20px 20px 20px 40px;
+  }
 }
 
 .about p {
-  background: #f8f6ff;
-  border-color: #ebebeb;
-  border-style: solid;
-  border-width: 1px 1px 1px 0;
   font-family: 'Open Sans', sans-serif;
   font-size: 11px;
   line-height: 18px;
-  margin-left: -40px;
   max-width: 300px;
-  padding: 20px 20px 20px 40px;
 }
 
 .navigation {
@@ -459,7 +478,6 @@ article figure figcaption {
 
 ol {
   font-size: 1rem;
-  list-style: lower-roman;
   padding: 0 0 0 20px;
 }
 
