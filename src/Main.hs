@@ -25,6 +25,7 @@ myFeedConfiguration = FeedConfiguration
 copyFiles :: [Pattern]
 copyFiles =
   [ "static/img/*"
+  , "static/img/yes/*"
   , "static/js/*"
   , "404.html"
   , "robots.txt"
@@ -88,6 +89,19 @@ site = do
 
       makeItem ""
         >>= loadAndApplyTemplate "templates/twitter.html" ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
+        >>= cleanIndexUrls
+
+  create ["about/index.html"] $ do
+    route idRoute
+    compile $ do
+      let ctx = mconcat
+            [ constField "title" "About | Jezen Thomas"
+            , defaultContext
+            ]
+
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/about.html" ctx
         >>= loadAndApplyTemplate "templates/default.html" ctx
         >>= cleanIndexUrls
 
