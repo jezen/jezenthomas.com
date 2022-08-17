@@ -1,5 +1,6 @@
-<div class="index">
-  <p>Hi, I'm Jezen Thomas.<br>
-  I write <a href="/posts">words</a> and code while travelling the world.</p>
-  <p class="lol">…and I still can't believe they're paying me for it!</p>
-</div>
+$for(posts)$
+  <div class="post">
+    <a class="post-title" href="$url$">$title$</a>
+    $if(excerpt)$<p class="post-excerpt">$excerpt$</p>$endif$
+  </div>
+$endfor$

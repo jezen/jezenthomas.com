@@ -49,30 +49,30 @@ site = do
 
   match "css/*" $ route idRoute >> compile compressCssCompiler
 
-  let postCtx = mconcat [ postSlugField "slug", pageCtx ]
+  let postCtx = postSlugField "slug" <> pageCtx
 
   match "posts/*/*" (postRules postCtx)
 
-  create ["index.html"] $ do
+  match "index.html" $ do
     route idRoute
     compile $ do
-      let indexCtx = mconcat
-            [ constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
-            , defaultContext
-            ]
+      let recentPostList :: Int -> Compiler String
+          recentPostList n = do
+            posts   <- loadAllSnapshots "posts/*/*" "content" >>= recentFirst
+            itemTpl <- loadBody "templates/post-index.html"
+            applyTemplateList itemTpl postCtx (take n posts)
+      let ctx =  constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
+              <> postCtx
 
-      makeItem ""
-        >>= loadAndApplyTemplate "templates/index.html" indexCtx
-        >>= loadAndApplyTemplate "templates/default.html" indexCtx
+      getResourceBody
+        >>= applyAsTemplate (field "posts" (const (recentPostList 3)))
+        >>= loadAndApplyTemplate "templates/default.html" ctx
         >>= cleanIndexUrls
 
   create ["twitter/index.html"] $ do
     route idRoute
     compile $ do
-      let ctx = mconcat
-            [ constField "title" "Twitter | Jezen Thomas"
-            , defaultContext
-            ]
+      let ctx = constField "title" "Twitter | Jezen Thomas" <> defaultContext
 
       makeItem ""
         >>= loadAndApplyTemplate "templates/twitter.html" ctx
@@ -82,10 +82,7 @@ site = do
   create ["about/index.html"] $ do
     route idRoute
     compile $ do
-      let ctx = mconcat
-            [ constField "title" "About | Jezen Thomas"
-            , defaultContext
-            ]
+      let ctx = constField "title" "About | Jezen Thomas" <> defaultContext
 
       makeItem ""
         >>= loadAndApplyTemplate "templates/about.html" ctx

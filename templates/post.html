@@ -1,12 +1,14 @@
 <div class="container">
   <article>
-    <h1>$title$</h1>
-    <p class="post-date">
-      <span>$date$</span>
-      $if(location)$
-      | $location$
-      $endif$
-    </p>
+    <h1 class="post-title">$title$</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        <span>$date$</span>
+        $if(location)$
+        | $location$
+        $endif$
+      </p>
+    </div>
     $body$
   </article>
 </div>

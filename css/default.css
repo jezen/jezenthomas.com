@@ -9,14 +9,12 @@
 
 html,
 body {
-  -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
   height: 100%;
 }
 
 body {
   color: #000;
-  font-size: 16px;
+  font-size: 15px;
 }
 
 #main {
@@ -34,7 +32,7 @@ img {
 }
 
 .post-index {
-  padding: 40px 20px 20px;
+  padding: 40px 20px 40px 60px;
 }
 
 .post-index h2 {
@@ -51,9 +49,19 @@ img {
   margin-bottom: 3.5em;
 }
 
+.post-title {
+  color: #000;
+  font-size: 20px;
+  letter-spacing: normal;
+  margin: 0;
+}
+
+.post-title a {
+  border: none;
+}
+
 .posts .post-title {
   border: none;
-  font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
   font-weight: bold;
 }
 
@@ -65,23 +73,25 @@ img {
   color: #000;
   font-size: 14px;
   margin: 8px 0 10px;
-  max-width: 560px;
+  max-width: 600px;
 }
 /* }}} */
 /* Typography ----------------------------------------------------------- {{{ */
 body {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  color: #444;
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  font-size: 15px;
+  line-height: 24px;
 }
 
 hr {
   border-style: double;
   border-width: 3px 0 0;
   border-color: #ddd;
-  max-width: 560px;
+  max-width: 600px;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   margin: 2.5em 0 1em;
   font-weight: bold;
 }
@@ -96,9 +106,15 @@ h3 {
   font-size: 1rem;
 }
 
+.post-meta {
+  font-size: 14px;
+}
+
+.post-meta p {
+  margin: 0;
+}
+
 .post-date {
-  color: #777;
-  font-size: 13px;
   margin: 10px 0 1em;
 }
 
@@ -133,10 +149,7 @@ a:hover {
 }
 
 p {
-  color: #000;
-  font-size: 14px;
-  line-height: 22px;
-  margin: 1.5em 0 2em;
+  margin: 2em 0;
 }
 
 pre {
@@ -240,44 +253,10 @@ blockquote p em {
   border: none;
 }
 /* }}} */
-/* Index ---------------------------------------------------------------- {{{ */
-.index p {
-  font-family: 'Nanum Pen Script',cursive;
-  font-size: 36px;
-  line-height: 34px;
-  margin: 20px 20px 20px;
-  max-width: 520px;
-  max-width: 520px;
-}
-
-.index p a {
-  border: none;
-}
-
-.index p.lol {
-  font-size: 16px;
-  margin: 10px;
-  text-align: right;
-  transform: rotate(-1deg);
-}
-
-@media (min-width: 920px) {
-  .index p {
-    font-size: 54px;
-    line-height: 44px;
-    margin: 170px 170px 20px;
-  }
-
-  .index p.lol {
-    font-size: 24px;
-    margin: 0 170px;
-  }
-}
-/* }}} */
 /* About ---------------------------------------------------------------- {{{ */
 .about-page {
-  max-width: 560px;
-  padding: 40px 20px;
+  max-width: 600px;
+  padding: 40px 20px 40px 60px;
 }
 
 .about-page h2 {
@@ -367,7 +346,6 @@ blockquote p em {
 /* }}} */
 /* Header --------------------------------------------------------------- {{{ */
 .site-title {
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 18px;
   font-weight: bold;
   margin: 0 auto 1rem;
@@ -475,7 +453,6 @@ nav li a:hover {
   border-style: solid;
   border-color: #ddd;
   border-width: 1px 0;
-  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 15px;
   list-style: none;
   margin: 20px 0;
@@ -522,7 +499,7 @@ article {
 
 @media (min-width: 920px) {
   article {
-    padding: 40px 0 20px 20px;
+    padding: 40px 0 20px 60px;
   }
 }
 
@@ -532,12 +509,10 @@ article h2 {
 
 article p,
 article li {
-  font-size: 14px;
-  max-width: 560px;
+  max-width: 600px;
 }
 
 article h1 {
-  font-family: "Helvetica Neue Bold", sans-serif;
   font-size: 1.6rem;
   font-weight: bold;
   letter-spacing: -1px;
@@ -547,7 +522,7 @@ article h1 {
 
 article figure {
   margin: 3em 0px;
-  max-width: 560px;
+  max-width: 600px;
 }
 
 article figure figcaption {
@@ -558,7 +533,6 @@ article figure figcaption {
 }
 
 ol {
-  font-size: 1rem;
   padding: 0 0 0 20px;
 }
 
@@ -574,7 +548,7 @@ ol {
 footer {
   border-top: 3px double #ddd;
   margin: 3em 20px 20px;
-  max-width: 560px;
+  max-width: 600px;
   padding: 1em 0 4em;
 }
 
@@ -584,7 +558,6 @@ footer .license img {
 
 footer .license p {
   color: #58595a;
-  font-family: 'Helvetica-Neue', sans-serif;
   font-size: .8em;
   line-height: 1.6em;
   margin-top: 0;
@@ -594,70 +567,6 @@ footer .license a {
   border: none
 }
 /* }}} */
-
-.newsletter {
-  margin-top: 40px;
-  overflow: hidden;
-  padding: 10px 0;
-  position: relative;
-}
-
-@media (min-width: 920px) {
-  .newsletter::before {
-    background: #ddd;
-    content: '';
-    display: block;
-    height: 1px;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 40px;
-  }
-}
-
-.newsletter h2 {
-  font-size: 14px;
-  margin: 10px 0 4px;
-}
-
-.embeddable-buttondown-form label {
-  color: #333;
-  display: block;
-  font-size: 11px;
-  line-height: 14px;
-  margin-bottom: 6px;
-}
-
-.embeddable-buttondown-form input[type="email"] {
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  font-size: 12px;
-  margin: 4px 0;
-  padding: 8px;
-  width: 100%;
-}
-
-.embeddable-buttondown-form input[type="submit"] {
-  background: #ff4136;
-  border-radius: 4px;
-  border: none;
-  color: #fff;
-  float: right;
-  font-size: 13px;
-  font-weight: bold;
-  height: 28px;
-  line-height: 28px;
-  margin-top: 6px;
-  padding: 0 12px;
-  transition: all .2s;
-}
-
-.embeddable-buttondown-form p {
-  color: #484848;
-  font-size: 8px;
-  margin: 2px 0;
-}
-
 .footnotes {
-  max-width: 560px;
+  max-width: 600px;
 }

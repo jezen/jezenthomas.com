@@ -21,26 +21,32 @@ Caribbean, Vietnam, China, Thailand, and Siberia. It has been of tremendous
 business value for us to not limit our talent pool to people local to our
 registered office address in the UK. Not only do we get access to an infinitely
 wider array of brilliant people, but also it makes Supercede a more attractive
-place to work for those people. Our engineers don't have to displace their
-lives to go and live in London or Silicon Valley. They don't need to face those
-soul-crushing daily commutes. They can sit at home, or in the garden, or
-wherever makes them happiest, and get the uninterrupted focus time they need to
-do the real work that underpins our business. This is _critical_. We are a
-technology company after all, and it would be utterly moronic for a business
-leader to not prioritise the productivity and workplace satisfaction of exactly
-the people who do all the real work.
+place to work for those people.
+
+Our engineers don't have to displace their lives to go and live in London or
+Silicon Valley. They don't need to face those soul-crushing daily commutes.
+They can sit at home, or in the garden, or wherever makes them happiest, and
+get the uninterrupted focus time they need to do the real work that underpins
+our business.
+
+This is _critical_.
+
+We are a technology company after all, and it would be utterly moronic for a
+business leader to not prioritise the productivity and workplace satisfaction
+of exactly the people who do all the real work.
 
 Given that our team are distributed across several time zones, it is
 logistically infeasible to hold a daily synchronous meeting. Which timezone
 should it occur in? Which employees deserve to sacrifice the regularity of
 their Circadian rhythm to appease the whim of a manager who can't be bothered
-to read the status of work-in-progress on the team's Kanban board? If you run a
-software startup, you probably like to think you hire the best people. The
-smartest people. The rock stars. The A-players. Effective software engineers are
-in high market demand, and it's rather paradoxical to view a software engineer
-as both smart enough to solve the hard problems in your business domain and
-make you rich, and simultaneously stupid enough to settle for a toxic work
-environment when greener pastures are aplenty.
+to read the status of work-in-progress on the team's Kanban board?
+
+If you run a software startup, you probably like to think you hire the best
+people. The smartest people. The rock stars. The A-players. Effective software
+engineers are in high market demand, and it's rather paradoxical to view a
+software engineer as both smart enough to solve the hard problems in your
+business domain and make you rich, and simultaneously stupid enough to settle
+for a toxic work environment when greener pastures are aplenty.
 
 Proponents of daily stand-ups — at least those that are real engineers — argue
 that these synchronous meetings can indeed be a valuable ceremony for the sake
@@ -49,9 +55,11 @@ set that fact aside to entertain this argument. If you read the literature, it
 is argued that for this to work it is absolutely forbidden for project managers
 to join these meetings. This is, however, a utopian view. The status of
 in-progress work is the remit of project/product managers. Why else would those
-people exist? It is the managers who insist on holding this ceremony, and so it
-naturally follows that the managers will expect to be able to attend these
-status meetings. Inevitably (and in my experience rather quickly), the ceremony
+people exist?
+
+It is the managers who insist on holding this ceremony, and so it naturally
+follows that the managers will expect to be able to attend these status
+meetings. Inevitably (and in my experience rather quickly), the ceremony
 becomes a monotony of disengaged developers who trot out the same canned lines.
 
 > Yesterday I worked on the widget.
