@@ -274,26 +274,6 @@ blockquote p em {
   }
 }
 /* }}} */
-/* Contact -------------------------------------------------------------- {{{ */
-.contact {
-  max-width: 560px;
-  padding: 40px 20px;
-}
-
-.contact h3 {
-  margin: 0;
-}
-
-.contact p {
-  font-size: 16px;
-}
-
-@media (max-width: 320px) {
-  .calendly-inline-widget {
-    margin-left: -20px;
-  }
-}
-/* }}} */
 /* About ---------------------------------------------------------------- {{{ */
 .about-page {
   max-width: 560px;
