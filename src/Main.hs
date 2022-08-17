@@ -1,6 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Control.Monad (forM_)
+import Data.ByteString.Lazy (fromStrict)
+import Data.ByteString.Char8 (pack)
+import Data.Digest.Pure.MD5 (md5)
 import Data.List (groupBy, isSuffixOf, sortOn)
 import Data.Monoid ((<>))
 import Data.Ord (Down(..), comparing)
@@ -33,15 +36,27 @@ copyFiles =
   , "loadtestertool.xml"
   ]
 
+styleSheets :: [FilePath]
+styleSheets =
+  [ "css/normalize.css"
+  , "css/default.css"
+  , "css/syntax.css"
+  ]
+
 config :: Configuration
 config = defaultConfiguration
   { deployCommand = "yarn surge _site jezenthomas.com" }
 
 main :: IO ()
-main = hakyllWith config site
+main = hakyllWith config $ do
 
-site :: Rules ()
-site = do
+  compiledStylesheetPath <- preprocess $ do
+    styles <- mapM readFile styleSheets
+    let h = md5 $ fromStrict $ pack $ compressCss $ mconcat styles
+    pure $ "css/" <> show h <> ".css"
+
+  let cssPathCtx = constField "cssPath" compiledStylesheetPath
+
   forM_ copyFiles $ \ptrn ->
     match ptrn $ do
       route idRoute
@@ -49,13 +64,30 @@ site = do
 
   match "css/*" $ route idRoute >> compile compressCssCompiler
 
-  let postCtx = postSlugField "slug" <> pageCtx
+  create [fromFilePath compiledStylesheetPath] $ do
+    route idRoute
+    compile $ do
+      styles <- mapM (load . fromFilePath) styleSheets
+      let ctx = listField "styles" pageCtx (pure styles)
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/empty.html" ctx
 
-  match "posts/*/*" (postRules postCtx)
+  let postCtx = postSlugField "slug" <> pageCtx <> cssPathCtx
+
+  match "posts/*/*" $ do
+    route postCleanRoute
+    dep <- makePatternDependency "css/*"
+    rulesExtraDependencies [dep] $ compile $ pandocCompiler
+      >>= loadAndApplyTemplate "templates/post-content.html" postCtx
+      >>= saveSnapshot "content"
+      >>= loadAndApplyTemplate "templates/post.html" postCtx
+      >>= loadAndApplyTemplate "templates/default.html" postCtx
+      >>= cleanIndexUrls
 
   match "index.html" $ do
     route idRoute
-    compile $ do
+    dep <- makePatternDependency "css/*"
+    rulesExtraDependencies [dep] $ compile $ do
       let recentPostList :: Int -> Compiler String
           recentPostList n = do
             posts   <- loadAllSnapshots "posts/*/*" "content" >>= recentFirst
@@ -63,26 +95,20 @@ site = do
             applyTemplateList itemTpl postCtx (take n posts)
       let ctx =  constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
               <> postCtx
+              <> cssPathCtx
 
       getResourceBody
         >>= applyAsTemplate (field "posts" (const (recentPostList 3)))
         >>= loadAndApplyTemplate "templates/default.html" ctx
         >>= cleanIndexUrls
 
-  create ["twitter/index.html"] $ do
-    route idRoute
-    compile $ do
-      let ctx = constField "title" "Twitter | Jezen Thomas" <> defaultContext
-
-      makeItem ""
-        >>= loadAndApplyTemplate "templates/twitter.html" ctx
-        >>= loadAndApplyTemplate "templates/default.html" ctx
-        >>= cleanIndexUrls
-
   create ["about/index.html"] $ do
     route idRoute
-    compile $ do
-      let ctx = constField "title" "About | Jezen Thomas" <> defaultContext
+    dep <- makePatternDependency "css/*"
+    rulesExtraDependencies [dep] $ compile $ do
+      let ctx =  constField "title" "About | Jezen Thomas"
+              <> cssPathCtx
+              <> defaultContext
 
       makeItem ""
         >>= loadAndApplyTemplate "templates/about.html" ctx
@@ -91,10 +117,12 @@ site = do
 
   create ["posts/index.html"] $ do
     route idRoute
-    compile $ do
+    dep <- makePatternDependency "css/*"
+    rulesExtraDependencies [dep] $ compile $ do
       posts <- recentFirst =<< loadAll "posts/*/*"
       let ctx =  constField "title" "All Posts | Jezen Thomas"
               <> publishedGroupField "years" posts postCtx
+              <> cssPathCtx
               <> defaultContext
 
       makeItem ""
@@ -138,16 +166,6 @@ pageCtx = mconcat
   , dateField "date" "%B %e, %Y"
   , defaultContext
   ]
-
-postRules :: Context String -> Rules ()
-postRules ctx = do
-  route postCleanRoute
-  compile $ pandocCompiler
-    >>= loadAndApplyTemplate "templates/post-content.html" ctx
-    >>= saveSnapshot "content"
-    >>= loadAndApplyTemplate "templates/post.html" ctx
-    >>= loadAndApplyTemplate "templates/default.html" ctx
-    >>= cleanIndexUrls
 
 -- custom routes
 --------------------------------------------------------------------------------

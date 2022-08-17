@@ -12,6 +12,7 @@ executable site
                   , blaze-html
                   , containers
                   , filepath
+                  , pureMD5
   ghc-options:      -threaded
   Hs-source-dirs:   src
   default-language: Haskell2010
