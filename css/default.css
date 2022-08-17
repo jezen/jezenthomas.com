@@ -32,7 +32,13 @@ img {
 }
 
 .post-index {
-  padding: 40px 20px 40px 60px;
+  padding: 40px 20px;
+}
+
+@media (min-width: 920px) {
+  .post-index {
+    padding: 40px 20px 40px 60px;
+  }
 }
 
 .post-index h2 {
@@ -255,8 +261,17 @@ blockquote p em {
 /* }}} */
 /* About ---------------------------------------------------------------- {{{ */
 .about-page {
+  padding: 40px 20px;
+}
+
+@media (min-width: 920px) {
+  .about-page {
+    padding: 40px 20px 40px 60px;
+  }
+}
+
+.about-page {
   max-width: 600px;
-  padding: 40px 20px 40px 60px;
 }
 
 .about-page h2 {
