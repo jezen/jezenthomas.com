@@ -47,7 +47,7 @@
       function ordinal(n) {
          var s = ["th","st","nd","rd"],
              v = n % 100;
-         return n + '<sup> ' + (s[(v-20)%10]||s[v]||s[0]) + '</sup>';
+         return n + '<sup>' + (s[(v-20)%10]||s[v]||s[0]) + '</sup>';
       }
 
       [].slice.call(document.querySelectorAll('.post-date span')).forEach(function(el) {
