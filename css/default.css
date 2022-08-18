@@ -561,11 +561,18 @@ ol {
 /* }}} */
 
 footer {
-  position: absolute;
   bottom: 20px;
-  left: 40px;
-  font-size: 11px;
   color: #666;
+  display: none;
+  font-size: 11px;
+  left: 40px;
+  position: absolute;
+}
+
+@media (min-width: 920px) {
+  footer {
+    display: block;
+  }
 }
 
 .footnotes {
