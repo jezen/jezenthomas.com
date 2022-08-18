@@ -390,6 +390,7 @@ blockquote p em {
 @media (min-width: 920px) {
   .about {
     display: block;
+    height: 100%;
     max-width: 300px;
     padding: 40px;
     position: fixed;
@@ -558,29 +559,15 @@ ol {
   list-style-type: lower-roman !important;
 }
 /* }}} */
-/* Footer --------------------------------------------------------------- {{{ */
+
 footer {
-  border-top: 3px double #ddd;
-  margin: 3em 20px 20px;
-  max-width: 600px;
-  padding: 1em 0 4em;
+  position: absolute;
+  bottom: 20px;
+  left: 40px;
+  font-size: 11px;
+  color: #666;
 }
 
-footer .license img {
-  opacity: .8;
-}
-
-footer .license p {
-  color: #58595a;
-  font-size: .8em;
-  line-height: 1.6em;
-  margin-top: 0;
-}
-
-footer .license a {
-  border: none
-}
-/* }}} */
 .footnotes {
   max-width: 600px;
 }
