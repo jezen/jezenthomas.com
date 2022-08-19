@@ -40,6 +40,7 @@ styleSheets :: [FilePath]
 styleSheets =
   [ "css/normalize.css"
   , "css/default.css"
+  , "css/header.css"
   , "css/syntax.css"
   ]
 
