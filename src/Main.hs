@@ -1,8 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Control.Monad (forM_)
-import Data.ByteString.Lazy (fromStrict)
 import Data.ByteString.Char8 (pack)
+import Data.ByteString.Lazy (fromStrict)
 import Data.Digest.Pure.MD5 (md5)
 import Data.List (groupBy, isSuffixOf, sortOn)
 import Data.Monoid ((<>))
@@ -12,6 +12,7 @@ import Data.Time.Clock (UTCTime, utctDay)
 import Data.Time.Locale.Compat (defaultTimeLocale)
 import Hakyll hiding (host)
 import System.FilePath.Posix (takeBaseName, takeDirectory, (</>))
+import Text.Pandoc.Options
 
 host :: String
 host = "https://jezenthomas.com"
@@ -27,9 +28,7 @@ myFeedConfiguration = FeedConfiguration
 
 copyFiles :: [Pattern]
 copyFiles =
-  [ "static/img/*"
-  , "static/img/yes/*"
-  , "static/js/*"
+  [ "static/**"
   , "404.html"
   , "robots.txt"
   , "favicon.ico"
@@ -42,6 +41,7 @@ styleSheets =
   , "css/default.css"
   , "css/header.css"
   , "css/syntax.css"
+  , "css/katex.css"
   ]
 
 config :: Configuration
@@ -78,7 +78,7 @@ main = hakyllWith config $ do
   match "posts/*/*" $ do
     route postCleanRoute
     dep <- makePatternDependency "css/*"
-    rulesExtraDependencies [dep] $ compile $ pandocCompiler
+    rulesExtraDependencies [dep] $ compile $ blogCompiler
       >>= loadAndApplyTemplate "templates/post-content.html" postCtx
       >>= saveSnapshot "content"
       >>= loadAndApplyTemplate "templates/post.html" postCtx
@@ -167,6 +167,25 @@ pageCtx = mconcat
   , dateField "date" "%B %e, %Y"
   , defaultContext
   ]
+
+blogCompiler :: Compiler (Item String)
+blogCompiler = pandocCompilerWith readerOpts writerOpts
+  where
+  readerOpts :: ReaderOptions
+  readerOpts = defaultHakyllReaderOptions
+    { readerExtensions =
+        (readerExtensions defaultHakyllReaderOptions) <> extensionsFromList
+           [ Ext_tex_math_single_backslash  -- TeX math btw (..) [..]
+           , Ext_tex_math_double_backslash  -- TeX math btw \(..\) \[..\]
+           , Ext_tex_math_dollars           -- TeX math between $..$ or $$..$$
+           , Ext_latex_macros               -- Parse LaTeX macro definitions (for math only)
+           ]
+      }
+
+  writerOpts :: WriterOptions
+  writerOpts = defaultHakyllWriterOptions
+    { writerHTMLMathMethod = MathJax ""
+    }
 
 -- custom routes
 --------------------------------------------------------------------------------
