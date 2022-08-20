@@ -31,12 +31,9 @@ comprehension:
 
 ```haskell
 [ (x, y) | x <- [1..3], y <- [1..3] ]
-```
 
-Which results in the following output:
-
-```
-[(1,1),(1,2),(1,3),(2,1),(2,2),(2,3),(3,1),(3,2),(3,3)]
+-- evaluates to:
+--   [(1,1),(1,2),(1,3),(2,1),(2,2),(2,3),(3,1),(3,2),(3,3)]
 ```
 
 Applying this approach to the maths riddle is essentially the same:
@@ -60,7 +57,7 @@ Evaluating this expression generates a whole bunch of mathematical expressions
 encoded in strings — 65,536 expressions to be exact. The expressions look like
 this:
 
-```
+```haskell
 [ "1*2*3*4/5-6-7*8-9"
 , "1*2*3*4/5-6-7*8/9"
 , "1*2*3*4/5-6-7*8*9"
@@ -87,13 +84,7 @@ import Language.Haskell.Interpreter
 
 f = runInterpreter $ do
   setImports ["Prelude"]
-  eval "3 + 5"
-```
-
-Evaluating function `f` gives us the result:
-
-```
-Right "8"
+  eval "3 + 5" -- evaluates to `Right "8"`
 ```
 
 Pretty cool, if not somewhat heretical.
@@ -124,13 +115,9 @@ result = runInterpreter $ do
   evaluate expr = eval expr >>= \a -> pure (expr, a)
 ```
 
-The above is an expanded version of what I originally wrote, for the sake of
-legibility. When I was playing with this, I actually wrote it as a one-liner
-directly in GHCi, like this:
-
-```
-(runInterpreter $ setImports ["Prelude"] >> forM (let ops = [ '+', '-', '/', '*' ] in [ [ '1', a, '2', b, '3', c, '4', d, '5', e, '6', f, '7', g, '8', h, '9' ] | a <- ops, b <- ops, c <- ops, d <- ops, e <- ops, f <- ops, g <- ops, h <- ops ]) (\expr -> eval expr >>= \a -> pure (expr, a))) >>= pure . filter (\(_, a) -> a == "100") . fromRight []
-```
+The above is an expanded version of what I originally wrote. When I was playing
+with this, I actually wrote it as a one-liner directly in GHCi, which is a
+similar experience to composing a Unix command line.
 
 Running this produces 14 possible answers, and that's without enumerating all
 those possible answers that would result from changing the order of operations
