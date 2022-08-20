@@ -117,11 +117,14 @@ result = runInterpreter $ do
 
 The above is an expanded version of what I originally wrote. When I was playing
 with this, I actually wrote it as a one-liner directly in GHCi, which is a
-similar experience to composing a Unix command line.
+similar experience to composing a Unix command line. Is my approach an
+efficient way to find the possible answers? No. Do I care enough to optimise my
+approach? Also no. Who said Haskell can't do quick and dirty scripting work?
 
 Running this produces 14 possible answers, and that's without enumerating all
 those possible answers that would result from changing the order of operations
-with brackets.
+with brackets. After submitting my answers, my colleague rejected my approach
+because I "used a program", and "that's cheating."
 
 \$$ 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 * 9 \$$
 \$$ 1 + 2 + 3 - 4 * 5 + 6 * 7 + 8 * 9 \$$
@@ -137,20 +140,5 @@ with brackets.
 \$$ 1 * 2 * 3 - 4 * 5 + 6 * 7 + 8 * 9 \$$
 \$$ 1 * 2 * 3 * 4 + 5 + 6 + 7 * 8 + 9 \$$
 \$$ 1 * 2 * 3 * 4 + 5 + 6 - 7 + 8 * 9 \$$
-
-This is how my machine looks like while generating answers. It's a good way to
-make the other customers in Starbucks feel uneasy.
-
-![Generating thousands of mathematical expressions in GHCi.](/static/img/numbers.gif)
-
-Is my approach an efficient way to find the possible answers? No. Do I care
-enough to optimise my approach? Also no.
-
-Who said Haskell can't do quick and dirty scripting work?
-
-After submitting my answers, my colleague rejected my approach because I "used
-a program", and "that's cheating."
-
-ಠ_ಠ
 
 [0]: https://hackage.haskell.org/package/hint
