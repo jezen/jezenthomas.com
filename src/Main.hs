@@ -31,8 +31,7 @@ copyFiles =
   [ "static/**"
   , "404.html"
   , "robots.txt"
-  , "favicon.ico"
-  , "loadtestertool.xml"
+  , "doom.gif"
   ]
 
 styleSheets :: [FilePath]
