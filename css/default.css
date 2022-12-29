@@ -90,7 +90,24 @@ body {
   line-height: 24px;
 }
 
-hr {
+article > hr {
+  background: none;
+  border: 0;
+  height: auto;
+  margin: 4em 0;
+  max-width: 600px;
+  padding: 0;
+}
+
+article > hr::after {
+  content: '⁂';
+  display: block;
+  line-height: 1;
+  opacity: 0.8;
+  text-align: center;
+}
+
+.footnotes hr {
   border-style: double;
   border-width: 3px 0 0;
   border-color: #ddd;
@@ -362,13 +379,13 @@ blockquote p em {
 /* }}} */
 /* Article -------------------------------------------------------------- {{{ */
 article {
-  padding: 20px;
+  padding: 20px 20px 100px;
   position: relative;
 }
 
 @media (min-width: 920px) {
   article {
-    padding: 40px 0 20px 60px;
+    padding: 40px 0 100px 60px;
   }
 }
 
