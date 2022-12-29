@@ -94,7 +94,7 @@ article > hr {
   background: none;
   border: 0;
   height: auto;
-  margin: 4em 0;
+  margin: 3em 0;
   max-width: 600px;
   padding: 0;
 }
@@ -404,6 +404,13 @@ article h1 {
   letter-spacing: -1px;
   padding: 0;
   margin: 0;
+}
+
+article > p:last-of-type::after {
+  color: #666;
+  content: ' ■';
+  font-family: TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif;
+  font-size: 17px;
 }
 
 article figure {
