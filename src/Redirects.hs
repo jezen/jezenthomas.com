@@ -1,0 +1,57 @@
+module Redirects (redirects) where
+
+import Hakyll
+
+newPaths :: [String]
+newPaths =
+  [ "/2013/07/the-setup/"
+  , "/2013/08/arcify/"
+  , "/2013/12/spirograph/"
+  , "/2014/05/red-green-wtf/"
+  , "/2014/10/folding-paragraphs-in-vim/"
+  , "/2014/12/working-with-whitespace/"
+  , "/2015/05/a-function-for-moving-to-the-beginning-of-the-line/"
+  , "/2015/05/free-internet-on-trains/"
+  , "/2015/05/shell-script-static-analysis-in-vim/"
+  , "/2015/06/automatic-quality-assurance-with-git-hooks/"
+  , "/2015/09/how-i-find-and-replace-in-vim/"
+  , "/2015/09/how-i-write-invoices-in-vim/"
+  , "/2015/10/using-git-to-manage-todos/"
+  , "/2015/10/visualising-code-growth-with-git-and-d3/"
+  , "/2015/11/code-review-done-right/"
+  , "/2015/11/my-uncomplicated-git-workflow/"
+  , "/2015/11/the-worlds-most-boring-build-system/"
+  , "/2016/01/the-case-against-dynamic-typing/"
+  , "/2016/02/deploying-a-haskell-web-service-with-nix/"
+  , "/2016/03/working-in-the-dark/"
+  , "/2016/05/javascript-is-not-expressive/"
+  , "/2016/08/git-is-your-single-point-of-truth/"
+  , "/2016/09/showing-the-weather-in-tmux/"
+  , "/2017/01/the-knowledge-is-a-scam/"
+  , "/2017/02/how-many-levels-of-javascript-are-you-on/"
+  , "/2018/12/silence-at-last/"
+  , "/2018/12/yesod-is-a-minimal-web-framework/"
+  , "/2019/01/hello-world-in-haskell/"
+  , "/2019/01/keeping-css-simple/"
+  , "/2019/01/you-think-css-in-js-is-bad/"
+  , "/2019/04/rich-hickey-doesnt-know-types/"
+  , "/2019/07/tracing-user-requests-in-yesod/"
+  , "/2019/09/implementing-csp-in-yesod/"
+  , "/2019/10/bleep-boop/"
+  , "/2019/10/on-technical-debt/"
+  , "/2020/01/rewriting-routes-in-yesod/"
+  , "/2020/02/how-i-work-from-anywhere-in-the-world/"
+  , "/2020/05/why-i-love-monday-mornings/"
+  , "/2020/11/how-i-write-elm-applications/"
+  , "/2021/06/20-percent-time-at-supercede/"
+  , "/2021/08/why-we-dont-do-daily-stand-ups-at-supercede/"
+  , "/2021/12/fast-counting-with-postgresql-and-haskell/"
+  , "/2022/05/solving-a-maths-riddle-with-bad-haskell/"
+  , "/2022/08/static-asset-hashing-in-hakyll/"
+  , "/2022/08/we-deserve-better-than-bem/"
+  , "/2022/12/at-least-roundtrip-serialisation/"
+  , "/2022/12/make-your-database-tables-smaller/"
+  ]
+
+redirects :: [(Identifier, String)]
+redirects = (\p -> (fromFilePath (drop 9 p <> "index.html"), p)) <$> newPaths

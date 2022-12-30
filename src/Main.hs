@@ -10,12 +10,17 @@ import Data.Ord (Down(..), comparing)
 import Data.Time.Calendar (toGregorian)
 import Data.Time.Clock (UTCTime, utctDay)
 import Data.Time.Locale.Compat (defaultTimeLocale)
+import Debug.Trace
 import Hakyll hiding (host)
+import Redirects
 import System.FilePath.Posix (takeBaseName, takeDirectory, (</>))
 import Text.Pandoc.Options
 
 host :: String
 host = "https://jezenthomas.com"
+
+postsPattern :: Pattern
+postsPattern = "posts/*/*/*"
 
 myFeedConfiguration :: FeedConfiguration
 myFeedConfiguration = FeedConfiguration
@@ -74,15 +79,21 @@ main = hakyllWith config $ do
 
   let postCtx = postSlugField "slug" <> pageCtx <> cssPathCtx
 
-  match "posts/*/*" $ do
-    route postCleanRoute
+  postsMeta <- getAllMetadata "posts/*/*/*"
+
+  version "redirects" $ createRedirects redirects
+
+  match "posts/*/*/*" $ do
+    trace (show postsMeta) $ route postCleanRoute
     dep <- makePatternDependency "css/*"
-    rulesExtraDependencies [dep] $ compile $ blogCompiler
-      >>= loadAndApplyTemplate "templates/post-content.html" postCtx
-      >>= saveSnapshot "content"
-      >>= loadAndApplyTemplate "templates/post.html" postCtx
-      >>= loadAndApplyTemplate "templates/default.html" postCtx
-      >>= cleanIndexUrls
+    rulesExtraDependencies [dep] $ compile $ do
+      ident <- getUnderlying
+      blogCompiler
+        >>= loadAndApplyTemplate "templates/post-content.html" postCtx
+        >>= saveSnapshot "content"
+        >>= loadAndApplyTemplate "templates/post.html" postCtx
+        >>= loadAndApplyTemplate "templates/default.html" postCtx
+        >>= cleanIndexUrls
 
   match "index.html" $ do
     route idRoute
@@ -90,7 +101,7 @@ main = hakyllWith config $ do
     rulesExtraDependencies [dep] $ compile $ do
       let recentPostList :: Int -> Compiler String
           recentPostList n = do
-            posts   <- loadAllSnapshots "posts/*/*" "content" >>= recentFirst
+            posts   <- loadAllSnapshots "posts/*/*/*" "content" >>= recentFirst
             itemTpl <- loadBody "templates/post-index.html"
             applyTemplateList itemTpl postCtx (take n posts)
       let ctx =  constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
@@ -119,7 +130,7 @@ main = hakyllWith config $ do
     route idRoute
     dep <- makePatternDependency "css/*"
     rulesExtraDependencies [dep] $ compile $ do
-      posts <- recentFirst =<< loadAll "posts/*/*"
+      posts <- recentFirst =<< loadAll "posts/*/*/*"
       let ctx =  constField "title" "All Posts | Jezen Thomas"
               <> publishedGroupField "years" posts postCtx
               <> cssPathCtx
@@ -134,7 +145,7 @@ main = hakyllWith config $ do
   create ["sitemap.xml"] $ do
     route idRoute
     compile $ do
-      posts <- recentFirst =<< loadAll "posts/*/*"
+      posts <- recentFirst =<< loadAll "posts/*/*/*"
 
       let allPosts = return posts
       let sitemapCtx = mconcat
@@ -152,7 +163,7 @@ main = hakyllWith config $ do
          compile $ do
            let feedCtx = pageCtx <> bodyField "description"
            posts <- fmap (take 10) . recentFirst =<<
-                   loadAllSnapshots "posts/*/*" "content"
+                   loadAllSnapshots "posts/*/*/*" "content"
            renderRss myFeedConfiguration feedCtx posts
              >>= cleanIndexHtmls
 
@@ -173,7 +184,7 @@ blogCompiler = pandocCompilerWith readerOpts writerOpts
   readerOpts :: ReaderOptions
   readerOpts = defaultHakyllReaderOptions
     { readerExtensions =
-        (readerExtensions defaultHakyllReaderOptions) <> extensionsFromList
+        readerExtensions defaultHakyllReaderOptions <> extensionsFromList
            [ Ext_tex_math_single_backslash  -- TeX math btw (..) [..]
            , Ext_tex_math_double_backslash  -- TeX math btw \(..\) \[..\]
            , Ext_tex_math_dollars           -- TeX math between $..$ or $$..$$
@@ -190,7 +201,7 @@ blogCompiler = pandocCompilerWith readerOpts writerOpts
 --------------------------------------------------------------------------------
 postCleanRoute :: Routes
 postCleanRoute = cleanRoute
- `composeRoutes` gsubRoute "(posts|drafts)/[0-9]{4}/" (const "")
+ `composeRoutes` gsubRoute "(posts|drafts)/" (const "")
 
 cleanRoute :: Routes
 cleanRoute = customRoute createIndexRoute
