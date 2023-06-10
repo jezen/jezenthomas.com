@@ -454,5 +454,10 @@ footer {
 }
 
 .footnotes {
+  font-size: 13px;
   max-width: 600px;
+}
+
+.footnotes p {
+  margin: 1em 0;
 }

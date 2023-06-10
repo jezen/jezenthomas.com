@@ -8,6 +8,7 @@ excerpt:
   just need to be aware of the language details which can circumvent the
   protection they provide.
 tags: haskell
+image: relational.jpg
 ---
 
 You know that _primitive obsession_ is an anti-pattern.
