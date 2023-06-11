@@ -125,6 +125,10 @@ nav li a:visited {
   font-size: 18px;
 }
 
+nav li a[aria-current=true] {
+  font-weight: bold;
+}
+
 @media (min-width: 920px) {
   nav li a {
     font-size: 13px;

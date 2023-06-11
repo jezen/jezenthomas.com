@@ -92,7 +92,7 @@ main = hakyllWith config $ do
         >>= loadAndApplyTemplate "templates/post-content.html" postCtx
         >>= saveSnapshot "content"
         >>= loadAndApplyTemplate "templates/post.html" postCtx
-        >>= loadAndApplyTemplate "templates/default.html" postCtx
+        >>= loadAndApplyTemplate "templates/default.html" (postCtx <> boolField "page-blog" (const True))
         >>= cleanIndexUrls
 
   match "index.html" $ do
@@ -106,6 +106,7 @@ main = hakyllWith config $ do
             applyTemplateList itemTpl postCtx (take n posts)
       let ctx =  constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
               <> postCtx
+              <> boolField "page-home" (const True)
               <> cssPathCtx
 
       getResourceBody
@@ -118,6 +119,7 @@ main = hakyllWith config $ do
     dep <- makePatternDependency "css/*"
     rulesExtraDependencies [dep] $ compile $ do
       let ctx =  constField "title" "About | Jezen Thomas"
+              <> boolField "page-about" (const True)
               <> cssPathCtx
               <> defaultContext
 
@@ -132,6 +134,7 @@ main = hakyllWith config $ do
     rulesExtraDependencies [dep] $ compile $ do
       posts <- recentFirst =<< loadAll "posts/*/*/*"
       let ctx =  constField "title" "All Posts | Jezen Thomas"
+              <> boolField "page-blog" (const True)
               <> publishedGroupField "years" posts postCtx
               <> cssPathCtx
               <> defaultContext
