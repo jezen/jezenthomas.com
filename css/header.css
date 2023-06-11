@@ -1,11 +1,12 @@
 .site-title {
-  font-size: 18px;
+  font-size: 22px;
   font-weight: bold;
   margin: 0 auto 1rem;
 }
 
 @media (min-width: 920px) {
   .site-title {
+    font-size: 18px;
     margin: 1.6rem auto .4rem;
   }
 }
@@ -22,6 +23,10 @@
 }
 
 .about .portrait {
+  display: none;
+}
+
+.about .bio {
   display: none;
 }
 
@@ -54,6 +59,10 @@
     border: 1px solid #e3e3e3;
     border-radius: 6px;
   }
+
+  .about .bio {
+    display: block;
+  }
 }
 
 .about p {
@@ -64,12 +73,14 @@
   max-width: 300px;
 }
 
-nav::before {
-  display: block;
-  width: 80px;
-  height: 1px;
-  border-top: 1px solid #ddd;
-  content: '';
+@media (min-width: 920px) {
+  nav::before {
+    display: block;
+    width: 80px;
+    height: 1px;
+    border-top: 1px solid #ddd;
+    content: '';
+  }
 }
 
 nav ul {
@@ -78,25 +89,47 @@ nav ul {
 }
 
 nav ul li {
-  margin: 0;
+  display: inline-block;
+  margin: 0 20px 0 0;
   position: relative;
 }
 
-nav li::before {
-  color: rgba(71, 127, 165, 0.59);
-  content: "→";
-  font-size: 13.5px;
-  line-height: 1.38em;
-  margin-right: 6px;
-  text-shadow: 0 0 10px rgb(21 180 241 / 29%);
+#bmac {
+  display: none;
+}
+
+@media (min-width: 920px) {
+  nav ul li {
+    display: list-item;
+    margin: 0;
+  }
+
+  nav ul li::before {
+    color: rgba(71, 127, 165, 0.59);
+    content: "→";
+    font-size: 13.5px;
+    line-height: 1.38em;
+    margin-right: 6px;
+    text-shadow: 0 0 10px rgb(21 180 241 / 29%);
+  }
+
+  #bmac {
+    display: list-item;
+  } 
 }
 
 nav li a,
 nav li a:visited {
   border: none;
   color: #333;
-  font-size: 13px;
-  font-weight: bold;
+  font-size: 18px;
+}
+
+@media (min-width: 920px) {
+  nav li a {
+    font-size: 13px;
+    font-weight: bold;
+  }
 }
 
 nav li a:hover {
