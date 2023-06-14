@@ -7,7 +7,7 @@ excerpt:
   types into something more meaningful. Here are a couple of functions you'll
   need to achieve that.
 tags: haskell
-image: relational.jpg
+image: yesod-forms-newtypes-and-smart-constructors.jpg
 ---
 
 Say we're writing a web application, and we're modelling a login form.
