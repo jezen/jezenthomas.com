@@ -9,6 +9,7 @@ import Data.Monoid ((<>))
 import Data.Ord (Down(..), comparing)
 import Data.Time.Calendar (toGregorian)
 import Data.Time.Clock (UTCTime, utctDay)
+import Data.Time.Format (formatTime)
 import Data.Time.Locale.Compat (defaultTimeLocale)
 import Debug.Trace
 import Hakyll hiding (host)
@@ -77,22 +78,30 @@ main = hakyllWith config $ do
       makeItem ""
         >>= loadAndApplyTemplate "templates/empty.html" ctx
 
-  let postCtx = postSlugField "slug" <> pageCtx <> cssPathCtx
+  let postCtx =  postSlugField "slug"
+              <> pageCtx
+              <> cssPathCtx
+              <> boolField "page-blog" (const True)
+
+  let utcCtx = field "utcOrdinal" getItemUTCOrdinal
+            <> field "utcDay" getItemUTCDay
+            <> field "utcMonth" getItemUTCMonth
+            <> field "utcYear" getItemUTCYear
 
   postsMeta <- getAllMetadata "posts/*/*/*"
 
   version "redirects" $ createRedirects redirects
 
   match "posts/*/*/*" $ do
-    trace (show postsMeta) $ route postCleanRoute
+    route postCleanRoute
     dep <- makePatternDependency "css/*"
     rulesExtraDependencies [dep] $ compile $ do
       ident <- getUnderlying
       blogCompiler
         >>= loadAndApplyTemplate "templates/post-content.html" postCtx
         >>= saveSnapshot "content"
-        >>= loadAndApplyTemplate "templates/post.html" postCtx
-        >>= loadAndApplyTemplate "templates/default.html" (postCtx <> boolField "page-blog" (const True))
+        >>= loadAndApplyTemplate "templates/post.html" (postCtx <> utcCtx)
+        >>= loadAndApplyTemplate "templates/default.html" postCtx
         >>= cleanIndexUrls
 
   match "index.html" $ do
@@ -262,3 +271,33 @@ publishedGroupField name posts postContext = listField name groupCtx $ do
       extractTime :: Item a -> Compiler (UTCTime, Item a)
       extractTime item = getItemUTC defaultTimeLocale (itemIdentifier item)
         >>= \time -> pure (time, item)
+
+getItemUTCDay :: Item String -> Compiler String
+getItemUTCDay item = do
+  utc <- getItemUTC defaultTimeLocale $ itemIdentifier item
+  pure $ formatTime defaultTimeLocale "%e" utc
+
+getItemUTCMonth :: Item String -> Compiler String
+getItemUTCMonth item = do
+  utc <- getItemUTC defaultTimeLocale $ itemIdentifier item
+  pure $ formatTime defaultTimeLocale "%B" utc
+
+getItemUTCYear :: Item String -> Compiler String
+getItemUTCYear item = do
+  utc <- getItemUTC defaultTimeLocale $ itemIdentifier item
+  pure $ formatTime defaultTimeLocale "%Y" utc
+
+getItemUTCOrdinal :: Item String -> Compiler String
+getItemUTCOrdinal item = do
+  utc <- getItemUTC defaultTimeLocale $ itemIdentifier item
+  pure $ ordinalSuffix utc
+  where
+  ordinalSuffix :: UTCTime -> String
+  ordinalSuffix t =
+    let dayOfMonth = (\(_, _, a) -> a) (toGregorian (utctDay t))
+        suffix n
+          | n `elem` [1,21,31] = "st"
+          | n `elem` [2,22]    = "nd"
+          | n `elem` [3,23]    = "rd"
+          | otherwise          = "th"
+    in suffix dayOfMonth

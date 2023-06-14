@@ -16,18 +16,19 @@
     <meta name="author" content="Jezen Thomas">
     <meta property="og:title" content="$title$">
     <meta property="og:description" content="$if(excerpt)$$excerpt$$else$Haskell programmer, entrepreneur, co-founder & CTO of Supercede.$endif$">
-
-    <!--  -->
-    <meta name="format-detection" content="telephone=no">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-
     <meta property="og:type" content="article">
     <meta property="og:image" content="$if(image)$/static/img/$image$$else$/static/img/prestiz.jpg$endif$">
     <meta property="og:site_name" content="Jezen Thomas">
-
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="$title$">
+    <meta name="twitter:description" content="$if(excerpt)$$excerpt$$else$Haskell programmer, entrepreneur, co-founder & CTO of Supercede.$endif$">
+    <meta name="twitter:image" content="$if(image)$/static/img/$image$$else$/static/img/prestiz.jpg$endif$">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/$cssPath$" />
-    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed" />
+    <link rel="stylesheet" type="text/css" href="/$cssPath$">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
     $partial("templates/header.html")$
@@ -40,24 +41,6 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
     ga('create', 'UA-37713515-1', 'auto');
     ga('send', 'pageview');
-    </script>
-
-    <!-- A better programmer would have written this in Haskell. Alas… -->
-    <script type="text/javascript">
-      function ordinal(n) {
-         var s = ["th","st","nd","rd"],
-             v = n % 100;
-         return n + '<sup>' + (s[(v-20)%10]||s[v]||s[0]) + '</sup>';
-      }
-
-      [].slice.call(document.querySelectorAll('.post-date span')).forEach(function(el) {
-        var dateTokens = el.innerText.split(' ');
-        el.innerHTML = [
-          dateTokens[0],
-          ordinal(parseInt(dateTokens[1], 10)) + ',',
-          dateTokens[2]
-        ].join(' ');
-      })
     </script>
 
     <script type="text/javascript">
