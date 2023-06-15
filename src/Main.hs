@@ -81,7 +81,6 @@ main = hakyllWith config $ do
   let postCtx =  postSlugField "slug"
               <> pageCtx
               <> cssPathCtx
-              <> boolField "page-blog" (const True)
 
   let utcCtx = field "utcOrdinal" getItemUTCOrdinal
             <> field "utcDay" getItemUTCDay
@@ -101,7 +100,7 @@ main = hakyllWith config $ do
         >>= loadAndApplyTemplate "templates/post-content.html" postCtx
         >>= saveSnapshot "content"
         >>= loadAndApplyTemplate "templates/post.html" (postCtx <> utcCtx)
-        >>= loadAndApplyTemplate "templates/default.html" postCtx
+        >>= loadAndApplyTemplate "templates/default.html" (postCtx <> boolField "page-blog" (const True))
         >>= cleanIndexUrls
 
   match "index.html" $ do
