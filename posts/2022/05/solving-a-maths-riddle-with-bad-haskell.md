@@ -123,22 +123,26 @@ approach? Also no. Who said Haskell can't do quick and dirty scripting work?
 
 Running this produces 14 possible answers, and that's without enumerating all
 those possible answers that would result from changing the order of operations
-with brackets. After submitting my answers, my colleague rejected my approach
-because I "used a program", and "that's cheating."
+with brackets.
 
-\$$ 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 * 9 \$$
-\$$ 1 + 2 + 3 - 4 * 5 + 6 * 7 + 8 * 9 \$$
-\$$ 1 + 2 - 3 * 4 + 5 * 6 + 7 + 8 * 9 \$$
-\$$ 1 + 2 - 3 * 4 - 5 + 6 * 7 + 8 * 9 \$$
-\$$ 1 + 2 * 3 + 4 * 5 - 6 + 7 + 8 * 9 \$$
-\$$ 1 - 2 + 3 * 4 * 5 + 6 * 7 + 8 - 9 \$$
-\$$ 1 - 2 + 3 * 4 * 5 - 6 + 7 * 8 - 9 \$$
-\$$ 1 - 2 * 3 + 4 * 5 + 6 + 7 + 8 * 9 \$$
-\$$ 1 - 2 * 3 - 4 + 5 * 6 + 7 + 8 * 9 \$$
-\$$ 1 - 2 * 3 - 4 - 5 + 6 * 7 + 8 * 9 \$$
-\$$ 1 * 2 * 3 + 4 + 5 + 6 + 7 + 8 * 9 \$$
-\$$ 1 * 2 * 3 - 4 * 5 + 6 * 7 + 8 * 9 \$$
-\$$ 1 * 2 * 3 * 4 + 5 + 6 + 7 * 8 + 9 \$$
-\$$ 1 * 2 * 3 * 4 + 5 + 6 - 7 + 8 * 9 \$$
+```
+1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 * 9
+1 + 2 + 3 - 4 * 5 + 6 * 7 + 8 * 9
+1 + 2 - 3 * 4 + 5 * 6 + 7 + 8 * 9
+1 + 2 - 3 * 4 - 5 + 6 * 7 + 8 * 9
+1 + 2 * 3 + 4 * 5 - 6 + 7 + 8 * 9
+1 - 2 + 3 * 4 * 5 + 6 * 7 + 8 - 9
+1 - 2 + 3 * 4 * 5 - 6 + 7 * 8 - 9
+1 - 2 * 3 + 4 * 5 + 6 + 7 + 8 * 9
+1 - 2 * 3 - 4 + 5 * 6 + 7 + 8 * 9
+1 - 2 * 3 - 4 - 5 + 6 * 7 + 8 * 9
+1 * 2 * 3 + 4 + 5 + 6 + 7 + 8 * 9
+1 * 2 * 3 - 4 * 5 + 6 * 7 + 8 * 9
+1 * 2 * 3 * 4 + 5 + 6 + 7 * 8 + 9
+1 * 2 * 3 * 4 + 5 + 6 - 7 + 8 * 9
+```
+
+After submitting my answers, my colleague rejected my approach because I "used
+a program", and "that's cheating."
 
 [0]: https://hackage.haskell.org/package/hint

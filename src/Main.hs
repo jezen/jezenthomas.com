@@ -46,7 +46,6 @@ styleSheets =
   , "css/default.css"
   , "css/header.css"
   , "css/syntax.css"
-  , "css/katex.css"
   ]
 
 config :: Configuration
