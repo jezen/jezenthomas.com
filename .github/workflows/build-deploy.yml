@@ -1,0 +1,19 @@
+name: Build and deploy to GitHub Pages
+on: push
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: cachix/install-nix-action@v20
+        with:
+          nix_path: nixpkgs=channel:nixos-unstable
+      - uses: DeterminateSystems/magic-nix-cache-action@v2
+      - run: nix-build
+      - run: ./result/bin/jgt rebuild
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          folder: _site
