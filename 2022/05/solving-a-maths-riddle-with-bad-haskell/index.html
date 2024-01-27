@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="stylesheet" type="text/css" href="/css/cbc73378bbe1bec3d847d13bdfe0e119.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -166,22 +166,23 @@ efficient way to find the possible answers? No. Do I care enough to optimise my
 approach? Also no. Who said Haskell can’t do quick and dirty scripting work?</p>
 <p>Running this produces 14 possible answers, and that’s without enumerating all
 those possible answers that would result from changing the order of operations
-with brackets. After submitting my answers, my colleague rejected my approach
-because I “used a program”, and “that’s cheating.”</p>
-<p>$$ 1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 * 9 $$
-$$ 1 + 2 + 3 - 4 * 5 + 6 * 7 + 8 * 9 $$
-$$ 1 + 2 - 3 * 4 + 5 * 6 + 7 + 8 * 9 $$
-$$ 1 + 2 - 3 * 4 - 5 + 6 * 7 + 8 * 9 $$
-$$ 1 + 2 * 3 + 4 * 5 - 6 + 7 + 8 * 9 $$
-$$ 1 - 2 + 3 * 4 * 5 + 6 * 7 + 8 - 9 $$
-$$ 1 - 2 + 3 * 4 * 5 - 6 + 7 * 8 - 9 $$
-$$ 1 - 2 * 3 + 4 * 5 + 6 + 7 + 8 * 9 $$
-$$ 1 - 2 * 3 - 4 + 5 * 6 + 7 + 8 * 9 $$
-$$ 1 - 2 * 3 - 4 - 5 + 6 * 7 + 8 * 9 $$
-$$ 1 * 2 * 3 + 4 + 5 + 6 + 7 + 8 * 9 $$
-$$ 1 * 2 * 3 - 4 * 5 + 6 * 7 + 8 * 9 $$
-$$ 1 * 2 * 3 * 4 + 5 + 6 + 7 * 8 + 9 $$
-$$ 1 * 2 * 3 * 4 + 5 + 6 - 7 + 8 * 9 $$</p>
+with brackets.</p>
+<pre><code>1 + 2 + 3 + 4 + 5 + 6 + 7 + 8 * 9
+1 + 2 + 3 - 4 * 5 + 6 * 7 + 8 * 9
+1 + 2 - 3 * 4 + 5 * 6 + 7 + 8 * 9
+1 + 2 - 3 * 4 - 5 + 6 * 7 + 8 * 9
+1 + 2 * 3 + 4 * 5 - 6 + 7 + 8 * 9
+1 - 2 + 3 * 4 * 5 + 6 * 7 + 8 - 9
+1 - 2 + 3 * 4 * 5 - 6 + 7 * 8 - 9
+1 - 2 * 3 + 4 * 5 + 6 + 7 + 8 * 9
+1 - 2 * 3 - 4 + 5 * 6 + 7 + 8 * 9
+1 - 2 * 3 - 4 - 5 + 6 * 7 + 8 * 9
+1 * 2 * 3 + 4 + 5 + 6 + 7 + 8 * 9
+1 * 2 * 3 - 4 * 5 + 6 * 7 + 8 * 9
+1 * 2 * 3 * 4 + 5 + 6 + 7 * 8 + 9
+1 * 2 * 3 * 4 + 5 + 6 - 7 + 8 * 9</code></pre>
+<p>After submitting my answers, my colleague rejected my approach because I “used
+a program”, and “that’s cheating.”</p>
 
   </article>
 </div>
@@ -202,7 +203,5 @@ $$ 1 * 2 * 3 * 4 + 5 + 6 - 7 + 8 * 9 $$</p>
         el.innerText = '[' + content + ']';
       })
     </script>
-    <script defer src="/static/js/katex/katex.min.js"></script>
-    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
   </body>
 </html>
