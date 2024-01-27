@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>My Uncomplicated Git Workflow</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Stop screwing around with version control ceremony and learn to love Git from the command line.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="My Uncomplicated Git Workflow">
+    <meta property="og:description" content="Stop screwing around with version control ceremony and learn to love Git from the command line.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="My Uncomplicated Git Workflow">
+    <meta name="twitter:description" content="Stop screwing around with version control ceremony and learn to love Git from the command line.">
+    <meta name="twitter:image" content="/static/img/prestiz.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">My Uncomplicated Git Workflow</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        November 12<sup>th</sup>, 2015
+        
+        | Gdynia, Poland
+        
+      </p>
+    </div>
+    <p><span class="run-in"><span class="drop">R</span>ecently I have been
+surprised</span> with how often I see developers struggle with their version
+control system. Given that using version control is such a central part of any
+serious software endeavour, struggling with it must be a great way to kill
+developer productivity and potentially lose work.</p>
+<p>I don’t find it valuable to spend brain cycles context switching between
+thinking about what my production code should look like and trying to remember
+which Git command and with which flags is appropriate in any given context. For
+this reason, my Git workflow is about as simple as I can make it.</p>
+<p>My workflow exists exclusively in the terminal, and leans heavily on Git aliases
+and a Ruby gem (don’t laugh) called <em>git-smart</em>. The gem seems not to be
+actively maintained any more, but it still works regardless. I don’t use
+git-flow, and I advise against using it because it is needlessly complex.</p>
+<p>Reasons for only using Git in the terminal:</p>
+<ul>
+<li>I want to protect my arms, wrists, hands, and fingers by not having to shuffle
+a cursor around the screen with a mouse or trackpad. Typing only.</li>
+<li>My terminal is easy on the eyes with its dark theme so I suffer from fewer
+headaches when working.</li>
+<li>I am unable to fathom how anyone would find a GUI application like SourceTree
+less intimidating than Git’s command-line interface.</li>
+</ul>
+<h2 id="pulling-changes">Pulling changes</h2>
+<p>A typical working session for me begins with pulling the latest changes from the
+remote repository. I use the <code>git smart-pull</code> command provided by the git-smart
+gem for this, and I have the command aliased in my global <code>.gitconfig</code> so I only
+need to type <code>git sp</code>. The git-smart gem will first run <code>git fetch origin</code>, and
+then figure out the best way to pull changes from remote, rebasing if necessary.
+It’s also nice that it tells you which commands it’s running and when, so you
+can learn more about Git while it makes decisions for you.</p>
+<h2 id="reviewing-changes">Reviewing changes</h2>
+<p>After I have spent time working on a task, I will check the status of the
+working directory with the standard <code>git status</code> command, which I have aliased
+to <code>git st</code>. I use the standard output because I can scan it more quickly with
+my eyes. In most cases, I already know what the status of the working directory
+will be before checking the status, but I run the command anyway as a simple
+sanity check. I am usually able to scan the status in a fraction of a second.</p>
+<p>Assuming checking the status didn’t give me any surprises, I inspect the work I
+did in greater detail with <code>git diff</code>. I don’t alias this command, because I
+find it comfortable enough to type at speed. I do make an effort to keep my
+commits small, so I am usually able to scan the diff in about a second.</p>
+<h2 id="staging-changes">Staging changes</h2>
+<p>Now I am ready to begin staging my changes. In the cases when I want to stage
+<em>everything</em> — and this is the most common case — I use the <code>git add --all</code>
+command, which I have aliased to <code>git aa</code>. If on the other hand I feel my work
+should be split into multiple commits, I’ll stage hunks of changes with <code>git add -p</code>. I use this command often, but not often enough to justify creating an alias
+for it. Using the <code>-p</code> flag when staging puts you in an interactive patch mode
+that asks you which hunks to stage. Answer <code>y</code> for yes, <code>n</code> for no, and <code>q</code> to
+quit patching. Sometimes the hunk it presents to you contains more code than you
+wish to stage, and at that point you can answer <code>s</code> for split.</p>
+<p>Sometimes I feel the need to check once again which changes are staged, but <code>git diff</code> alone won’t work here. For staged changes, you need to run <code>git diff --cached</code>, which I have aliased to <code>git dc</code>.</p>
+<h2 id="committing-changes">Committing changes</h2>
+<p>When I’m ready to commit my changes, I run <code>git commit</code>, which I have aliased to
+<code>git ci</code>. I almost <em>never</em> use the <code>-m</code> flag when committing. Instead, Git opens
+up my text editor so I can comfortably write a proper commit message there.</p>
+<p>If I forget to add some changes to the commit and/or I want to change the commit
+message, I use <code>git ci --amend</code>. If I want to undo the commit entirely, I use
+<code>git reset HEAD~1</code>.</p>
+<p>If there are no other commits to make, I will run <code>git sp</code> again to ensure I
+have the latest changes locally, and then I run <code>git push</code> to share my work with
+my team.</p>
+<h2 id="working-with-branches">Working with branches</h2>
+<p>I’m generally not a fan of the pull-request model of collaboration, and I don’t
+like the idea that a team of developers can’t trust one another enough to commit
+directly to master. The pull-request model usually involves a synchronous
+code-review step, where the PR can not be merged into master until it has been
+approved by other members of the team. It’s unfortunate that we have tools that
+cater to an asynchronous workflow, and yet use them synchronously anyway. The PR
+model can be a necessary evil however if a project doesn’t have any tests.</p>
+<p>When I do need to use branches, I make liberal use of <code>git checkout</code>, which I
+have aliased to <code>git co</code>. If I want to create a new branch, I use <code>git co -b &lt;branchname&gt;</code>. If I want to switch back to the previous branch I was on (I
+sometimes shuffle quickly between a feature branch and master), I use <code>git co -</code>. The checkout command is also handy for clearing away unstaged changes that I
+don’t care for anymore, with <code>git co -- .</code>.</p>
+<p>If I need to merge from a feature branch back into master, I use the <code>git smart-merge</code> command from git-smart. I don’t use this often enough to bother
+creating an alias. This is another one of those commands that decides the best
+strategy for merging given some context, and it’s always just done the right
+thing for me.</p>
+<h2 id="the-view-from-10000-feet">The view from 10,000 feet</h2>
+<p>From time to time, I like to briefly check how the project has been progressing,
+and again git-smart pulls through for us here providing the <code>git smart-log</code>
+command, which I have aliased to <code>git sl</code>.</p>
+<h2 id="getting-distracted">Getting distracted</h2>
+<p>Sometimes I’ll be half-way through working on a task and I will have to
+context-switch to another task. I don’t want to commit my work in an unfinished
+state, but I do want a clean working directory. In this case, I use <code>git stash</code>.
+When I want to retrieve my unfinished work, I use <code>git stash apply</code>, followed by
+<code>git stash drop</code> assuming nothing went wrong when applying the latest stash.
+This is safer than using <code>git stash pop</code> directly.</p>
+<h2 id="problems-in-the-wild">Problems in the wild</h2>
+<p>There is a caveat to using git-smart, and that is it doesn’t play nicely with
+Git submodules. What happens is, a submodule that is yet to be updated will make
+the working directory appear dirty, when in reality it isn’t. When git-smart
+sees a dirty working directory, it’ll stash your changes before pulling, and
+then pop them after pulling, which will pop the wrong stash which could
+potentially cause problems. In practice, this shouldn’t be an issue because
+submodules should be avoided anyway.</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>Learning to harness the power of Git properly is a key factor in communicating
+with colleagues effectively, and it also makes projects far easier to maintain.</p>
+<p>Uninstall SourceTree. Abandon git-flow.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

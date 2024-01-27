@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Working In The Dark</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="It's not uncommon to work unsociable hours, be that because of deadlines, midnight inspiration, or just skipping a few timezones. But that doesn't mean your eyes have to suffer. Here's how I protect mine.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Working In The Dark">
+    <meta property="og:description" content="It's not uncommon to work unsociable hours, be that because of deadlines, midnight inspiration, or just skipping a few timezones. But that doesn't mean your eyes have to suffer. Here's how I protect mine.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Working In The Dark">
+    <meta name="twitter:description" content="It's not uncommon to work unsociable hours, be that because of deadlines, midnight inspiration, or just skipping a few timezones. But that doesn't mean your eyes have to suffer. Here's how I protect mine.">
+    <meta name="twitter:image" content="/static/img/prestiz.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Working In The Dark</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        March  6<sup>th</sup>, 2016
+        
+        | Gdynia, Poland
+        
+      </p>
+    </div>
+    <p><span class="run-in"><span class="drop">I</span> often find myself</span>
+working on my computer in dark environments. Sometimes I’ll be writing code
+late into the evening or typing up an article on a long-haul flight. The
+blinding difference in luminosity created by the computer screen is an
+excellent way of killing your eyesight. It’s also a great way to piss everyone
+off around you when they’re trying to get some sleep.</p>
+<p>To mitigate this problem, I use two tools: <a href="http://justgetflux.com">Flux</a> and <a href="https://iterm2.com/">iTerm</a>.</p>
+<h2 id="flux">Flux</h2>
+<p>Flux is a tool for controlling the warmth of the light emanating from your
+computer display. I believe that unless you’re a graphic designer and need to
+see accurate colours, everyone should be using this tool.</p>
+<p>The primary utility of Flux is to make the light from your screen less blue so
+it doesn’t screw with your natural sleep patterns. In total darkness though,
+this alone is not enough to curb screen brightness and protect your eyes.
+Instead, I use a neat little feature of Flux called ‘Darkroom’. The Darkroom
+feature emulates a traditional photograph development room. Compare the
+following photos…</p>
+<figure>
+<img src="/static/img/without_flux.jpg" alt="Without Flux, the screen is too bright and kills my eyes" />
+<figcaption aria-hidden="true">Without Flux, the screen is too bright and kills my eyes</figcaption>
+</figure>
+<p>The same shot with Darkroom enabled…</p>
+<figure>
+<img src="/static/img/darkroom.jpg" alt="Enabling Darkroom means you can safely view light-background content at night" />
+<figcaption aria-hidden="true">Enabling Darkroom means you can safely view light-background content at night</figcaption>
+</figure>
+<h2 id="iterm">iTerm</h2>
+<p>The Darkroom feature takes care of viewing anything with a light background,
+but what about anything with a dark background? My terminal background is black
+and the window is full-screen, so viewing it with Darkroom enabled means I see
+a screen-full of bright red.</p>
+<p>Luckily, making the terminal play nicely with Flux’s Darkroom is simple enough
+with a couple of settings. After enabling Darkroom, I open the preferences pane
+for iTerm, and navigate to Profiles &gt; Colors. At the bottom of the pane, there
+is a dropdown menu labelled ‘Load Presets…’. Selecting ‘Light Background’
+from the menu takes care of most of that colour problem.</p>
+<p>There are a couple of further minor tweaks that I make for working in Vim (which
+is where I spend most of my time).</p>
+<pre><code>set bg=light
+set nocursorline</code></pre>
+<p>And just like that, no more sore eyes!</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

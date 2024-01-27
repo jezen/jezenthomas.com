@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>We Deserve Better Than BEM</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="A simple approach to composing web page components using a compiler and a monadic action. It's easier than BEM, and it works better too.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="We Deserve Better Than BEM">
+    <meta property="og:description" content="A simple approach to composing web page components using a compiler and a monadic action. It's easier than BEM, and it works better too.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/conductor.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="We Deserve Better Than BEM">
+    <meta name="twitter:description" content="A simple approach to composing web page components using a compiler and a monadic action. It's easier than BEM, and it works better too.">
+    <meta name="twitter:image" content="/static/img/conductor.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">We Deserve Better Than BEM</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        August 24<sup>th</sup>, 2022
+        
+        | Odessa, Ukraine
+        
+      </p>
+    </div>
+    <p>The past decade has seen a number of CSS methodologies come and go in web
+development. The approach that seems to have become most widely adopted is
+called Block Element Modifier (BEM).</p>
+<p>BEM aims to make user interface code more manageable by ignoring the
+<em>cascading</em> part of Cascading Style Sheets, keeping the specificity of
+selectors low, and avoiding naming collisions. It does this by imposing a
+naming convention which programmers should rigidly adhere to.</p>
+<p>Applied BEM looks something like this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;header</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;header&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;img</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;header__logo header__logo--success&quot;</span> <span class="er">src</span><span class="ot">=</span><span class="st">&quot;/slava_ukraini.jpg&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/header&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;style&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.header</span> {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span>: <span class="fu">linear-gradient(</span><span class="dv">-180</span><span class="dt">deg</span><span class="op">,</span> <span class="cn">royalblue</span> <span class="dv">50</span><span class="dt">%</span><span class="op">,</span> <span class="cn">yellow</span> <span class="dv">50</span><span class="dt">%</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.header__logo--success</span> {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">position</span>: <span class="dv">absolute</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/style&gt;</span></span></code></pre></div>
+<p>The <em>block</em> in this case is <code>header</code>. We delimit the block and the <em>element</em>
+with a couple of underscores, and appending two hyphens and some string denotes
+a modifier.</p>
+<p>In practice, not only does this turn into a mess of punctuation, but this
+approach is also rather fragile.</p>
+<p>There’s nothing but human discipline to stop you from accidentally mistyping a
+selector, or inadvertently introducing a naming collision. When the visual
+design of your software changes and some markup is removed, there is nothing to
+indicate that the associated styles are now dead code and can safely be
+removed.</p>
+<p>Fundamentally, I don’t believe that relying on human discipline is a sensible
+way to scale a software project. We deserve better. Computers are perfectly
+capable of managing the relationships between components of a software system,
+whether that’s some markup and its associated styles and scripts, or classes
+and functions and the data types that flow between.</p>
+<p>The tools are available to us. We just need to use them.</p>
+<p>At Supercede we’re leveraging a technique which I think scales better than BEM.
+The technique is facilitated by Yesod which is the Haskell web framework that
+we use, but there’s no reason why this technique couldn’t be recreated in other
+frameworks.</p>
+<p>Approaching the previous <code>header</code> component in Yesod would look like this<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">header ::</span> <span class="dt">Widget</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>header <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  theId <span class="ot">&lt;-</span> newIdent</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  [whamlet|</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;header </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;img </span><span class="er">class=&quot;logo</span><span class="kw"> </span><span class="er">success&quot;</span><span class="kw"> </span><span class="er">src=&quot;/slava_ukraini</span><span class="st">.jpg</span><span class="er">&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  |]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  toWidget [cassius|</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    ##{theId}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      background: linear-gradient(-180deg, royalblue 50%, yellow 50%)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      .logo.success</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        position: absolute</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  |]</span></code></pre></div>
+<p>The interesting part here is the use of <code>newIdent</code>. This is a monadic action
+which will bind <code>theId</code> to an identifier which is guaranteed to not collide
+with any other identifiers on the page which are generated the same way.</p>
+<p>This works by maintaining a counter in some request-specific internal state. At
+runtime when a request comes in and the application begins building up the page
+to serve to the user, every run of the <code>newIdent</code> action asks the state for the
+current count. The count is then incremented and stored back in the state, and
+the new count is used to generate a unique identifier.</p>
+<p>Composing a couple of widgets together illustrates this effect.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">myWebPage ::</span> <span class="dt">Widget</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>myWebPage <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  theId <span class="ot">&lt;-</span> newIdent</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  [whamlet|</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">^{</span>header<span class="kw">}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">^{</span>footer<span class="kw">}</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  |]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  toWidget [cassius|</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    ##{theId}</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      margin: auto</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  |]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ot">  header ::</span> <span class="dt">Widget</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  header <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    theId <span class="ot">&lt;-</span> newIdent</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    [whamlet|</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;header </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span>Some header text…</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    |]</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    toWidget [cassius|</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      ##{theId}</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        background: royalblue</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    |]</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="ot">  footer ::</span> <span class="dt">Widget</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  footer <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    theId <span class="ot">&lt;-</span> newIdent</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    [whamlet|</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;footer </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span>&amp;copy; Copyright Acme Inc. 2022</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    |]</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    toWidget [cassius|</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>      ##{theId}</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        background: yellow</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    |]</span></code></pre></div>
+<p>This Haskell code generates markup and styles which look like this:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">id</span><span class="ot">=</span><span class="st">&quot;hident3&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;header</span> <span class="er">id</span><span class="ot">=</span><span class="st">&quot;hident1&quot;</span><span class="kw">&gt;</span>Some header text…<span class="kw">&lt;/header&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;footer</span> <span class="er">id</span><span class="ot">=</span><span class="st">&quot;hident2&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;copy;</span> Copyright Acme Inc. 2022<span class="kw">&lt;/footer&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;style&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident1</span> { <span class="kw">background</span>: <span class="cn">royalblue</span><span class="op">;</span> }</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident2</span> { <span class="kw">background</span>: <span class="cn">yellow</span><span class="op">;</span> }</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident3</span> { <span class="kw">margin</span>: <span class="bu">auto</span><span class="op">;</span> }</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/style&gt;</span></span></code></pre></div>
+<p>So, correct use of the framework ensures our IDs are unique even when they’re
+all composed together, and the compiler ensures we don’t mistype the names that
+bind the HTML elements with their associated CSS and JavaScript. The compiler
+also helps us clean up dead code along the way.</p>
+<p>Ordinarily you might feel uncomfortable using a name as nondescriptive as
+<code>theId</code>, but in practice we tend to only use one unique identifier per widget.
+Each binding is scoped to its respective widget, and the name
+doesn’t appear verbatim in the generated HTML, CSS, or JavaScript.</p>
+<p>This approach also allows us to improve the <em>locality</em> of the code. Associated
+markup, styles, and scripts can all be written in adjacent code which makes the
+writing process less cumbersome.</p>
+<p>Because naming collisions are prevented by the application, we’re free to embrace
+specificity in CSS and just use IDs everywhere instead of limiting ourselves
+to classes. Relying on IDs in web development is usually avoided because
+they’re hard to manage manually at scale, but this pain goes away if you can
+delegate that management to a sufficiently sophisticated mechanism.</p>
+<p>Widget composition is one of the unsung heroes of the Yesod framework. Given
+that the framework is written in Haskell, I think people are often more
+interested in talking about exotic-sounding ideas like <em>zygohistomorphic
+prepromorphisms</em>, but the truth is that more basic concepts make up the vast
+majority of web development work, so those are the areas we should be focusing
+on. The composition of widgets and their associated styles and scripts is
+exactly one of those areas.</p>
+<p>I’ve found that the more responsibility I delegate away from humans and into
+the compiler, the fewer mistakes I tend to see in production. The mechanisms
+I’ve described here aren’t exactly new either — they’ve existed in Yesod for
+more than a decade. If your web framework of choice doesn’t have something like
+this, you should be asking yourself an important question: <em>Why not?</em></p>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Actually, it’s more typical to use <a href="https://www.yesodweb.com/book/shakespearean-templates#shakespearean-templates_attributes">syntactical conveniences</a> that Hamlet provides. The verbose version is used here so there is less unfamiliar syntax for the reader.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>How I Write Elm Applications</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="This covers a few patterns that I often lean on when writing non-trivial single-page applications in Elm. The bulk of this is breaking apart the application state, and then traversing it with lenses.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="How I Write Elm Applications">
+    <meta property="og:description" content="This covers a few patterns that I often lean on when writing non-trivial single-page applications in Elm. The bulk of this is breaking apart the application state, and then traversing it with lenses.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="How I Write Elm Applications">
+    <meta name="twitter:description" content="This covers a few patterns that I often lean on when writing non-trivial single-page applications in Elm. The bulk of this is breaking apart the application state, and then traversing it with lenses.">
+    <meta name="twitter:image" content="/static/img/prestiz.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">How I Write Elm Applications</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        November  7<sup>th</sup>, 2020
+        
+        | Gdańsk, Poland
+        
+      </p>
+    </div>
+    <p>Most of my work over the past 10 years has involved writing what is often
+called a <em>wizard</em>.</p>
+<p>A wizard is essentially a multi-step process that guides a user through a
+particular workflow. For example, if you are installing a new application on
+your computer, the wizard might guide you through the following process:</p>
+<ol type="1">
+<li>Enter your license registration details</li>
+<li>Agree to the software author’s legal terms</li>
+<li>Specify an installation location</li>
+</ol>
+<p>Most web applications provide something similar. If a user needs to input a
+large amount of data for the application to then run a bunch of calculations,
+you could of course just provide the user with one big web form. At a certain
+size though, a single web form can be intimidating and provide a less than
+ideal user experience. The canonical way to improve the user experience here is
+to break up the web form into several separate pages. This is another example
+of a wizard.</p>
+<figure>
+<img src="/static/img/wizard-diagram.jpg" alt="Forms are easier to digest when they’re split into separate steps" />
+<figcaption aria-hidden="true">Forms are easier to digest when they’re split into separate steps</figcaption>
+</figure>
+<p>I’ve tried writing wizards in a number of different web technologies, and so
+far Elm has proven itself as by far the most robust and painless, <em>especially</em>
+when it inevitably comes to changing some conditional logic to meet the mutable
+needs of various business processes.</p>
+<p>For any small Elm application, project structure is easy. There is no reason
+why a 1,000 line Elm application can’t live in a single file. In fact this is
+really how every Elm application ought to begin its life. Start with a single
+file with the usual boilerplate and the following contents:</p>
+<ul>
+<li>A single sum type to model all of the messages your application supports</li>
+<li>A single model which contains all the application state</li>
+<li>A single update function for advancing the application state</li>
+<li>A single view function for rendering the application state on the page</li>
+</ul>
+<p>If your web form is complex enough to warrant being broken into separate pages
+however, then your application is naturally not going to consist of a small
+number of lines of code. A common concern among less experienced Elm
+programmers is that one big sum type for all of your messages becomes unwieldy
+to maintain. The same is said of having one big shallow record for all of the
+application state, or one big <code>update</code> function to match all the constructors
+of the one big <code>Msg</code> type. This is where unnecessary complexity starts to
+balloon as programmers add <em>clever</em> abstractions and misdirections, usually
+involving both <code>Html.map</code> and <code>Cmd.map</code>, separate <code>update</code> functions for each
+logical subsection of your application (usually with noticeably awkward type
+signatures), and some vague hand-waving in the direction of <em>encapsulation</em> and
+so-called <em>Clean Code</em>.</p>
+<p>I’d argue that this kind of misdirection is almost <em>never</em> what you want. I’d
+argue further that this applies <em>especially</em> to you if your background is in
+maintaining complex React/Angular applications, where invented complexity is
+the status quo and this kind of misdirection is simply what you have become
+desensitised to.</p>
+<p>So if the combination of <code>Html.map</code> and <code>Cmd.map</code> are to be avoided, how can we
+scale an Elm application without sacrificing developer ergonomics? In short,
+the tricks to employ are:</p>
+<ul>
+<li>Nested sum types</li>
+<li>Nested record types</li>
+<li>Nested update functions</li>
+<li>Small, composable view functions</li>
+<li>Function composition</li>
+<li>Lenses</li>
+</ul>
+<p>Let’s take a look at a more concrete application of these ideas. As an example,
+we can model the process of a person applying for a bank loan.</p>
+<p>The bank will want to ask the applicant a whole bunch of questions, which we
+could group into three categories:</p>
+<ol type="1">
+<li>Personal information</li>
+<li>Details on the purpose of the loan</li>
+<li>Financial information and creditworthiness</li>
+</ol>
+<p>This would suggest a three-step wizard or a three-page web form. A reasonable
+place to begin splitting our application apart into three smaller pieces is in
+our <code>Msg</code> type.</p>
+<h2 id="the-big-msg-type">The Big Msg Type</h2>
+<p>The naïve way to model the messages our application should support is with one
+big sum type, which might look something like this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Page</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">PersonalInformationPage</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">LoanPurposePage</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">FinancialDetailsPage</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Msg</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- System-wide messages</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">NoOp</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetPage</span> <span class="dt">Page</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Personal information</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetFirstName</span> <span class="dt">String</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetLastName</span> <span class="dt">String</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetAddressLine1</span> <span class="dt">String</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more messages for the personal information page</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Purpose of the loan</span></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetPurchaseItemCategory</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetPurchaseItemEstimatedValue</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more messages for the loan purpose page</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Financial information</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetMonthlyIncomeBeforeTax</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetMonthlyRentPayment</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more messages about the applicant's financial details</span></span></code></pre></div>
+<p>This <em>does</em> work, but at some point it becomes cumbersome to support a large
+number of constructors. The value for “large” is of course determined by the
+individual programmer’s personal taste and/or pain threshold. To ease this
+pain, people typically <em>extract</em> groups of messages into their own separate sum
+types, which subsequently forces them to write update functions that return a
+type <em>other</em> than the top-level <code>Msg</code> type.</p>
+<p><em>Don’t do that!</em></p>
+<p>The way to break these groups of constructors out is by first nesting them
+inside the <code>Msg</code> type, like this:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">PersonalInformationMsg</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">SetFirstName</span> <span class="dt">String</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetLastName</span> <span class="dt">String</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetAddressLine1</span> <span class="dt">String</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc..</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">LoanPurposeMsg</span> <span class="co">-- etc…</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">FinancialDetailsMsg</span> <span class="co">-- etc…</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Msg</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">NoOp</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetPage</span> <span class="dt">Page</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">PersonalInformationMsg</span> <span class="dt">PersonalInformationMsg</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">LoanPurposeMsg</span> <span class="dt">LoanPurposeMsg</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">FinancialDetailsMsg</span> <span class="dt">FinancialDetailsMsg</span></span></code></pre></div>
+<p>The new message types can live in the same file as the top-level <code>Msg</code> type.
+They can also be extracted to different files. That’s your choice.</p>
+<p>The next thing to tackle is our <code>update</code> function, since it needs to mirror our
+<code>Msg</code> type.</p>
+<h2 id="nested-update-functions">Nested Update Functions</h2>
+<p>I’ve seen people advocate for page-specific <code>update</code> functions which take a
+page-specific model and return a tuple of that page-specific model and a
+page-specific <code>Cmd Msg</code> equivalent. This is typically where you see <code>Cmd.map</code>
+sneaking in. These functions almost inevitably end up needing <em>something</em> from
+the top-level application-wide state, so you’ll often see some type signature
+like this:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   <span class="op">:</span> <span class="dt">PersonalInformationMsg</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">Model</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> (<span class="dt">PersonalInformationModel</span>, <span class="dt">Cmd</span> <span class="dt">PersonalInformationMsg</span>)</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span></code></pre></div>
+<p>This is <em>way</em> too complex already, and this approach doesn’t even actually buy
+you anything.</p>
+<p>The far simpler way to do this is to have every nested <code>update</code> function take a
+page-specific message, the <em>entire</em> application state, and return the same type
+for that state along with the top-level <code>Msg</code> type, like this:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation <span class="op">:</span> <span class="dt">PersonalInformationMsg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetFirstName</span> a    <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetLastName</span> a     <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine1</span> a <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>update <span class="op">:</span> <span class="dt">Msg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>update msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">NoOp</span> <span class="ot">-&gt;</span> (model, Cmd.none)</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetPage</span> page <span class="ot">-&gt;</span> ({ model <span class="op">|</span> page <span class="ot">=</span> page }, Cmd.none)</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">PersonalInformationMsg</span> subMsg <span class="ot">-&gt;</span> updatePersonalInformation subMsg model</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">LoanPurposeMsg</span> subMsg <span class="ot">-&gt;</span> updateLoanPurpose subMsg model</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">FinancialDetailsMsg</span> subMsg <span class="ot">-&gt;</span> updateFinancialDetails subMsg model</span></code></pre></div>
+<p>No complicated type signatures. No juggling of message types. No <code>Cmd.map</code>. Easy.</p>
+<p>Of course the whole point of our <code>update</code> function is to advance the state of
+our model, and the structure of that model is also something that can swell and
+become unwieldy, so that’s what we will dissect next.</p>
+<h2 id="record-surgery">Record Surgery</h2>
+<p>Near the inception of the project, all of our individual bits of state might
+exist at the top level of our <code>Model</code>, which is typically represented as a
+record. Perhaps something like this:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">Model</span> <span class="ot">=</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  { page <span class="op">:</span> <span class="dt">Page</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  , firstName <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  , lastName <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  , addressLine1 <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more personal information fields</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  , purchaseItemCategory <span class="op">:</span> <span class="dt">ItemCategory</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  , purchaseItemEstimatedValue <span class="op">:</span> <span class="dt">Money</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more loan purpose fields…</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …and also financial details, and system-wide state, etc…</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<p>Like the parts of our project we’ve addressed previously, this also can turn
+into a bit of a mess as it grows. Both application-wide data and page-specific
+data are mixed in together which feels a bit haphazard. Fortunately, grouping
+and extracting these fields is typically rather intuitive. We can start by
+grouping page-specific parts of the state together, and then group further
+until it no longer <em>feels</em> messy.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">Address</span> <span class="ot">=</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  { line1 <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  , line2 <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  , city <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  , postcode <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">PersonalInformation</span> <span class="ot">=</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  { firstName <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  , lastName <span class="op">:</span> <span class="dt">String</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  , address <span class="op">:</span> <span class="dt">Address</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">LoanPurpose</span> <span class="ot">=</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  { purchaseItemCategory <span class="op">:</span> <span class="dt">ItemCategory</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  , purchaseItemEstimatedValue <span class="op">:</span> <span class="dt">Money</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">FinancialDetails</span> <span class="ot">=</span> <span class="co">-- …</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">Model</span> <span class="ot">=</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  { page <span class="op">:</span> <span class="dt">Page</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  , personalInformation <span class="op">:</span> <span class="dt">PersonalInformation</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  , loanPurpose <span class="op">:</span> <span class="dt">LoanPurpose</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  , financialDetails <span class="op">:</span> <span class="dt">FinancialDetails</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<p>The problem now however is that when we wish to update a deeply-nested field,
+we need to write all of the code to unwrap each level until we arrive at the
+depth we need. Illustrated another way, let’s say we want to update the first
+line of the applicant’s address.</p>
+<p>Retrieving the value of this field is no problem, as we can use Elm’s dot
+syntax to succinctly get us all the way there, like this:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model<span class="op">.</span>personalInformation<span class="op">.</span>address<span class="op">.</span>line1</span></code></pre></div>
+<p>What we <em>can’t</em> do here however is <em>update</em> that field in a similar fashion,
+<em>i.e.</em>, Elm won’t allow us to write something like this:</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- This won't work</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>{ model<span class="op">.</span>personalInformation<span class="op">.</span>address <span class="op">|</span> line1 <span class="ot">=</span> newLine1 }</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- This also won't work</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>{ model <span class="op">|</span> personalInformation<span class="op">.</span>address<span class="op">.</span>line1 <span class="ot">=</span> newLine1 }</span></code></pre></div>
+<p>The naïve way to unwrap and subsequently update the field in this record is to
+write something like this:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation <span class="op">:</span> <span class="dt">PersonalInformationMsg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetFirstName</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetLastName</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine1</span> newLine1 <span class="ot">-&gt;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        personalInformation <span class="ot">=</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>          model<span class="op">.</span>personalInformation</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        address <span class="ot">=</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>          personalInformation<span class="op">.</span>address</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        newAddress <span class="ot">=</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>          { address <span class="op">|</span> line1 <span class="ot">=</span> newLine1 }</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        newPersonalInformation <span class="ot">=</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>          { personalInformation <span class="op">|</span> address <span class="ot">=</span> newAddress }</span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>     <span class="kw">in</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        ({ model <span class="op">|</span> personalInformation <span class="ot">=</span> newPersonalInformation }, Cmd.none)</span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine2</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span></code></pre></div>
+<p>That’s 14 lines of code to update one single field. Not only is this single
+example somewhat confusing to follow, you also need to imagine how this update
+function will look when taking into account the five or so other fields <em>just
+in the address record</em>! This is — quite frankly — pretty terrible. The trick
+here is not to stare out of the window and contemplate rewriting everything in
+ClojureScript. Instead, the thing to do is write a whole bunch of <em>lenses</em>.</p>
+<p>Conceptually, the lens functions we need are rather simple. We need one
+function to bridge the gap between each level of our information architecture,
+and then we just need to glue those functions together.</p>
+<figure>
+<img src="/static/img/lens-diagram.jpg" alt="A visual diagram of the lens functions we need" />
+<figcaption aria-hidden="true">A visual diagram of the lens functions we need</figcaption>
+</figure>
+<p>In the diagram above, the orange arrows represent the individual lenses that we
+want in order to move between the different levels of our data structure. The
+blue arrow is the lens that we will want to use in our
+<code>updatePersonalInformation</code> function, and we get this bigger lens by composing
+the three smaller lenses together.</p>
+<p>We can write these functions with a handy library called <a href="https://package.elm-lang.org/packages/arturopala/elm-monocle/latest/"><code>elm-monocle</code></a>
+(and of course other libraries are available), and they would look something
+like the following:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Monocle.Compose</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Monocle.Lens</span> exposing (<span class="dt">Lens</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- lens A</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>personalDetailsL <span class="op">:</span> <span class="dt">Lens</span> <span class="dt">Model</span> <span class="dt">PersonalDetails</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>personalDetailsL <span class="ot">=</span> <span class="dt">Lens</span> <span class="op">.</span>personalDetails (\b a <span class="ot">-&gt;</span> { a <span class="op">|</span> personalDetails <span class="ot">=</span> b })</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- lens B</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>personalDetailsAddressL <span class="op">:</span> <span class="dt">Lens</span> <span class="dt">PersonalDetails</span> <span class="dt">Address</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>personalDetailsAddressL <span class="ot">=</span> <span class="dt">Lens</span> <span class="op">.</span>address (\b a <span class="ot">-&gt;</span> { a <span class="op">|</span> address <span class="ot">=</span> b })</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- lens C</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>addressLine1L <span class="op">:</span> <span class="dt">Lens</span> <span class="dt">Address</span> <span class="dt">String</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>addressLine1L <span class="ot">=</span> <span class="dt">Lens</span> <span class="op">.</span>line1 (\b a <span class="ot">-&gt;</span> { a <span class="op">|</span> line1 <span class="ot">=</span> b })</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- lens D</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>personalDetailsAddressLine1L <span class="op">:</span> <span class="dt">Lens</span> <span class="dt">Model</span> <span class="dt">String</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>personalDetailsAddressLine1L <span class="op">:</span> personalDetailsL</span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|&gt;</span> Monocle.Compose.lensWithLens personalDetailsAddressL</span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|&gt;</span> Monocle.Compose.lensWithLens addressLine1L</span></code></pre></div>
+<p>You can pretty much ignore the implementation of each of these lenses, as they
+are mostly just mechanical transformations between each level of our model.
+It’s better instead to read the type signatures which clearly show that the
+first lens gets you from <code>Model</code> to <code>PersonalDetails</code>, the second lens takes
+you from <code>PersonalDetails</code> to <code>Address</code>, the third lens takes us one level
+deeper, and the fourth lens combines the first three, taking us all the way
+from our top-level <code>Model</code> right the way down to the <code>String</code> that represents
+the first line of the applicant’s address.</p>
+<p>Writing out all of these lenses is admittedly somewhat tedious and it’s mostly
+boilerplate — which makes me wonder if these couldn’t be generated in some way;
+a research topic for another day. It’s at least easy enough to just stick all
+this boilerplate in its own file somewhere and not clutter up the parts of the
+code where more interesting things happen. Once we have these lenses though,
+we’re able to drastically clean up our update functions.</p>
+<p>Instead of the mess we had earlier, we could have something like this:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation <span class="op">:</span> <span class="dt">PersonalInformationMsg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetFirstName</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetLastName</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine1</span> newLine1 <span class="ot">-&gt;</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    (personalDetailsAddressLine1L<span class="op">.</span>set newLine1 model, Cmd.none)</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine1</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span></code></pre></div>
+<p>This is much more elegant, and the nature of this API means it works even more
+beautifully when updating several fields at once. You could write something
+like the following contrivance, for example:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">flip</span> <span class="op">:</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> c</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">flip</span> f b a <span class="ot">=</span> f a b</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>updateExampleFields <span class="op">:</span> <span class="dt">ExampleMsg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>updateExampleFields msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetManyModelFields</span> foo bar baz spam eggs <span class="ot">-&gt;</span> model</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> nestedExampleFooL<span class="op">.</span>set foo</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> nestedExampleBarL<span class="op">.</span>set bar</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> nestedExampleBazL<span class="op">.</span>set baz</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> montyPythonBreakfastSpamL<span class="op">.</span>set spam</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> montyPythonBreakfastEggsL<span class="op">.</span>set eggs</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> <span class="fu">flip</span> Tuple.pair Cmd.none</span></code></pre></div>
+<p>Writing composable setter functions is possible without a lens library, but the
+code you end up writing will look so similar to idiomatic usage of elm-monocle
+anyway so I see no reason not to use the library and standardise on a
+consistent API across your project.</p>
+<p>I have seen several people recommend avoiding having to write lenses by just
+not having the <em>problem</em> of deeply-nested record types in the first place, and
+instead to have as shallow a model as possible. I don’t agree with this kind of
+hand-waving as it fails to take into account the possibility for types to be
+generated on the backend so the shape of the model never goes out of sync
+across that boundary. For a non-trivial application, I believe it’s cheaper to
+use code generation to derive the type definitions, JSON encoders, and JSON
+decoders than it is to manually write all of it and try to make sure everyone
+on your team is disciplined enough to always make those changes.</p>
+<p>As a brief aside, I will at this point sympathise with people who have
+criticised Elm in the past for some of its most vocal proponents being
+<a href="https://discourse.elm-lang.org/t/updating-nested-records-again/1488/9">frustratingly unhelpful</a>.</p>
+<blockquote>
+<p>Relatedly, I’ve also come to view lenses as a such a huge mistake that if
+there were a way for the language to make it impossible to implement lens
+libraries, I would advocate for it. (Unfortunately, they are not possible to
+rule out.)</p>
+</blockquote>
+<p>I’m sorry, but sanctimoniously dismissing a powerful technique for working with
+data structures in a schema that they’ve come to exist in organically <em>without
+even bothering to justify the dismissal or provide an alternative technique</em> is
+just bad.</p>
+<p>Sometimes, like… People are just, kinda, wrong? You know?</p>
+<p>Moving swiftly on, and now that our model is satisfactorily wrangled, we can
+attack the last part of this puzzle which is rendering our model on the page.</p>
+<h2 id="the-closed-loop">The Closed Loop</h2>
+<p>In the same way that your nested model update functions should return a
+top-level <code>Msg</code> type rather than some page-specific message type, the view
+functions should <em>also</em> return the top-level <code>Msg</code> type.</p>
+<pre><code>-- Bad
+personalDetailsView_ : Model -&gt; Html PersonalDetailsMsg
+
+-- Good
+personalDetailsView : Model -&gt; Html Msg</code></pre>
+<p>The question here then is: how do we send a page-specific message into the
+runtime if the view function has declared in its type signature that it returns
+a top-level <code>Msg</code> type in a <code>Html</code> context? This turns out to be quite simple.
+We can just use function composition to join the different constructors
+together.</p>
+<p>If we consider a view function that renders an input for modifying the first
+line of the applicant’s address as before, we might write it like this:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>addressLine1Input <span class="op">:</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> <span class="dt">Html</span> <span class="dt">Msg</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>addressLine1Input model <span class="ot">=</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  input</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    [ type_ <span class="st">&quot;text&quot;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    , value model<span class="op">.</span>personalDetails<span class="op">.</span>address<span class="op">.</span>line1</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    , onInput (<span class="dt">PersonalInformationMsg</span> <span class="op">&lt;&lt;</span> <span class="dt">SetAddressLine1</span>)</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    ] []</span></code></pre></div>
+<p>That’s all there is to it really. I am happily employing all of the techniques
+described above in a number of Elm projects, each of which span several
+thousand lines of code.</p>
+<p>There are a couple of other things you can do to better manage Elm applications
+as they grow. At Riskbook for example, we use <a href="https://hackage.haskell.org/package/haskell-to-elm"><code>haskell-to-elm</code></a> to generate our
+Elm types, JSON encoders, and JSON decoders from our Haskell backend. This has
+worked tremendously for us and I would recommend it, though it’s outside of the
+scope of this article.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

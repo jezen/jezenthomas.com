@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Hello World in Haskell</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Haskell programmer, entrepreneur, co-founder & CTO of Supercede.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Hello World in Haskell">
+    <meta property="og:description" content="Haskell programmer, entrepreneur, co-founder & CTO of Supercede.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Hello World in Haskell">
+    <meta name="twitter:description" content="Haskell programmer, entrepreneur, co-founder & CTO of Supercede.">
+    <meta name="twitter:image" content="/static/img/prestiz.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Hello World in Haskell</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        January 27<sup>th</sup>, 2019
+        
+        | Kaliningrad, Russia
+        
+      </p>
+    </div>
+    <p>After much deliberation, I have finally happened upon an elegant solution to
+the age-old conundrum of printing text to the screen in the Haskell programming
+language.</p>
+<p>If you would like to learn how to achieve the same, open the world’s best text
+editor (no, not Emacs — the other one), and try to follow along.</p>
+<p>Like any Haskell program, we must start by writing our <code>main</code> function. This is
+our single point of entry. If you’re curious, the <code>main</code> function is actually
+named after the river Main which passes through Frankfurt am Main in Germany.
+It is named after this river because the Haskell programming language is based
+on the Lambda Calculus, and if you look a little South-West of Frankfurt on a
+map, you will see where the Main joins the Rhein near the city of Mainz, the
+river is in the shape of a Lambda!</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="co">-- This is where we will print to the screen!</span></span></code></pre></div>
+<p>The first line is the function’s type signature. It says that an invocation of
+our <code>main</code> function will result in some “<code>IO</code> action” being run, which does not
+return any value. This is useful, because we know that to print some text on
+the screen is to have an effect on the world. So far, so good.</p>
+<p>The next line is where we will implement our logic for printing text on the
+screen. Let’s proceed by importing the necessary libraries for causing side
+effects.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes       #-}</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell   #-}</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span>           <span class="dt">Foreign.C.Types</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Language.C.Inline</span> <span class="kw">as</span> <span class="dt">C</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>C.include <span class="st">&quot;&lt;stdio.h&gt;&quot;</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>C.include <span class="st">&quot;&lt;stdlib.h&gt;&quot;</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> [C.block<span class="op">|</span> void {</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">/*</span> <span class="dt">This</span> is <span class="kw">where</span> we will <span class="fu">print</span> to the screen<span class="op">!</span> <span class="op">*/</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  } <span class="op">|</span>]</span></code></pre></div>
+<p>This enables us to write C code inline in our Haskell program. We enable a
+couple of language extensions to make the Haskell compiler correctly parse the
+C code. Don’t forget to add the <code>inline-c</code> package to your Cabal file! Failure
+to remember this automatically enters you into a special mode that veteran
+Haskell programmers refer to as <em>Cabal Hell</em>. This is when your project fails
+to compile until you vanquish a demonic adversary in a Twitter debate over
+which Haskell build tool is best.</p>
+<p>Now that our scaffolding is in place, we can <em>draw the rest of the owl</em> by
+wielding the <em>Right Tool for the Job</em>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes       #-}</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell   #-}</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span>           <span class="dt">Foreign.C.Types</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Language.C.Inline</span> <span class="kw">as</span> <span class="dt">C</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>C.include <span class="st">&quot;&lt;stdio.h&gt;&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>C.include <span class="st">&quot;&lt;stdlib.h&gt;&quot;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> [C.block<span class="op">|</span> void {</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  system(<span class="st">&quot;python -c 'print \&quot;Hello, World!\&quot;'&quot;</span>);</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  } <span class="op">|</span>]</span></code></pre></div>
+<p>Naturally we are using a <code>system</code> call to run the Python interpreter, and
+finally we are able to print to the screen. As you may be aware, Python was
+originally inspired by the <em>Gecko</em> programming language, which was written in
+C++ and JavaScript. Those two languages are of course syntactically verbose,
+making heavy use of braces to denote the start and ends of blocks of logic and
+control flow. Those braces are colloquially referred to as “legs”, and as
+Python uses an indent-sensitive syntax instead, it can be thought of as a
+“lizard without legs” — hence, Python.</p>
+<hr />
+<p>If you found this useful, you may also find utility in <a href="https://github.com/jezen/is-thirteen">this other very serious project</a>.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

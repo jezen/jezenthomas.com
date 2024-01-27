@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Tracing User Requests in Yesod</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Haskell programmer, entrepreneur, co-founder & CTO of Supercede.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Tracing User Requests in Yesod">
+    <meta property="og:description" content="Haskell programmer, entrepreneur, co-founder & CTO of Supercede.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Tracing User Requests in Yesod">
+    <meta name="twitter:description" content="Haskell programmer, entrepreneur, co-founder & CTO of Supercede.">
+    <meta name="twitter:image" content="/static/img/prestiz.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Tracing User Requests in Yesod</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        July  9<sup>th</sup>, 2019
+        
+        | Gdynia, Poland
+        
+      </p>
+    </div>
+    <p>Recently I decided I want to invest in my Yesod application’s logging system.
+Yesod provides sane defaults for logging using the Apache style and this is
+enough for most applications, however in my case I had a few extra demands.
+Namely, the logs should:</p>
+<ul>
+<li>Contain an authenticated user’s ID so we have full visibility into every
+user’s behaviour</li>
+<li>Generate a unique ID for each request, so requests can be discussed
+internally</li>
+<li>Show the request’s total duration, which will help us find performance
+bottlenecks</li>
+<li>Be formatted in JSON for ease of parsing with other tools</li>
+</ul>
+<p>Most of these needs could be addressed with functionality the relevant
+libraries included in a typical scaffolded Yesod site already provide. One of
+my needs necessitated a little more work. More on that in a moment.</p>
+<p>First, let’s take a look at how logging is typically set up in a scaffolded
+Yesod site. For our purposes, all we need to care about is what we define as
+our <code>outputFormat</code>. The value we use here should be different depending on
+whether you’re running the application in development or production — unless of
+course you <em>want</em> to see JSON logs in development.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Application.hs</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ot">makeLogWare ::</span> <span class="dt">App</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Middleware</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>makeLogWare foundation <span class="ot">=</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  mkRequestLogger def</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    { outputFormat <span class="ot">=</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> appDetailedRequestLogging <span class="op">$</span> appSettings foundation</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">then</span> <span class="dt">Detailed</span> <span class="dt">True</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span> <span class="dt">Apache</span> <span class="op">$</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>               <span class="kw">if</span> appIpFromHeader <span class="op">$</span> appSettings foundation</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>               <span class="kw">then</span> <span class="dt">FromFallback</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>               <span class="kw">else</span> <span class="dt">FromSocket</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    , destination <span class="ot">=</span> <span class="dt">Logger</span> <span class="op">$</span> loggerSet <span class="op">$</span> appLogger foundation</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
+<p>Yesod applications are set to use detailed logging in development by default.
+This format is easier to visually parse than either Apache or JSON logs, but
+would be far too noisy in production. The <code>True</code> in <code>Detailed True</code> means we
+want the logs to use colours. A more descriptive type here might have been
+useful, but that’s by the by. Here’s how those detailed logs look (here without
+colour):</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>GET /auth/page/simple/login</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  Accept: text/html,application/xhtml+xml,application/xml;q…</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  Status: 200 OK 0.007939s</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>GET /favicon.ico</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  Accept: image/webp,image/apng,image/*,*/*;q=0.8</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  Status: 200 OK 0.001512s</span></code></pre></div>
+<p>Ok, so that’s just fine, but we’re more interested now in the production logs.
+We don’t want the Apache format, so that’s what we’ll change. The available
+data constructors can be found in the <a href="http://hackage.haskell.org/package/wai-extra-3.0.27/docs/Network-Wai-Middleware-RequestLogger.html#t:OutputFormat">wai-extra</a> package. You’ll see
+<code>Apache IPAddrSource</code> and <code>Detailed Bool</code>, both of which we’re familiar with
+from the scaffolding. There are a few others however with “custom output
+format” in their names which are a little more useful.</p>
+<p>The penultimate data constructor has an associated JSON formatter called
+<code>formatAsJSON</code>. As it turns out, this combination of data constructor and
+formatting function (and also a custom middleware, but that’s internal)
+includes the request duration. So that’s two of my requirements taken care of!
+I <em>believe</em> logging the request duration is based on <a href="https://stackoverflow.com/a/26146218/704015">this prior art</a> by
+Maximilian Tagher — the implementation looks identical.</p>
+<p>So if we have the means to provide a custom formatter, why don’t we just add
+the ID of an authenticated user there? Well, here’s the thing. Request logging
+happens at the WAI level, which is the outer layer of the system. To read the
+authenticated user’s ID we need to check against the authentication system, but
+authentication happens at the Yesod level, which is an inner layer of the
+system. So first, we need some way to pass arbitrary data from the inner Yesod
+layer to the outer WAI layer. I think request and response headers are a
+suitable mechanism for transferring this kind of data, and we can use the
+<a href="http://hackage.haskell.org/package/yesod-core-1.6.14/docs/Yesod-Core-Handler.html#v:addHeader"><code>addHeader</code></a> function to easily add any response header we want. We also want
+this response header to be applied to <em>every</em> request, so we should use a
+middleware to add this functionality to all handlers.</p>
+<p>Adding Yesod middleware is trivial:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Foundation.hs</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ot">addUserIdToResponseHeadersMiddleware ::</span> <span class="dt">Handler</span> a <span class="ot">-&gt;</span> <span class="dt">Handler</span> a</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>addUserIdToResponseHeadersMiddleware handler <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> toKey <span class="ot">=</span> UUID.toText <span class="op">.</span> unUserUUID <span class="op">.</span> userUuid <span class="op">.</span> entityVal</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  mUserId <span class="ot">&lt;-</span> toKey <span class="op">&lt;&lt;$&gt;&gt;</span> maybeAuth</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  traverse_ (addHeader <span class="st">&quot;User-ID&quot;</span>) mUserId</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  handler</span></code></pre></div>
+<p>In this middleware — which is just a polymorphic handler that composes with
+any other handler — we use <code>maybeAuth</code> to get a value of <code>Maybe (Entity User)</code>.
+We have a function <code>toKey</code> which takes a user’s ID from an <code>Entity User</code>, and
+since our user entity is wrapped in a <code>Maybe</code>, and then again wrapped in a
+monadic action that retrieves that value from the database, we need to <code>fmap</code>
+<em>twice</em> over <code>maybeAuth</code> to get our <code>Maybe UserUUID</code> in one pass. The custom
+operator <code>&lt;&lt;$&gt;&gt;</code> gives us this double <code>fmap</code>, and is defined as such:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">infixl</span> <span class="dv">4</span> <span class="op">&lt;&lt;$&gt;&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ot">(&lt;&lt;$&gt;&gt;) ::</span> (<span class="dt">Functor</span> f, <span class="dt">Functor</span> g) <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f (g a) <span class="ot">-&gt;</span> f (g b)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>(<span class="op">&lt;&lt;$&gt;&gt;</span>) <span class="ot">=</span> <span class="fu">fmap</span> <span class="op">.</span> <span class="fu">fmap</span></span></code></pre></div>
+<p>If the user is <em>not</em> authenticated, the value of <code>mUserId</code> will be <code>Nothing</code>,
+in which case we <em>do</em> nothing. If the user <em>is</em> authenticated, we add their ID
+it to a response header with a key of <code>User-ID</code>. The <code>traverse_</code> function in
+this context gives us this behaviour of “if the value is a <code>Just</code> then do
+something with it, otherwise do nothing”.</p>
+<p>We also need to <em>apply</em> our middleware, which is just a case of tacking it onto
+whatever other middleware chain we already have.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Foundation.hs</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span> <span class="kw">where</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- ...Other stuff is probably here</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  yesodMiddleware <span class="ot">=</span> defaultYesodMiddleware</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span> addUserIdToResponseHeadersMiddleware</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- ...More stuff</span></span></code></pre></div>
+<p>That’s great, but there’s a problem: How do we get these response headers in
+our request log formatter? I went through the source, and unfortunately none of
+the formatting middlewares actually provided the response headers to the log
+formatter. I sent a pull request which adds another <code>OutputFormat</code> data
+constructor, along with its associated custom middleware and log formatter to
+the <code>wai-extra</code> package, and it was <a href="https://github.com/yesodweb/wai/pull/762">merged earlier today</a>. So as of version
+<code>3.0.27</code>, you can use this data constructor:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">OutputFormatterWithDetailsAndHeaders</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>   <span class="ot">=</span> <span class="dt">ZonedDate</span> <span class="co">-- ^ When the log message was generated</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">Request</span> <span class="co">-- ^ The WAI request</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">Status</span> <span class="co">-- ^ HTTP status code</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span> <span class="co">-- ^ Response size</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">NominalDiffTime</span> <span class="co">-- ^ Duration of the request</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> [<span class="dt">S8.ByteString</span>] <span class="co">-- ^ The request body</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">B.Builder</span> <span class="co">-- ^ Raw response</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> [<span class="dt">Header</span>] <span class="co">-- ^ The response headers</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">LogStr</span></span></code></pre></div>
+<p>…together with the new <code>formatAsJSONWithHeaders</code> function. So our <code>makeLogWare</code>
+function can now be changed to this:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Application.hs</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ot">makeLogWare ::</span> <span class="dt">App</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Middleware</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>makeLogWare foundation <span class="ot">=</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  mkRequestLogger def</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    { outputFormat <span class="ot">=</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> appDetailedRequestLogging <span class="op">$</span> appSettings foundation</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">then</span> <span class="dt">Detailed</span> <span class="dt">True</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span> <span class="dt">OutputFormatterWithDetailsAndHeaders</span> formatAsJSONWithHeaders</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    , destination <span class="ot">=</span> <span class="dt">Logger</span> <span class="op">$</span> loggerSet <span class="op">$</span> appLogger foundation</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
+<p>This will now render all request logs in production as JSON, along with the
+request duration and any response headers. It will also redact any request
+header with a key of <code>Cookie</code>, or any response header with a key of
+<code>Set-Cookie</code>.</p>
+<p>Almost there. Now we just want to generated a unique ID for each request as
+it’s coming in, and stuff that ID in a request header. We can do this easily
+enough at the outer WAI layer.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Application.hs</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ot">addRequestId ::</span> <span class="dt">Middleware</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>addRequestId app req sendRes <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  reqId <span class="ot">&lt;-</span> UUID.toASCIIBytes <span class="op">&lt;$&gt;</span> UUID.nextRandom</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> hs <span class="ot">=</span> (<span class="st">&quot;Request-ID&quot;</span>, reqId) <span class="op">:</span> WAI.requestHeaders req</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  app (req { WAI.requestHeaders <span class="ot">=</span> hs }) sendRes</span></code></pre></div>
+<p>The first line uses the <code>uuid</code> package to generate a UUIDv4, and then converts
+it to a human-readable bytestring. We then construct a new value for the
+request headers — here marked as <code>hs</code> — which is just the new header prepended
+to the list of existing request headers. We then continue with the rest of the
+request lifecycle, sending along a modified request with the new headers.</p>
+<p>As before, don’t forget to add this new middleware to the appropriate chain.
+This would be our WAI middleware chain, <em>not</em> the Yesod middleware chain we
+used earlier.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Application.hs</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ot">makeApplication ::</span> <span class="dt">App</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Application</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>makeApplication foundation <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  logWare  <span class="ot">&lt;-</span> makeLogWare foundation</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  appPlain <span class="ot">&lt;-</span> toWaiAppPlain foundation</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> <span class="op">$</span> addRequestId <span class="op">$</span> logWare <span class="op">$</span> defaultMiddlewaresNoLogging appPlain</span></code></pre></div>
+<p>Go forth, and trace users.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

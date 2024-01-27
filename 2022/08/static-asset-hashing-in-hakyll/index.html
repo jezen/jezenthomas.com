@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Static Asset Hashing in Hakyll</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="You can do cache-busting of static assets in a Hakyll website by generating a hash of the file's contents and using that as the path to the compiled asset instead.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Static Asset Hashing in Hakyll">
+    <meta property="og:description" content="You can do cache-busting of static assets in a Hakyll website by generating a hash of the file's contents and using that as the path to the compiled asset instead.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/blog.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Static Asset Hashing in Hakyll">
+    <meta name="twitter:description" content="You can do cache-busting of static assets in a Hakyll website by generating a hash of the file's contents and using that as the path to the compiled asset instead.">
+    <meta name="twitter:image" content="/static/img/blog.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Static Asset Hashing in Hakyll</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        August 18<sup>th</sup>, 2022
+        
+        | Odessa, Ukraine
+        
+      </p>
+    </div>
+    <p>A problem I encountered while working on this website is that when I edit one
+of the CSS files and publish my changes to the Internet, there’s a good chance
+your browser will have cached the previous CSS files that it served you, and
+you won’t see the new styles that I have written.</p>
+<p>To mitigate this, I decided to hack the compilation step in Hakyll so that my
+stylesheets are concatenated together, compressed, and then turned into an MD5
+hash. This hash is then used as the path to the resulting file which forces
+the browser to download the new file whenever I update the styles.</p>
+<p>The first step is to list the filepaths of the CSS files that should be
+compiled. The order in which rules are declared in CSS is important, so I
+prefer to list these filepaths explicitly.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- | All CSS files which should be compiled</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">styleSheets ::</span> [<span class="dt">FilePath</span>]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>styleSheets <span class="ot">=</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  [ <span class="st">&quot;css/normalize.css&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  , <span class="st">&quot;css/default.css&quot;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  , <span class="st">&quot;css/syntax.css&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  ]</span></code></pre></div>
+<p>Next, we need to generate the MD5 hash for the compiled CSS file’s ultimate
+filepath. By leveraging Hakyll’s <code>preprocess</code> function, it’s possible to run
+some arbitrary IO effects during the site’s compilation step.</p>
+<p>The approach here is to:</p>
+<ol type="1">
+<li>Read the contents of each CSS file.</li>
+<li>Concatenate the CSS files into one big string with <code>mconcat</code>.</li>
+<li>Compress the string with Hakyll’s default <a href="https://hackage.haskell.org/package/hakyll-4.15.1.1/docs/Hakyll-Web-CompressCss.html#v:compressCss"><code>compressCss</code></a> function.</li>
+<li>Pack the string into a lazy bytestring, and build an MD5 digest with the <a href="https://hackage.haskell.org/package/pureMD5-2.1.4/docs/Data-Digest-Pure-MD5.html#v:md5"><code>md5</code></a> function.</li>
+<li>Convert the MD5 digest back into a filepath and return it.</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> hakyllWith config <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  compiledStylesheetPath <span class="ot">&lt;-</span> preprocess <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    styles <span class="ot">&lt;-</span> <span class="fu">mapM</span> <span class="fu">readFile</span> styleSheets</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> h <span class="ot">=</span> md5 <span class="op">$</span> fromStrict <span class="op">$</span> <span class="fu">pack</span> <span class="op">$</span> compressCss <span class="op">$</span> <span class="fu">mconcat</span> styles</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pure</span> <span class="op">$</span> <span class="st">&quot;css/&quot;</span> <span class="op">&lt;&gt;</span> <span class="fu">show</span> h <span class="op">&lt;&gt;</span> <span class="st">&quot;.css&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> cssPathCtx <span class="ot">=</span> constField <span class="st">&quot;cssPath&quot;</span> compiledStylesheetPath</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span></code></pre></div>
+<p>The <code>cssPathCtx</code> binding is a convenience. It’s handy because most pages that
+Hakyll generates will want CSS applied, which means most pages will need to
+know where to find the compiled stylesheet.</p>
+<p>Continuing on in our <code>Rules</code> monad, we need to add a rule that generates the
+file at the filepath we calculated in the preprocessing step. The route to this
+file is already correct, so we keep it as is with <code>route idRoute</code>. In the
+compilation step for this rule, we are again loading our list of CSS filepaths
+and adding them to some page context. The context here is only used in a
+special file that we’ll use in a moment to render all of the CSS.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> hakyllWith config <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  create [fromFilePath compiledStylesheetPath] <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    route idRoute</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      styles <span class="ot">&lt;-</span> <span class="fu">mapM</span> (load <span class="op">.</span> fromFilePath) styleSheets</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> ctx <span class="ot">=</span> listField <span class="st">&quot;styles&quot;</span> pageCtx (<span class="fu">pure</span> styles)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      makeItem <span class="st">&quot;&quot;</span> <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/all.css&quot;</span> ctx</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span></code></pre></div>
+<p>The snippet above references a template which doesn’t exist yet. We create that
+file, and add a single line of Hakyll’s templating DSL to render all of the
+contents of each of the CSS files by iterating over the <code>styles</code> context we
+defined.</p>
+<pre><code>$for(styles)$$body$$endfor$</code></pre>
+<p>At this point, the compiled stylesheet is being generated correctly, but the
+site’s outermost template layer doesn’t reference it yet. Any time you load and
+apply the outermost template layer — in this case called
+<code>templates/default.html</code> — you’ll need to pass in the <code>cssPathCtx</code> bound
+earlier, likely monoidally joined with some other context for that template.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> hakyllWith config <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  match <span class="st">&quot;index.html&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    route idRoute</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> ctx <span class="ot">=</span> cssPathCtx <span class="op">&lt;&gt;</span> someOtherCtx</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      getResourceBody</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> applyAsTemplate (field <span class="st">&quot;posts&quot;</span> (<span class="fu">const</span> (recentPostList <span class="dv">3</span>)))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/default.html&quot;</span> ctx</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> cleanIndexUrls</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span></code></pre></div>
+<p>Now that the default template knows the path to the compiled CSS file, we can update that reference.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;html&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;head&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;title&gt;</span>$title$<span class="kw">&lt;/title&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;link</span> <span class="er">rel</span><span class="ot">=</span><span class="st">&quot;stylesheet&quot;</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text/css&quot;</span> <span class="er">href</span><span class="ot">=</span><span class="st">&quot;/$cssPath$&quot;</span> <span class="kw">/&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/head&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;body&gt;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">&lt;!-- etc … --&gt;</span></span></code></pre></div>
+<p>Everything works as expected when compiling the site from scratch, but a
+typical development workflow involves running Hakyll’s filesystem monitor to
+watch for changes and incrementally recompile the site. If you run the <code>watch</code>
+command from your compiled Hakyll application binary and change one of the
+stylesheets, the files referencing the compiled stylesheet don’t yet know that
+they <em>also</em> need to be recompiled to reflect the new stylesheet path.</p>
+<p>Fortunately, Hakyll provides some building blocks for declaring extra
+dependencies in rules. Here’s the final necessary change.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> hakyllWith config <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  match <span class="st">&quot;index.html&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    route idRoute</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    dep <span class="ot">&lt;-</span> makePatternDependency <span class="st">&quot;css/*&quot;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    rulesExtraDependencies [dep] <span class="op">$</span> compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> ctx <span class="ot">=</span> cssPathCtx <span class="op">&lt;&gt;</span> someOtherCtx</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      getResourceBody</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> applyAsTemplate (field <span class="st">&quot;posts&quot;</span> (<span class="fu">const</span> (recentPostList <span class="dv">3</span>)))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/default.html&quot;</span> ctx</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> cleanIndexUrls</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span></code></pre></div>
+<p>Now during local development the outermost template layer will always reference
+the correct compiled stylesheet.</p>
+<p>An added benefit of this approach is the concatenation step, which results in
+only a single HTTP request necessary to fetch all of the styles on page load.</p>
+<p>This approach is working nicely on this website. If there’s a neater way to do
+it, please let me know.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

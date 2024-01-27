@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Stubbing I/O in Yesod</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="An easy way to stub I/O actions in Yesod request handler code with dependency injection.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Stubbing I/O in Yesod">
+    <meta property="og:description" content="An easy way to stub I/O actions in Yesod request handler code with dependency injection.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/stubbing-io-in-yesod.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Stubbing I/O in Yesod">
+    <meta name="twitter:description" content="An easy way to stub I/O actions in Yesod request handler code with dependency injection.">
+    <meta name="twitter:image" content="/static/img/stubbing-io-in-yesod.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Stubbing I/O in Yesod</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        November  5<sup>th</sup>, 2023
+        
+        | Kaş, Türkiye
+        
+      </p>
+    </div>
+    <p>Here’s the scenario.</p>
+<p>You’re writing a web application in Yesod. In one of your request handler
+functions, you need to run some IO action. This might be to make an HTTP
+request against an online weather service, or this might be to charge someone’s
+credit card, or even just to generate some random number.</p>
+<p>Taking the latter as an example, imagine we want to generate a random number
+and then respond to the user’s request by reporting whether the randomly
+generated number is even or odd.</p>
+<p>We might write code which looks like this.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes #-}</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell #-}</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TypeFamilies #-}</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Application</span> <span class="kw">where</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">System.Random</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Yesod</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">App</span> <span class="ot">=</span> <span class="dt">App</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mkYesod <span class="st">&quot;App&quot;</span> [parseRoutes|</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>/random RandomR GET</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>|]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ot">getRandomR ::</span> <span class="dt">Handler</span> <span class="dt">Value</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>getRandomR <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> liftIO randomNumber</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  returnJson <span class="op">$</span> isEven n</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ot">    randomNumber ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    randomNumber <span class="ot">=</span> randomRIO (<span class="dv">1</span>, <span class="dv">100</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ot">    isEven ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    isEven n <span class="ot">=</span> <span class="kw">if</span> <span class="fu">even</span> n <span class="kw">then</span> <span class="st">&quot;even&quot;</span> <span class="kw">else</span> <span class="st">&quot;odd&quot;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> warp <span class="dv">3000</span> <span class="dt">App</span></span></code></pre></div>
+<p>This is a complete Yesod application. We can run this locally and it will be
+listening for requests on port 3000. When we send requests there, we can see
+our application dutifully responding with whether or not the randomly generated
+number was even or odd.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl http://localhost:3000/random</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;even&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl http://localhost:3000/random</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;odd&quot;</span></span></code></pre></div>
+<p>This is all well and good, but how do we write an automated test for this? We
+can’t control the randomness of our pseudo-random number generator. Similarly,
+if instead of generating a random number this were an HTTP request to attempt
+to charge someone’s credit card with some payment provider, <em>e.g.</em>, Stripe,
+then we wouldn’t be able to write a reliable automated test for this because we
+don’t control Stripe’s servers.</p>
+<p>What we need to do is to <em>stub</em> out this IO action. This means that instead of
+running the real implementation during the test, we swap it out for a fake
+version that we <em>can</em> control.</p>
+<p>One simple approach for this is with <em>dependency injection</em>.</p>
+<p>Instead of defining our <code>randomNumber</code> function alongside our request handler,
+we can declare it as part of our application’s foundational data type.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">App</span> <span class="ot">=</span> <span class="dt">App</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> appRandomNumber ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<p>When we initialise our application, we construct our <code>App</code> value with the real
+implementation of our function.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> warp <span class="dv">3000</span> <span class="op">$</span> <span class="dt">App</span> randomNumber</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    randomNumber <span class="ot">=</span> <span class="co">-- real implementation</span></span></code></pre></div>
+<p>Since our <code>randomNumber</code> function is no longer defined alongside our request
+handler, we’ll now need to ask for that function from within the handler
+instead.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getRandomR ::</span> <span class="dt">Handler</span> <span class="dt">Value</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>getRandomR <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> liftIO <span class="op">=&lt;&lt;</span> getsYesod appRandomNumber</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  returnJson <span class="op">$</span> isEven n</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ot">    isEven ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    isEven n <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<p>This behaves exactly as it did before, but now we’re able to swap out our
+<code>randomNumber</code> function for a fake version in an automated test with
+<code>testModifySite</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">withApp ::</span> <span class="dt">SpecWith</span> (<span class="dt">TestApp</span> <span class="dt">App</span>) <span class="ot">-&gt;</span> <span class="dt">Spec</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>withApp <span class="ot">=</span> before <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">App</span> randomNumber, <span class="fu">id</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ot">stub ::</span> <span class="dt">YesodDispatch</span> a <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">YesodExample</span> a ()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>stub f <span class="ot">=</span> testModifySite (\app <span class="ot">-&gt;</span> <span class="fu">pure</span> (f app, <span class="fu">id</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ot">spec ::</span> <span class="dt">Spec</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>spec <span class="ot">=</span> withApp <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  describe <span class="st">&quot;GET /random&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;works with even numbers&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      stub (\a <span class="ot">-&gt;</span> a { appRandomNumber <span class="ot">=</span> <span class="fu">pure</span> <span class="dv">66</span> })</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      get <span class="dt">RandomR</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      statusIs <span class="dv">200</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      bodyEquals <span class="st">&quot;\&quot;even\&quot;&quot;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;works with odd numbers&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      stub (\a <span class="ot">-&gt;</span> a { appRandomNumber <span class="ot">=</span> <span class="fu">pure</span> <span class="dv">17</span> })</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      get <span class="dt">RandomR</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      statusIs <span class="dv">200</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      bodyEquals <span class="st">&quot;\&quot;odd\&quot;&quot;</span></span></code></pre></div>
+<p>Of course, the usual warnings apply. There are problems that come along with
+stubbing out functions — if your stub doesn’t accurately reflect what that
+function <em>actually</em> does, then your test is only giving you false confidence.</p>
+<p>People often say that stubbing is bad and that you shouldn’t do it. I don’t
+think this advice is useful. Yes, your tests and application logic should be
+pure as far as you can help it. But sometimes you really <em>do</em> need a stub.</p>
+<p>A working example of this approach is <a href="https://github.com/jezen/yesod-stubbing-example">available here</a>.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

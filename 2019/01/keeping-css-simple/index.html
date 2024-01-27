@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Keeping CSS Simple</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Modern CSS tooling gives you so much added power. But are you sure it's more power that you want? Perhaps it's time we stop digging ourselves a deeper hole.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Keeping CSS Simple">
+    <meta property="og:description" content="Modern CSS tooling gives you so much added power. But are you sure it's more power that you want? Perhaps it's time we stop digging ourselves a deeper hole.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Keeping CSS Simple">
+    <meta name="twitter:description" content="Modern CSS tooling gives you so much added power. But are you sure it's more power that you want? Perhaps it's time we stop digging ourselves a deeper hole.">
+    <meta name="twitter:image" content="/static/img/prestiz.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Keeping CSS Simple</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        January 12<sup>th</sup>, 2019
+        
+        | Kaliningrad, Russia
+        
+      </p>
+    </div>
+    <p>In a previous day job, I suggested removing all instances of <a href="http://lesscss.org/">Less</a>. Not
+because it’s bad, or because <a href="https://sass-lang.com/">Sass</a> is <em>“better”</em> in some way.</p>
+<p>I suggested removing it and <em>not</em> replacing it with Sass, instead keeping with
+plain CSS because I felt the team had not shown the discipline to not abuse the
+extra power a pre-processor gives you.</p>
+<p>The codebase was a tangle of nested rules which results in overly complex and
+specific selectors. When specifics of those need to change, the team doesn’t
+back out of the existing specificity, but instead overwrite it with more. Add
+to this a liberal helping of mixins — because “code reuse”, apparently — and
+the resulting CSS is applied, disabled, reapplied, over and over.</p>
+<p>My suggestion to not use a CSS pre-processor was met with much flapping and
+exasperation.</p>
+<blockquote>
+<p>But everyone uses pre-processors! That’s just the way it’s done!</p>
+</blockquote>
+<p>You can chalk up the above to both the <a href="https://yourlogicalfallacyis.com/bandwagon">Bandwagon</a> and <a href="https://yourlogicalfallacyis.com/appeal-to-authority">Appeal to
+Authority</a> logical fallacies. These fallacies are particularly widespread in
+software development. To <a href="http://www.drdobbs.com/architecture-and-design/interview-with-alan-kay/240003442">paraphrase</a> Alan Kay and then take him slightly
+out of context, <em>software development today is more popular culture than
+engineering</em>.</p>
+<p>Any flavour of CSS pre-processor gives you objectively <em>more</em> power when
+writing web page styles. But do you need that power? Or is that extra power
+just rope with which to hang yourself? I think the benefits of pre-processors
+don’t outweigh the drawbacks, especially in the hands of the enthusiastic but
+inexperienced.</p>
+<p>Plain CSS gets you plenty far enough.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

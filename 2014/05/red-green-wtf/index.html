@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Red, Green, WTF?</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="In order to reason about any particular concept, the concept needs to be analysed at a reasonable level of abstraction. Here’s what we’re getting wrong when introducing test-driven JavaScript development.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Red, Green, WTF?">
+    <meta property="og:description" content="In order to reason about any particular concept, the concept needs to be analysed at a reasonable level of abstraction. Here’s what we’re getting wrong when introducing test-driven JavaScript development.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Red, Green, WTF?">
+    <meta name="twitter:description" content="In order to reason about any particular concept, the concept needs to be analysed at a reasonable level of abstraction. Here’s what we’re getting wrong when introducing test-driven JavaScript development.">
+    <meta name="twitter:image" content="/static/img/prestiz.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Red, Green, WTF?</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        May  8<sup>th</sup>, 2014
+        
+        | Göteborg, Sweden
+        
+      </p>
+    </div>
+    <p>Test-Driven Development is gradually working its way into the front-end
+development ecosystem, but I don’t feel the adoption rate is as high as it
+probably should be. There are a couple of reasons for this; or rather, the two
+reasons I can think of are sides of the same coin.</p>
+<p>I’ve been consuming my fair share of TDD-flavoured literature lately, all
+written and recorded by the revered and outspoken thought-leaders in this
+space. It’s funny; I could swear they all copy each other’s prose. I’m
+particularly amused by the phrase “reason about”, as in: “…blah blah blah, I
+find this approach makes the concept in question easier to <em>reason about</em>”.</p>
+<p>The interesting thing here is that in order to <em>reason about</em> any particular
+concept, the concept needs to be analysed at a <em>reasonable</em> level of
+abstraction. Most of the TDD discussion tends to fall into one of two levels of
+abstraction:</p>
+<ol type="1">
+<li>An overly-simplified <em>Hello, World!</em> syntax example, or:</li>
+<li>Dry academia involving diagrams of boxes with arrows pointing to other boxes</li>
+</ol>
+<p>A typical ‘Hello, World!’ example of using a test framework like
+<a href="https://github.com/pivotal/jasmine">Jasmine</a> will look something like this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">'Hello World'</span><span class="op">,</span> <span class="kw">function</span>() {</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">'should return hello world'</span><span class="op">,</span> <span class="kw">function</span>() {</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(<span class="fu">helloWorld</span>())<span class="op">.</span><span class="fu">toEqual</span>(<span class="st">'Hello World'</span>)<span class="op">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<p>What does any of that mean? From the outset, these five lines are confounding.
+In the first line, we say we are describing a ‘Hello World’. What is a ‘Hello
+World’? It doesn’t even sound like a noun! In this case, the fact that the
+example is nonsensical actually makes the concept <em>more difficult</em> to reason
+about.</p>
+<p>Empathise with your fellow developer. They’re thinking: “Well, I have this web
+form, and some JavaScript that validates the input fields; I wonder how I might
+test that my JavaScript does what I intend.” In which parallel universe does
+writing a function that returns the string ‘Hello World’ have any use to our
+friend writing form validation functionality?</p>
+<p>If you’re explaining TDD, starting with an unrealistically simple example
+steepens the learning curve.</p>
+<p>The academic types sometimes go too far the <em>other</em> way. An article on Test
+Doubles opens with an explanation of stunt doubles and their role in the film
+industry. What follows is an analogy between stunt doubles and Test Doubles.
+You could argue for or against that connection, but whilst you’re pondering the
+difference you’re <em>not</em> thinking about how this applies to your codebase.</p>
+<p>I’m convinced the two are equally discouraging to a TDD beginner. Being forced
+to draw parallels between your codebase and example code with no realistic
+use-case is an unnecessary added complexity when you’re trying to understand
+how and <em>why</em> to write unit tests for that code.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

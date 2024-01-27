@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Make Your Types Smaller</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Persistent models tend to be where primitive obsession creeps in. Make your types more specific so you avoid paying the cost of having to sprinkle validation code throughout your system.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Make Your Types Smaller">
+    <meta property="og:description" content="Persistent models tend to be where primitive obsession creeps in. Make your types more specific so you avoid paying the cost of having to sprinkle validation code throughout your system.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/make-your-types-smaller.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Make Your Types Smaller">
+    <meta name="twitter:description" content="Persistent models tend to be where primitive obsession creeps in. Make your types more specific so you avoid paying the cost of having to sprinkle validation code throughout your system.">
+    <meta name="twitter:image" content="/static/img/make-your-types-smaller.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Make Your Types Smaller</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        December 31<sup>st</sup>, 2022
+        
+        | Kraków, Poland
+        
+      </p>
+    </div>
+    <p>Dragons lie at the boundaries of systems.</p>
+<p>But where those boundaries lie is too often in a software developer’s blind spot.</p>
+<p>A clear system boundary in a web application is a form. We know not to trust
+user input, and so we diligently validate — both client-side and server-side —
+the user’s submission.</p>
+<p>Once the submission has crossed <em>that</em> threshold however, I think we lower our guard.</p>
+<p>The database also exists beyond a system boundary. Programming language
+peculiarities should probably not leak into the database, and vice versa.</p>
+<p>It is generally understood how to use techniques such as <a href="https://wiki.haskell.org/Smart_constructors">smart
+constructors</a> to ensure a value floating through the system is always valid,
+but I think <em>when</em> to use a technique like this is something that programmers
+have difficulty developing an intuition for.</p>
+<p>It may be because of the <em>adjacency</em> of the database conceptually to the data
+types that model the values the database will eventually contain; but I have
+noticed — across several open-source projects — that <a href="https://wiki.c2.com/?PrimitiveObsession">primitive obsession</a>
+creeps in when defining persistent models.</p>
+<p>It’s not an unreasonable thought pattern: you know you want to model a <code>User</code>
+in your system. Your <code>User</code> model will be persisted in the <code>users</code> table. Your
+<code>User</code> has a <code>name</code> field, which will be persisted in a column with a <code>VARCHAR</code>
+(or <code>TEXT</code>) type.</p>
+<p>So you define your persistent model this way:</p>
+<pre><code>User
+  name Text
+  dateOfBirth Day
+  email Text
+  UniqueEmail email
+  -- etc…</code></pre>
+<p>The problem of course is that the <a href="https://en.wikibooks.org/wiki/A-level_Computing/AQA/Paper_2/Fundamentals_of_functional_programming/Basics_of_functional_programming">domain</a> for the <code>name</code> field (and also
+the email field) is much larger than we want. Even taking into account
+<a href="https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/">falsehoods programmers believe about names</a>, a name is not just <em>any</em> text
+value. We need to enforce some rules. We need to reduce our problem space. We
+need to <em>make it smaller</em>.</p>
+<p>For example, we wouldn’t want a user with an empty string for a name:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  { name <span class="ot">=</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  , dateOfBirth <span class="ot">=</span> <span class="co">-- …</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span></code></pre></div>
+<p>We also wouldn’t want <em>this</em> monstrosity<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  { name <span class="ot">=</span> <span class="st">&quot;V̥̝̣̤͇̮̣̦ͮͬ̇͌̕͟l̲̩̠̬͆ͪ͒͌̿ͧ̅͊͘a̷̙̾́̐͌̀ͥ̂̅͝ḓͤͣ̅͂̂ͩ̆͡ò̲̙͙̗̳̻̠̀l̥̮͈̫̻̤̞̿͛ͧ̄͒͋̅̂ͩ͘f̸̮̩̫̺̾͊̌̌ͫ̀͟ͅ ̥ͪ͋͞P̟̻̝͕̩͎̞ͭ̾ͧ͗̆̉u̶͍̱̭͎̓͋̓͂͗ͧͯ͡ͅͅt̸̯̜̟̥̋ͬͦ͂͆͘͟l̯͉͉̤ͣe̱̟̮̖̋ͦ̌͒͂͆ͪ͌͘r͚͛̒͗̔͊̚͘&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  , dateOfBirth <span class="ot">=</span> <span class="co">-- …</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span></code></pre></div>
+<p>It’s all very well telling ourselves that this wouldn’t happen to us because we
+are running a comprehensive validation function when processing the form submission
+that ingests this data, but the reality is that in a non-trivial business your
+database is going to have more than one entry point. Expediency and technical debt
+are facts of life.</p>
+<p>A persistent model with a bunch of fields representing primitive values like
+<code>Text</code> is a code smell. When we see it, it’s telling us that we should <em>make
+our types smaller</em>. That is to say, more specific.</p>
+<p>Perhaps what we want instead is something like this:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[st|</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  -- Our User type with more specific types in its fields</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  User</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    name Username -- This type is smaller!</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    dateOfBirth Day</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    email Email</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    UniqueEmail email</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    -- etc…</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>|]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Introduce a Username type which wraps a text value</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- Keep this in a different module, and be sure not to expose the constructor!</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Username</span>  <span class="ot">=</span> <span class="dt">Username</span> {<span class="ot"> unUsername ::</span> <span class="dt">Text</span> }</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- The &quot;smart constructor&quot; which enforces validation rules</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- Only expose this one!</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ot">mkUsername ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Username</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>mkUsername t</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> t <span class="op">==</span> <span class="st">&quot;&quot;</span> <span class="ot">=</span> <span class="dt">Nothing</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> failsSomeOtherValidationRule t <span class="ot">=</span> <span class="dt">Nothing</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Username</span> t)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">-- Teach our program to marshal values over the system boundary</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">PersistField</span> <span class="dt">Username</span> <span class="kw">where</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  toPersistValue <span class="ot">=</span> <span class="co">-- unwrap value</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  fromPersistValue <span class="ot">=</span> <span class="co">-- parse value into narrower type</span></span></code></pre></div>
+<p>It may seem more expensive to use a more specific type because you then need to
+take the time to teach your program how to marshal values across that
+application/database boundary, but I think this one-time cost is cheaper than
+having to code defensively in perpetuity.</p>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Fun Fact: For quite a long time, Twitter happily accepted Zalgo input in tweets, allowing anyone to turn the timelines of other users into an incomprehensible mess.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

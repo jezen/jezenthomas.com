@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>At Least Assert Your Serialisation Roundtrips</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="How to use property-based testing with Hedgehog and Hspec to ensure that the values in your system can be serialised and deserialised symmetrically.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="At Least Assert Your Serialisation Roundtrips">
+    <meta property="og:description" content="How to use property-based testing with Hedgehog and Hspec to ensure that the values in your system can be serialised and deserialised symmetrically.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/reflection.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="At Least Assert Your Serialisation Roundtrips">
+    <meta name="twitter:description" content="How to use property-based testing with Hedgehog and Hspec to ensure that the values in your system can be serialised and deserialised symmetrically.">
+    <meta name="twitter:image" content="/static/img/reflection.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">At Least Assert Your Serialisation Roundtrips</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        December 10<sup>th</sup>, 2022
+        
+        | Kraków, Poland
+        
+      </p>
+    </div>
+    <p>When you’re writing a web application, the values that flow through your system
+need to be serialised and deserialised. This could be for representation as
+JSON, XML, a parameter in a URI query string, or a field in a database, <em>etc</em>.</p>
+<p>The problem with teaching your program how to serialise or deserialise values
+is that it is manual and error-prone.</p>
+<p>Consider the follow enumeration type which models the status of a company in
+the United Kingdom.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Status</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">Active</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrder</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrderAdministrativeReceiver</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrderReceiverManager</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrderReceivership</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrativeReceiver</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedOrClosed</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedToPLC</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedToUKEIG</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedToUKSocietas</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- 23 more constructors…</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Bounded</span>, <span class="dt">Enum</span>, <span class="dt">Eq</span>, <span class="dt">Ord</span>, <span class="dt">Read</span>, <span class="dt">Show</span>)</span></code></pre></div>
+<p>If we wanted to teach our program to serialise each of these constructors as
+JSON but we stuck with the defaults, we would end up with values like
+<code>"Active"</code> and <code>"AdministrationOrder"</code> which mirror how the constructors are
+written.</p>
+<p>This isn’t what we want though — a consumer of this JSON data would expect
+something in perhaps snake case or kebab case, <em>i.e.</em>, <code>"administration_order"</code>
+or <code>"administration-order"</code> respectively.</p>
+<p>Of course, we could type out the desired conversions manually, like this:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  parseJSON <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;active&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">Active</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrder</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order_administrative_receiver&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrderAdministrativeReceiver</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order_receiver_manager&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrderReceiverManager</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order_receivership&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrderReceivership</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administrative_receiver&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrativeReceiver</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_or_closed&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedOrClosed</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_to_plc&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedToPLC</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_to_ukeig&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedToUKEIG</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_to_uk_societas&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedToUKSocietas</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- 23 more lines of tedium…</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Could not parse Status - was not a String&quot;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">ToJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  toJSON <span class="ot">=</span> <span class="dt">String</span> <span class="op">.</span> \<span class="kw">case</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Active</span> <span class="ot">-&gt;</span> <span class="st">&quot;active&quot;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrder</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order&quot;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrderAdministrativeReceiver</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order_administrative_receiver&quot;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrderReceiverManager</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order_receiver_manager&quot;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrderReceivership</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order_receivership&quot;</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrativeReceiver</span> <span class="ot">-&gt;</span> <span class="st">&quot;administrative_receiver&quot;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedOrClosed</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_or_closed&quot;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedToPLC</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_to_plc&quot;</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedToUKEIG</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_to_ukeig&quot;</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedToUKSocietas</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_to_uk_societas&quot;</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- This isn't what I signed up for ಠ_ಠ</span></span></code></pre></div>
+<p>While this does model exactly the representation we want, clearly this is not
+the kind of code we wish to maintain. At scale, it is inevitable that you or
+one your colleagues will mistype one of the strings, or forget to handle a case
+entirely.</p>
+<p>A better approach would be to use some function — we are programmers after all
+— to handle the conversions for us.</p>
+<p>We can neatly convert the representations of each of these constructors
+automatically with some string conversion function, <em>e.g.</em>, those available in
+the <a href="https://hackage.haskell.org/package/casing-0.1.4.1/docs/Text-Casing.html"><code>casing</code></a> library. This would lead us to write JSON instances for our
+type like this:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Control.Monad.Fail</span> (fail)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Text.Casing</span> (kebab, pascal)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Text.Read</span> (readEither)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  parseJSON <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> s) <span class="ot">-&gt;</span> <span class="kw">case</span> deserialise s <span class="kw">of</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Left</span> err <span class="ot">-&gt;</span> <span class="fu">fail</span> (unpack err)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Right</span> status <span class="ot">-&gt;</span> <span class="fu">pure</span> status</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Could not parse Status - was not a String&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">ToJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  toJSON <span class="ot">=</span> <span class="dt">String</span> <span class="op">.</span> serialise</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="ot">serialise ::</span> <span class="dt">Status</span> <span class="ot">-&gt;</span> <span class="dt">Text</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>serialise <span class="ot">=</span> <span class="fu">pack</span> <span class="op">.</span> kebab <span class="op">.</span> <span class="fu">show</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="ot">deserialise ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Status</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>deserialise t <span class="ot">=</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> readEither (pascal (unpack s)) <span class="kw">of</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Left</span> _ <span class="ot">-&gt;</span> <span class="dt">Left</span> <span class="op">$</span> <span class="st">&quot;Could not parse Status: &quot;</span> <span class="op">&lt;&gt;</span> t</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Right</span> status <span class="ot">-&gt;</span> <span class="fu">pure</span> status</span></code></pre></div>
+<p>This is an improvement. We now have 15 lines of code rather than the 71 lines
+of code we would have had after laboriously typing out all of the constructors.</p>
+<p>There could be problems in the logic though, which we’ll need to write a test
+for. The best way I have found for writing a test for this kind of problem is
+with a roundtrip property-based test.</p>
+<p>Roundtripping in this context just means that if you take some value and
+serialise it, then you’ll get back the same value when you deserialise it.</p>
+<p>I’m partial to both the <code>hspec</code> and <code>hedgehog</code> testing libraries, so naturally
+it makes sense to combine them with the <a href="https://hackage.haskell.org/package/hspec-hedgehog-0.0.1.2/docs/Test-Hspec-Hedgehog.html"><code>hspec-hedgehog</code></a> library.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Model.StatusSpec</span> (spec) <span class="kw">where</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Aeson</span> <span class="kw">as</span> <span class="dt">Aeson</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Hedgehog.Gen</span> <span class="kw">as</span> <span class="dt">Gen</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Model.Status</span> (<span class="dt">Status</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Test.Hspec.Hedgehog</span> (<span class="dt">Gen</span>, forAll, hedgehog, tripping)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">TestImport</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ot">spec ::</span> <span class="dt">Spec</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>spec <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  describe <span class="st">&quot;Status&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;roundtrips JSON&quot;</span> <span class="op">$</span> hedgehog <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      x <span class="ot">&lt;-</span> forAll (Gen.enumBounded<span class="ot"> ::</span> <span class="dt">Gen</span> <span class="dt">Status</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      tripping x Aeson.encode Aeson.eitherDecode</span></code></pre></div>
+<p>This test says:</p>
+<blockquote>
+<p>Generate all the <code>Status</code> values and ensure each of them roundtrip.</p>
+</blockquote>
+<p>Hedgehog is able to give us all the values in our <code>Status</code> enumeration because
+we asked the compiler to derive instances for both the <code>Enum</code> and <code>Bounded</code>
+classes when we defined our type.</p>
+<p>What happens when we run this test?</p>
+<pre><code>Model.Status
+  Status
+    roundtrips JSON FAILED [1]
+
+Failures:
+
+  ./test/Model/StatusSpec.hs:20:7:
+  1) Model.Status.Status roundtrips JSON
+         ✗ &lt;interactive&gt; failed at ./test/Model/StatusSpec.hs:20:7
+           after 1 test.
+
+              ┏━━ ./test/Model/StatusSpec.hs ━━━
+           13 ┃ spec :: Spec
+           14 ┃ spec = do
+           15 ┃
+           16 ┃   describe &quot;Status&quot; $ do
+           17 ┃
+           18 ┃     it &quot;roundtrips JSON&quot; $ hedgehog $ do
+           19 ┃       x &lt;- forAll (Gen.enumBounded :: Gen Status)
+              ┃       │ ConvertedToPLC
+           20 ┃       tripping x Aeson.encode Aeson.eitherDecode
+              ┃       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              ┃       │ ━━━ Intermediate ━━━
+              ┃       │ &quot;\&quot;converted-to-plc\&quot;&quot;
+              ┃       │ ━━━ - Original) (+ Roundtrip ━━━
+              ┃       │ - Right ConvertedToPLC
+              ┃       │ + Left &quot;Error in $: Could not parse Status: converted-to-plc&quot;
+
+           This failure can be reproduced by running:
+           &gt; recheck (Size 0) (Seed 15174119819274148648 1778119947192687319) &lt;property&gt;</code></pre>
+<p>It failed!</p>
+<p>If we fire up GHCi and import both our <code>Status</code> type and the <code>Text.Casing</code> module, we can see why this fails.</p>
+<pre><code>λ kebab $ show ConvertedToPLC
+&quot;converted-to-plc&quot;
+
+λ pascal $ kebab $ show ConvertedToPLC
+&quot;ConvertedToPlc&quot;</code></pre>
+<p>The <code>pascal</code> function is converting the serialised <code>"converted-to-plc"</code> into
+<code>"ConvertedToPlc"</code>, but this doesn’t match the derived <code>Read</code> instance for that
+type! For the same reason, this code would also fail on the <code>ConvertedToUKEIG</code>
+and <code>ConvertedToUKSocietas</code> constructors.</p>
+<p>To fix this we’ll have to handle those edge cases manually, like this:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">deserialise ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Status</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>deserialise <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;converted-to-plc&quot;</span> <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="dt">ConvertedToPLC</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;converted-to-ukeig&quot;</span> <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="dt">ConvertedToUKEIG</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;converted-to-uk-societas&quot;</span> <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="dt">ConvertedToUKSocietas</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">-&gt;</span> <span class="kw">case</span> readEither (pascal (unpack s)) <span class="kw">of</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Left</span> _ <span class="ot">-&gt;</span> <span class="dt">Left</span> <span class="op">$</span> <span class="st">&quot;Could not parse Status: &quot;</span> <span class="op">&lt;&gt;</span> s</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Right</span> status <span class="ot">-&gt;</span> <span class="fu">pure</span> status</span></code></pre></div>
+<p>Running this again shows us that our tests pass, and we can have confidence
+that our test coverage is exhaustive because we aren’t relying on human
+discipline to exercise all of the paths through this code.</p>
+<p>I don’t think there’s any reason not to test your custom serialisation and
+deserialisation code this way, and if you’re new to property-based testing then
+this is the easiest place to start.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Rich Hickey Doesn't Know Types</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="Sorry Rich, typing preferences are one thing, but the implication that parametricity is effectively useless is just a bridge too far. You can't expect to say something wrong on the Internet and get away with it!">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Rich Hickey Doesn't Know Types">
+    <meta property="og:description" content="Sorry Rich, typing preferences are one thing, but the implication that parametricity is effectively useless is just a bridge too far. You can't expect to say something wrong on the Internet and get away with it!">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Rich Hickey Doesn't Know Types">
+    <meta name="twitter:description" content="Sorry Rich, typing preferences are one thing, but the implication that parametricity is effectively useless is just a bridge too far. You can't expect to say something wrong on the Internet and get away with it!">
+    <meta name="twitter:image" content="/static/img/prestiz.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Rich Hickey Doesn't Know Types</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        April  9<sup>th</sup>, 2019
+        
+        | Sopot, Poland
+        
+      </p>
+    </div>
+    <p>Clojure inventor Rich Hickey is known for his eloquence. His talks like <em>Simple
+Made Easy</em> are often cited as a favourite when you ask seemingly any savvy
+programmer.</p>
+<p>There’s something about the dulcet tones of his radio-smooth voice that brings
+a little more magic to any kind of philosophising about software complexity.
+Throw in some light usage of the word “complect”, allow to simmer for five
+minutes, and you have a seductive Nigella Lawson flavoured dish, garnished with
+a twist of pretentiousness.</p>
+<p>This is all well and good until he begins his tired <em>types are bad</em> tirade.</p>
+<p>Hickey doesn’t understand types. If he did, he wouldn’t be able to say the
+things he says with any shred of intellectual integrity, and I’d rather suggest
+he’s displaying ignorance than dishonesty.</p>
+<p>More specifically, I believe he doesn’t understand parametricity. I base that
+on one of his talks in which he says the following with much exasperation and
+furrowed brow:</p>
+<blockquote>
+<p><code>a -&gt; a</code>; <code>[a] -&gt; [a]</code>; It means nothing! It tells you <em>nothing</em>!</p>
+</blockquote>
+<p>— Rich Hickey, <a href="https://youtu.be/2V1FtfBDsLU?t=4020">Effective Programs</a>.</p>
+<p>I don’t know if he meant to say “A to A” (<code>a -&gt; a</code>). Assuming he did, that’s an
+easy concept to unpack, and an important step in understanding parametricity.</p>
+<p>The first assumption most people make is that a function which takes an <code>a</code> and
+returns an <code>a</code> could have <em>any</em> implementation. This seems reasonable enough —
+the value could <em>be</em> anything, so perhaps the function could <em>do</em> anything,
+<em>right</em>?</p>
+<p>No. Not right.</p>
+<p>What if the value is a number, like <code>1</code>? Could the returned value be the same
+number plus one? It would be the same <em>type</em>, right? Yeah, but then consider
+that the idea of “adding one” would also have to apply to <em>any other type</em> of
+value, and there are <em>infinite</em> types of values. What would <code>True + 1</code> be?
+Exactly. It’d be nonsense.</p>
+<p>What about if we keep the same value, but concatenate itself with another copy
+of itself? Well, we can’t. A Haskeller might describe this by saying not every
+type has a semigroup instance. This essentially just means that not every type
+of value can be concatenated. Create more examples like this to your heart’s
+content.</p>
+<p>This function is also guaranteed not to have any effect on the outside world.
+We <em>know</em> it won’t send your Bitcoins to China. We <em>know</em> it won’t open or
+close your garage door. We <em>know</em> it won’t hang while waiting for user input.
+For any of that to work, we’d need to see some hint of <code>IO</code> expressed in the
+type signature.</p>
+<p>Therefore, the <em>only</em> thing <code>a -&gt; a</code> could <em>possibly</em> be, is a function that
+takes a value and returns the same value unchanged. In Haskell, this is called
+the <code>id</code> function (but referred to in speech as “identity”).</p>
+<p>This alone is evidence enough that Hickey’s statement of “it means nothing!” is
+patently and demonstrably false. As it turns out, there’s an awful lot we
+<em>know</em> about a function, without even reading its implementation!</p>
+<p>With that out of the way, we’re prepared to unpack his second example of “list
+of A to list of A” (<code>[a] -&gt; [a]</code>).</p>
+<p>First, an admission: This could <em>technically</em> have infinite implementations,
+but not for any reason that Hickey is making any allusions to. It could have
+infinite implementations in the sense that you could implement it as the input
+alone, or concatenated with itself, or concatenated with itself twice, or
+thrice, and so on to infinity.</p>
+<pre><code>f :: [a] -&gt; [a]
+f a = a ++ a
+-- or
+f a = a ++ a ++ a
+-- or
+f a = a ++ a ++ a ++ a
+-- ad infinitum</code></pre>
+<p>For practical purposes, this distinction is not useful, so it does nothing to
+support Hickey’s claim that the type signature <code>[a] -&gt; [a]</code> “tells you
+nothing”.</p>
+<p>A second admission: While a function of <code>[a] -&gt; [a]</code> is considered <em>pure</em> in
+Haskell, it could potentially cause the <em>side effect</em> of crashing your program
+because of the <a href="https://en.wikipedia.org/wiki/Halting_problem">Halting Problem</a>.</p>
+<p>The execution of this program (theoretically, depending on input and other
+circumstances) could <em>also</em> push your CPU so hard that your machine overheats,
+bursts into flames, and melts into its own little pool of glowing lava. That’d
+be one hell of a side-effect.</p>
+<pre><code>f :: [a] -&gt; [a]
+f a = f a</code></pre>
+<p>Again, this distinction is not particularly useful. I include these admissions
+in the interest of fairness. I want to be clear that I do not intend to
+misrepresent neither Hickey nor the benefits and drawbacks of a good type
+system such as the one in Haskell.</p>
+<p>Let’s retreat to the realm of the reasonable. Could this function be <code>reverse</code>?
+Yeah, sure. You could recursively call this function with all the elements
+except the first one, joined with a list of just the first item.</p>
+<pre><code>reverse' :: [a] -&gt; [a]
+reverse' [] = []
+reverse' (x:xs) = reverse' xs ++ [x]</code></pre>
+<p>Pretty standard stuff. What else could it be? Could it be “Give me the first
+<em>n</em> elements of the list?” Yeah, that works. You could also drop the first <em>n</em>
+elements of the list.</p>
+<p>It’s worth noting at this point that none of the functions we <em>can</em> implement
+for this type signature actually touch the <code>a</code> inside the <code>[]</code>. Again, because
+of parametricity, we’re not allowed to do that. The rules about what we can do
+with <code>a -&gt; a</code> seem small and trivial, but actually this stuff is <em>fundamental</em>.
+This principle stacks up with <em>enormously</em> meaningful effect.</p>
+<p>What about a shuffle? Can <code>[a] -&gt; [a]</code> shuffle its elements?</p>
+<p>Think about this for a moment. How would this work? Given referential
+transparency, what would happen on subsequent calls to this function?</p>
+<p>For it to do a shuffle, it would need a random seed. You could either pass that
+in, which would make it something like</p>
+<pre><code>f :: Seed -&gt; [a] -&gt; [a]</code></pre>
+<p>…or you would have to do it in IO, which would make it</p>
+<pre><code>f :: [a] -&gt; IO [a]</code></pre>
+<p>Once again, there are quite many things we can <em>know</em> about what a function can
+do just by reading its type signature.</p>
+<p>You may begin to believe that since I have so far railed about theory, the
+benefits of all this are also only theoretical. That couldn’t be further from
+the truth.</p>
+<p>As Kris Jenkins said in his talk <a href="https://vimeo.com/302682323">Communicating in Types</a>:</p>
+<blockquote>
+<p>When you have a type error — and you <em>always</em> get a type error — the question
+is whether you get it from QA, or your users, or your compiler.</p>
+</blockquote>
+<p>The nature of business is change, and this is especially true in the startup
+world where I tend to reside. If you want to make large changes across a system
+in a dynamic language without breaking everything, you need to rely on human
+discipline to have written all the tests.</p>
+<p>Writing these tests manually is never going to be as quick as a compiler
+writing them for you. With a good compiler these kinds of changes go from being
+nearly impossible to just tedious. Encoding invariants in a type system is far
+cheaper than writing tests.</p>
+<p>Perhaps when Hickey says things like “it tells you nothing”, he is just using
+hyperbole for theatrical effect. If that’s the case, it’s effective — It
+certainly got a reaction from me! However I don’t think it’s an effective
+method for catalysing thoughtful discussion.</p>
+<p>Type systems like Haskell’s aren’t a panacea, and there are <em>some</em> things that
+a language with a dynamic type system can do that are harder to achieve in
+Haskell (though what this means in the context of a business is a separate
+discussion).</p>
+<p>That said, I don’t think Rich Hickey compares the two approaches on fair terms.
+It isn’t fair to say “type systems don’t help because if you try hard enough
+you can break them. What you need to do instead is [lots of hand-waving here]
+make things <em>simple!</em>”</p>
+<p>If you listen carefully to Hickey when he talks harshly about types, you maybe
+identify a number of logical fallacies.</p>
+<p>When Rich Hickey dismisses the value of a powerful type system by saying “oh it
+doesn’t really work in practice”, is this the <em>Anecdotal</em> logical fallacy?
+Because anecdotally, this stuff works for me and for many people I’ve worked
+with, <em>in practice</em>. It could also perhaps be <em>Ambiguity</em>, or <em>No True
+Scotsman</em>.</p>
+<p>And the people defending his take on this? <em>Appeal to Authority</em>.</p>
+<p>I say this being totally aware that I may be committing the <em>Fallacy Fallacy</em>,
+but I’m yet to be convinced that an accumulation of design aids does not yield
+a net benefit.</p>
+<p>In any case, writing robust software is pretty tough and I’m happy to take all
+the help I can get. Rejecting an entire field of study (like types!) is not
+only anti-intellectual, but also does nothing to move the state of our industry
+forward. I’d say that’s especially harmful now in a time where software errors
+can bring down a couple of Boeing 787 Max airplanes and kill hundreds of
+people.</p>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>

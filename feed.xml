@@ -1,0 +1,1042 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"
+    xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <channel>
+        <title>jezenthomas.com</title>
+        <link>https://jezenthomas.com</link>
+        <description><![CDATA[Thoughts on Haskell, Business, Unix, and more.]]></description>
+        <atom:link href="https://jezenthomas.com/feed.xml" rel="self"
+                   type="application/rss+xml" />
+        <lastBuildDate>Sun, 05 Nov 2023 00:00:00 UT</lastBuildDate>
+        <item>
+    <title>Stubbing I/O in Yesod</title>
+    <link>https://jezenthomas.com/2023/11/stubbing-io-in-yesod/</link>
+    <description><![CDATA[<p>Here’s the scenario.</p>
+<p>You’re writing a web application in Yesod. In one of your request handler
+functions, you need to run some IO action. This might be to make an HTTP
+request against an online weather service, or this might be to charge someone’s
+credit card, or even just to generate some random number.</p>
+<p>Taking the latter as an example, imagine we want to generate a random number
+and then respond to the user’s request by reporting whether the randomly
+generated number is even or odd.</p>
+<p>We might write code which looks like this.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes #-}</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell #-}</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TypeFamilies #-}</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Application</span> <span class="kw">where</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">System.Random</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Yesod</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">App</span> <span class="ot">=</span> <span class="dt">App</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mkYesod <span class="st">&quot;App&quot;</span> [parseRoutes|</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>/random RandomR GET</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>|]</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ot">getRandomR ::</span> <span class="dt">Handler</span> <span class="dt">Value</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>getRandomR <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> liftIO randomNumber</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  returnJson <span class="op">$</span> isEven n</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ot">    randomNumber ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    randomNumber <span class="ot">=</span> randomRIO (<span class="dv">1</span>, <span class="dv">100</span>)</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ot">    isEven ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    isEven n <span class="ot">=</span> <span class="kw">if</span> <span class="fu">even</span> n <span class="kw">then</span> <span class="st">&quot;even&quot;</span> <span class="kw">else</span> <span class="st">&quot;odd&quot;</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> warp <span class="dv">3000</span> <span class="dt">App</span></span></code></pre></div>
+<p>This is a complete Yesod application. We can run this locally and it will be
+listening for requests on port 3000. When we send requests there, we can see
+our application dutifully responding with whether or not the randomly generated
+number was even or odd.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl http://localhost:3000/random</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;even&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl http://localhost:3000/random</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;odd&quot;</span></span></code></pre></div>
+<p>This is all well and good, but how do we write an automated test for this? We
+can’t control the randomness of our pseudo-random number generator. Similarly,
+if instead of generating a random number this were an HTTP request to attempt
+to charge someone’s credit card with some payment provider, <em>e.g.</em>, Stripe,
+then we wouldn’t be able to write a reliable automated test for this because we
+don’t control Stripe’s servers.</p>
+<p>What we need to do is to <em>stub</em> out this IO action. This means that instead of
+running the real implementation during the test, we swap it out for a fake
+version that we <em>can</em> control.</p>
+<p>One simple approach for this is with <em>dependency injection</em>.</p>
+<p>Instead of defining our <code>randomNumber</code> function alongside our request handler,
+we can declare it as part of our application’s foundational data type.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">App</span> <span class="ot">=</span> <span class="dt">App</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> appRandomNumber ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<p>When we initialise our application, we construct our <code>App</code> value with the real
+implementation of our function.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> warp <span class="dv">3000</span> <span class="op">$</span> <span class="dt">App</span> randomNumber</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    randomNumber <span class="ot">=</span> <span class="co">-- real implementation</span></span></code></pre></div>
+<p>Since our <code>randomNumber</code> function is no longer defined alongside our request
+handler, we’ll now need to ask for that function from within the handler
+instead.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getRandomR ::</span> <span class="dt">Handler</span> <span class="dt">Value</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>getRandomR <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> liftIO <span class="op">=&lt;&lt;</span> getsYesod appRandomNumber</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  returnJson <span class="op">$</span> isEven n</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ot">    isEven ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    isEven n <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<p>This behaves exactly as it did before, but now we’re able to swap out our
+<code>randomNumber</code> function for a fake version in an automated test with
+<code>testModifySite</code>.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">withApp ::</span> <span class="dt">SpecWith</span> (<span class="dt">TestApp</span> <span class="dt">App</span>) <span class="ot">-&gt;</span> <span class="dt">Spec</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>withApp <span class="ot">=</span> before <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">App</span> randomNumber, <span class="fu">id</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ot">stub ::</span> <span class="dt">YesodDispatch</span> a <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">YesodExample</span> a ()</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>stub f <span class="ot">=</span> testModifySite (\app <span class="ot">-&gt;</span> <span class="fu">pure</span> (f app, <span class="fu">id</span>))</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ot">spec ::</span> <span class="dt">Spec</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>spec <span class="ot">=</span> withApp <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  describe <span class="st">&quot;GET /random&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;works with even numbers&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      stub (\a <span class="ot">-&gt;</span> a { appRandomNumber <span class="ot">=</span> <span class="fu">pure</span> <span class="dv">66</span> })</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      get <span class="dt">RandomR</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      statusIs <span class="dv">200</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      bodyEquals <span class="st">&quot;\&quot;even\&quot;&quot;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;works with odd numbers&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      stub (\a <span class="ot">-&gt;</span> a { appRandomNumber <span class="ot">=</span> <span class="fu">pure</span> <span class="dv">17</span> })</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      get <span class="dt">RandomR</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      statusIs <span class="dv">200</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      bodyEquals <span class="st">&quot;\&quot;odd\&quot;&quot;</span></span></code></pre></div>
+<p>Of course, the usual warnings apply. There are problems that come along with
+stubbing out functions — if your stub doesn’t accurately reflect what that
+function <em>actually</em> does, then your test is only giving you false confidence.</p>
+<p>People often say that stubbing is bad and that you shouldn’t do it. I don’t
+think this advice is useful. Yes, your tests and application logic should be
+pure as far as you can help it. But sometimes you really <em>do</em> need a stub.</p>
+<p>A working example of this approach is <a href="https://github.com/jezen/yesod-stubbing-example">available here</a>.</p>
+]]></description>
+    <pubDate>Sun, 05 Nov 2023 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2023/11/stubbing-io-in-yesod/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
+    <title>Haskell Pattern: Design for Qualified Imports</title>
+    <link>https://jezenthomas.com/2023/08/haskell-pattern-qualified-imports/</link>
+    <description><![CDATA[<p>When you’re writing library code, design for qualified imports.</p>
+<p>Let’s say we’re writing a module which is concerned with parsing email
+addresses. Inside this <code>Email</code> module, a function named <code>parseEmail</code> would be
+carrying more context in its name than is necessary. The name <code>parse</code> would be
+sufficient.</p>
+<p>When applying our parsing function in some <em>other</em> module, the name needs to be
+more descriptive so that it is more obvious what kind of thing the parsing
+function parses.</p>
+<p>We also might need to disambiguate this parsing function from another parsing
+function that may be in scope.</p>
+<p>✘ <code>Email.parseEmail</code> is redundant.</p>
+<p>✘ <code>parseEmail</code> makes it hard to know where the function is defined.</p>
+<p>✔ <code>Email.parse</code> is easy to read.</p>
+<p>✔ <code>Email.parse</code> makes it clear what kind of thing we’re parsing.</p>
+<p>✔ <code>Email.parse</code> makes it clear where that function is defined.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Acme.Email</span> <span class="kw">qualified</span> <span class="kw">as</span> <span class="dt">Email</span> <span class="co">-- exports `parse`, not `parseEmail`</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="fu">print</span> <span class="op">$</span> Email.parse <span class="st">&quot;foo@bar.com&quot;</span></span></code></pre></div>
+<p>The module describes the context we’re in. Sometimes we need to make
+that context clearer, and sometimes the context is already clear enough.</p>
+]]></description>
+    <pubDate>Thu, 17 Aug 2023 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2023/08/haskell-pattern-qualified-imports/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
+    <title>Yesod Forms, Newtypes, and Smart Constructors</title>
+    <link>https://jezenthomas.com/2023/06/yesod-forms-with-newtypes-and-smart-constructors/</link>
+    <description><![CDATA[<p>Say we’re writing a web application, and we’re modelling a login form.</p>
+<p>If the types in your system are primitive, you don’t need to do much to parse
+them from values outside your system boundary, <em>i.e.</em>, those submitted by a
+user through a web form.</p>
+<p>It’s easy enough to use a <code>textField</code> for each field in our login form.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Assume this type synonym exists for all examples in this article</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Form</span> x <span class="ot">=</span> <span class="dt">Html</span> <span class="ot">-&gt;</span> <span class="dt">MForm</span> (<span class="dt">HandlerFor</span> <span class="dt">App</span>) (<span class="dt">FormResult</span> x, <span class="dt">Widget</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- A login form with a single field</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">LoginForm</span> <span class="ot">=</span> <span class="dt">LoginForm</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> loginFormEmail ::</span> <span class="dt">Text</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ot">loginForm ::</span> <span class="dt">Form</span> <span class="dt">LoginForm</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>loginForm extra <span class="ot">=</span>  <span class="kw">do</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  email <span class="ot">&lt;-</span> mreq textField <span class="st">&quot;&quot;</span> <span class="dt">Nothing</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">LoginForm</span> <span class="op">&lt;$&gt;</span> <span class="fu">fst</span> email, <span class="op">$</span>(widgetFile <span class="st">&quot;login&quot;</span>))</span></code></pre></div>
+<p>No surprises here.</p>
+<h2 id="with-newtypes">With Newtypes</h2>
+<p>What if our types aren’t exactly <code>Text</code> values, but are some kind of
+equivalent type? For example, what if we’re representing our email value with a
+newtype which wraps the underlying text value?</p>
+<p>In Yesod, a <code>Field</code> cannot be a functor so it’s not obvious how to reuse a
+<code>textField</code> and make it produce an <code>Email</code> value instead.</p>
+<p>Fortunately, Yesod’s <a href="https://hackage.haskell.org/package/yesod-form">form library</a> provides <a href="https://hackage.haskell.org/package/yesod-form-1.7.4/docs/Yesod-Form-Functions.html#v:convertField"><code>convertField</code></a> to handle
+this case. You apply this function to a couple of functions for converting to
+and from your newtype, and a form field you wish to wrap.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Email</span> <span class="ot">=</span> <span class="dt">Email</span> {<span class="ot"> unEmail ::</span> <span class="dt">Text</span> }</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">LoginForm</span> <span class="ot">=</span> <span class="dt">LoginForm</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> loginFormEmail ::</span> <span class="dt">Email</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ot">loginForm ::</span> <span class="dt">Form</span> <span class="dt">LoginForm</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>loginForm extra <span class="ot">=</span>  <span class="kw">do</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  email <span class="ot">&lt;-</span> mreq (convertField <span class="dt">Email</span> unEmail textField) <span class="st">&quot;&quot;</span> <span class="dt">Nothing</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">LoginForm</span> <span class="op">&lt;$&gt;</span> <span class="fu">fst</span> email, <span class="op">$</span>(widgetFile <span class="st">&quot;login&quot;</span>))</span></code></pre></div>
+<h2 id="with-smart-constructors">With Smart Constructors</h2>
+<p>Newtype wrappers are better than working directly with primitive types, but by
+themselves they don’t provide a great deal of type safety because the wrapped
+data isn’t any more constrained than when it’s unwrapped.</p>
+<p>To solve that, we would reach for a <a href="https://kowainik.github.io/posts/haskell-mini-patterns#smart-constructor">smart constructor</a>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Explicitly exclude the value constructor</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Email</span> (<span class="dt">Email</span>, unEmail, email) <span class="kw">where</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- The newtype wrapper without a record field</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Email</span> <span class="ot">=</span> <span class="dt">Email</span> <span class="dt">Text</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- Unwrap the newtype</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ot">unEmail ::</span> <span class="dt">Email</span> <span class="ot">-&gt;</span> <span class="dt">Text</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>unEmail (<span class="dt">Email</span> email) <span class="ot">=</span> email</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- The smart constructor</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="ot">email ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Email</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>email t</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="st">&quot;@&quot;</span> <span class="ot">`isInfixOf`</span> t <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Email</span> t)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dt">Nothing</span></span></code></pre></div>
+<p>What if we’re using the smart constructor pattern and our newtypes can’t be
+naïvely constructed? We can’t use <code>convertField</code> because the types won’t line
+up.</p>
+<p>Again, Yesod conveniently provides <a href="https://hackage.haskell.org/package/yesod-form-1.7.4/docs/Yesod-Form-Functions.html#v:checkMMap"><code>checkMMap</code></a> for transforming some
+existing field into one that both performs validation <em>and</em> converts the
+datatype. This way we can use our smart constructor in the field directly
+instead of having to define validation rules in two places.</p>
+<p>This function wants to ultimately produce an <code>Either msg b</code> but our smart
+constructor only produces a <code>Maybe b</code>. We can use the <a href="https://hackage.haskell.org/package/errors-2.3.0/docs/Control-Error-Util.html#v:note"><code>note</code></a> function to
+promote it and provide a friendly error message.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Email</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">LoginForm</span> <span class="ot">=</span> <span class="dt">LoginForm</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> loginFormEmail ::</span> <span class="dt">Email</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ot">loginForm ::</span> <span class="dt">Form</span> <span class="dt">LoginForm</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>loginForm extra <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  email <span class="ot">&lt;-</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> msg <span class="ot">=</span> asText <span class="st">&quot;Invalid email&quot;</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        checkEmail <span class="ot">=</span> <span class="fu">pure</span> <span class="op">.</span> note msg <span class="op">.</span> email</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>     <span class="kw">in</span> mreq (checkMMap checkEmail unEmail textField) <span class="st">&quot;&quot;</span> <span class="dt">Nothing</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">LoginForm</span> <span class="op">&lt;$&gt;</span> <span class="fu">fst</span> email, <span class="op">$</span>(widgetFile <span class="st">&quot;login&quot;</span>))</span></code></pre></div>
+<p>Since <code>checkMMap</code> runs in the <code>Handler</code> monad, you can also run IO actions or
+database transactions as part of the validation step. For example, you could
+query the database and check that the email address you’re trying to log in
+with actually exists.</p>
+<p>If you want a little more assurance, it might be worth writing a property-based
+test which asserts that your functions to convert to and from your newtype
+successfully <a href="https://hedgehog.qa/article/haskell-round-trip">roundtrip</a>.</p>
+<p>Yesod’s form library is actually pretty powerful and satisying. It could
+perhaps do with more examples of what good looks like, and hopefully this short
+article helps. I’ve found that my code is generally neater when I’m able to
+manage parsing/validation together at the web form level.</p>
+]]></description>
+    <pubDate>Wed, 14 Jun 2023 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2023/06/yesod-forms-with-newtypes-and-smart-constructors/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
+    <title>Derived Instances Can Break Smart Constructors, Too</title>
+    <link>https://jezenthomas.com/2023/06/derived-instances-can-break-smart-constructors/</link>
+    <description><![CDATA[<p>You know that <em>primitive obsession</em> is an anti-pattern.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Bad, because it&#39;s &quot;stringly typed&quot;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">validPassword ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>validPassword password <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<p>We’re using a <code>Text</code> value to represent a user’s password. This is bad because
+there are so many possible <code>Text</code> values which would not be valid passwords.</p>
+<p>For example, <code>"letmein"</code> is too short to be a valid password.</p>
+<p>Ideally, you want to parse values into narrower types at the boundaries of your
+system. This saves you from having to program defensively throughout your
+codebase.</p>
+<p>To this end, you introduce a new type which wraps a text value and models the
+concept of a password.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> {<span class="ot"> unPassword ::</span> <span class="dt">Text</span> }</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ot">validPassword ::</span> <span class="dt">Password</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>validPassword password <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<p>This is better, but it’s still pretty weak. We’ve introduced a different name
+in the type signature so it’s harder to confuse this value for some other
+text value. The problem is that you can construct a <code>Password</code> value from
+literally <em>any</em> text value. This leads to invalid values floating through your
+system.</p>
+<p>We can fix that by writing a <a href="https://kowainik.github.io/posts/haskell-mini-patterns#smart-constructor">smart constructor</a>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Careful what we export from this module. Hide that constructor.</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Model.Password</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Password</span>    <span class="co">-- abstract, hiding the constructor</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  , unPassword  <span class="co">-- unwrap a password</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  , password    <span class="co">-- only way to build a password</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="kw">where</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- Our type wraps a Text value. No record field here!</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> <span class="dt">Text</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Unwrap a &#39;Password&#39;</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="ot">unPassword ::</span> <span class="dt">Password</span> <span class="ot">-&gt;</span> <span class="dt">Text</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>unPassword (<span class="dt">Password</span> p) <span class="ot">=</span> p</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- Try to construct a &#39;Password&#39;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ot">password ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Password</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>password t</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">length</span> t <span class="op">&lt;</span> <span class="dv">8</span>    <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;Password is too short&quot;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">length</span> t <span class="op">&gt;</span> <span class="dv">64</span>   <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;Password is too long&quot;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> t <span class="op">==</span> <span class="st">&quot;password&quot;</span> <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;Password is too predictable&quot;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span>       <span class="ot">=</span> <span class="dt">Right</span> (<span class="dt">Password</span> t)</span></code></pre></div>
+<p>This module uses explicit exports, because it’s important that the value
+constructor for <code>Password</code> remains internal to this module. The only way the we
+can construct a <code>Password</code> value outside of this module is by applying the
+exposed <code>password</code> function.</p>
+<p>The <code>newtype</code> declaration does not have a record field, because <a href="https://taylor.fausak.me/2018/03/16/record-fields-break-smart-constructors/">record fields
+break smart constructors</a>. Instead, we introduce another simple function for
+unwrapping the <code>newtype</code> to get to the text value underneath<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>The <code>password</code> function guards against a few invalid cases and allows us to
+construct a valid <code>Password</code> value<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>. This is what people mean when they say
+<em>correct by construction</em>.</p>
+<p>This is a solid improvement over the <em>stringly typed</em> approach that we started
+with, but there’s another potential pitfall that I ran into while refactoring
+some code recently.</p>
+<p>In a web application you often want to serialise and deserialise values between
+different representations, <em>e.g.</em>, JSON, XML, URI path pieces, <em>etc.</em> This is
+typically done with typeclasses — you have a typeclass called <code>FromJSON</code> with a
+polymorphic method which parses some JSON into some other type, and then you
+write an <em>instance</em> of that typeclass for each type that you’d like to apply
+that parsing function to.</p>
+<p>When you have a <code>newtype</code> which wraps some primitive text value, it can be
+tempting to ask the compiler to <em>derive</em> the <code>FromJSON</code> instance using the
+<code>GeneralizedNewtypeDeriving</code> language extension. It’s less code to write and
+maintain, and in many cases you will indeed want a typeclass instance that is
+the same as the instance of the underlying type.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> <span class="dt">Text</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> <span class="dt">FromJSON</span> <span class="co">-- here&#39;s your problem</span></span></code></pre></div>
+<p>When you’re using smart constructors however, this will lead to invalid data
+flowing through your system because like record fields, this is also a way to
+circumvent the validation performed by the smart constructor.</p>
+<p>Potentially adding to the confusion, we’re not protected by our careful use of
+module exports here. Typeclass instances in Haskell are always exported and
+imported between modules!</p>
+<p>Fixing this is simple — just manually write the instance.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE LambdaCase #-}</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> <span class="dt">Text</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Password</span> <span class="kw">where</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  parseJSON <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> p) <span class="ot">-&gt;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> password p <span class="kw">of</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Left</span> err <span class="ot">-&gt;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>          <span class="fu">fail</span> <span class="op">$</span> <span class="st">&quot;Could not parse Password: &quot;</span> <span class="op">&lt;&gt;</span> unpack p <span class="op">&lt;&gt;</span> <span class="st">&quot;; &quot;</span> <span class="op">&lt;&gt;</span> err <span class="op">&lt;&gt;</span> <span class="st">&quot;.&quot;</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Right</span> pass&#39; <span class="ot">-&gt;</span> <span class="fu">pure</span> pass&#39;</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Could not parse Password - was not a String&quot;</span></span></code></pre></div>
+<p>Despite these two pitfalls, smart constructors are a good return on investment.
+Just be sure you don’t accidentally introduce ways to circumvent the protection
+that they provide.</p>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>You probably never want to do this with a <em>password</em>, but you often need
+to unwrap a value like this to do something with the underlying value, like
+print it on the screen (or, a web page).<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2" role="doc-endnote"><p>You could also have this produce a <code>Maybe Password</code>, but the extra
+context around why validation can fail here is interesting.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+]]></description>
+    <pubDate>Fri, 09 Jun 2023 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2023/06/derived-instances-can-break-smart-constructors/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
+    <title>Please Don't Kill Me, Google Maps</title>
+    <link>https://jezenthomas.com/2023/04/google-maps-please-dont-kill-me/</link>
+    <description><![CDATA[<p>Google Maps has a <em>clever</em> feature where it will dynamically reconsider your
+route if it thinks it can save you time.</p>
+<p>In general, this makes sense. In most cases people would prefer to save time,
+and spending less time running an internal combustion engine is better for the
+environment. I get it.</p>
+<p>What bothers me about this feature is that you <em>can’t turn it off</em>.</p>
+<p>I can only assume a product manager in California has decided that <em>Google
+knows best</em>, so why would anyone want to turn this feature off?</p>
+<hr />
+<p>Last year I had to drive from Odessa, Ukraine, to Chișinău airport in Moldova.
+Before setting off, I input my destination, and Google Maps dutifully presented
+me with a choice of two routes.</p>
+<p>I chose the route I found most sensible, even though it’s slightly longer.</p>
+<p>While driving, the route guidance drew my attention away from what was
+otherwise a rather comfortable journey through Ukrainian vineyards. Google
+Maps directed me to leave the road to the Palanca border crossing — a road I
+was already somewhat familiar with.</p>
+<p>Google Maps had identified a faster route. Google Maps decided to switch me to
+the faster route, unless I promptly cancelled the switch by tapping a button on
+my telephone within a window of only a few seconds. This prompt is easy to
+miss, especially if — as is quite common when operating a motor vehicle — you
+are already using your eyes to see where you are going.</p>
+<p>The problem with the optimised route Google Maps wanted to guide me towards is
+that it runs through Transnistria.</p>
+<p>Transnistria is not a real country. It’s actually a sliver of Moldova’s
+territory which has been militarily occupied by the terrorist state of russia
+since the collapse of the Soviet Union.</p>
+<p>Google Maps already provides the user with the option to avoid motorways and
+tolls. Perhaps Google Maps should also allow the user to avoid wars?</p>
+<p>I chose my route specifically because I don’t want to drive towards a barrage
+of machine gun fire. I would prefer for my vehicle to have the same number of
+holes in it as it did when it came off the production line, and I would indeed
+prefer for my internal organs to remain internal.</p>
+<p>I understand some Californian environmentalists will be distressed that my
+chosen route displaces a few more hydrocarbons, but ideally — if at all
+possible — I don’t want to die in a fucking war.</p>
+<p>Is that so much to ask, Google?</p>
+]]></description>
+    <pubDate>Sun, 23 Apr 2023 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2023/04/google-maps-please-dont-kill-me/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
+    <title>Make Your Types Smaller</title>
+    <link>https://jezenthomas.com/2022/12/make-your-types-smaller/</link>
+    <description><![CDATA[<p>Dragons lie at the boundaries of systems.</p>
+<p>But where those boundaries lie is too often in a software developer’s blind spot.</p>
+<p>A clear system boundary in a web application is a form. We know not to trust
+user input, and so we diligently validate — both client-side and server-side —
+the user’s submission.</p>
+<p>Once the submission has crossed <em>that</em> threshold however, I think we lower our guard.</p>
+<p>The database also exists beyond a system boundary. Programming language
+peculiarities should probably not leak into the database, and vice versa.</p>
+<p>It is generally understood how to use techniques such as <a href="https://wiki.haskell.org/Smart_constructors">smart
+constructors</a> to ensure a value floating through the system is always valid,
+but I think <em>when</em> to use a technique like this is something that programmers
+have difficulty developing an intuition for.</p>
+<p>It may be because of the <em>adjacency</em> of the database conceptually to the data
+types that model the values the database will eventually contain; but I have
+noticed — across several open-source projects — that <a href="https://wiki.c2.com/?PrimitiveObsession">primitive obsession</a>
+creeps in when defining persistent models.</p>
+<p>It’s not an unreasonable thought pattern: you know you want to model a <code>User</code>
+in your system. Your <code>User</code> model will be persisted in the <code>users</code> table. Your
+<code>User</code> has a <code>name</code> field, which will be persisted in a column with a <code>VARCHAR</code>
+(or <code>TEXT</code>) type.</p>
+<p>So you define your persistent model this way:</p>
+<pre><code>User
+  name Text
+  dateOfBirth Day
+  email Text
+  UniqueEmail email
+  -- etc…</code></pre>
+<p>The problem of course is that the <a href="https://en.wikibooks.org/wiki/A-level_Computing/AQA/Paper_2/Fundamentals_of_functional_programming/Basics_of_functional_programming">domain</a> for the <code>name</code> field (and also
+the email field) is much larger than we want. Even taking into account
+<a href="https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/">falsehoods programmers believe about names</a>, a name is not just <em>any</em> text
+value. We need to enforce some rules. We need to reduce our problem space. We
+need to <em>make it smaller</em>.</p>
+<p>For example, we wouldn’t want a user with an empty string for a name:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  { name <span class="ot">=</span> <span class="st">&quot;&quot;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  , dateOfBirth <span class="ot">=</span> <span class="co">-- …</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span></code></pre></div>
+<p>We also wouldn’t want <em>this</em> monstrosity<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  { name <span class="ot">=</span> <span class="st">&quot;V̥̝̣̤͇̮̣̦ͮͬ̇͌̕͟l̲̩̠̬͆ͪ͒͌̿ͧ̅͊͘a̷̙̾́̐͌̀ͥ̂̅͝ḓͤͣ̅͂̂ͩ̆͡ò̲̙͙̗̳̻̠̀l̥̮͈̫̻̤̞̿͛ͧ̄͒͋̅̂ͩ͘f̸̮̩̫̺̾͊̌̌ͫ̀͟ͅ ̥ͪ͋͞P̟̻̝͕̩͎̞ͭ̾ͧ͗̆̉u̶͍̱̭͎̓͋̓͂͗ͧͯ͡ͅͅt̸̯̜̟̥̋ͬͦ͂͆͘͟l̯͉͉̤ͣe̱̟̮̖̋ͦ̌͒͂͆ͪ͌͘r͚͛̒͗̔͊̚͘&quot;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  , dateOfBirth <span class="ot">=</span> <span class="co">-- …</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span></code></pre></div>
+<p>It’s all very well telling ourselves that this wouldn’t happen to us because we
+are running a comprehensive validation function when processing the form submission
+that ingests this data, but the reality is that in a non-trivial business your
+database is going to have more than one entry point. Expediency and technical debt
+are facts of life.</p>
+<p>A persistent model with a bunch of fields representing primitive values like
+<code>Text</code> is a code smell. When we see it, it’s telling us that we should <em>make
+our types smaller</em>. That is to say, more specific.</p>
+<p>Perhaps what we want instead is something like this:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[st|</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  -- Our User type with more specific types in its fields</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  User</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    name Username -- This type is smaller!</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    dateOfBirth Day</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    email Email</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    UniqueEmail email</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    -- etc…</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>|]</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Introduce a Username type which wraps a text value</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- Keep this in a different module, and be sure not to expose the constructor!</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Username</span>  <span class="ot">=</span> <span class="dt">Username</span> {<span class="ot"> unUsername ::</span> <span class="dt">Text</span> }</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- The &quot;smart constructor&quot; which enforces validation rules</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- Only expose this one!</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ot">mkUsername ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Username</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>mkUsername t</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> t <span class="op">==</span> <span class="st">&quot;&quot;</span> <span class="ot">=</span> <span class="dt">Nothing</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> failsSomeOtherValidationRule t <span class="ot">=</span> <span class="dt">Nothing</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Username</span> t)</span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">-- Teach our program to marshal values over the system boundary</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">PersistField</span> <span class="dt">Username</span> <span class="kw">where</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  toPersistValue <span class="ot">=</span> <span class="co">-- unwrap value</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  fromPersistValue <span class="ot">=</span> <span class="co">-- parse value into narrower type</span></span></code></pre></div>
+<p>It may seem more expensive to use a more specific type because you then need to
+take the time to teach your program how to marshal values across that
+application/database boundary, but I think this one-time cost is cheaper than
+having to code defensively in perpetuity.</p>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Fun Fact: For quite a long time, Twitter happily accepted Zalgo input in tweets, allowing anyone to turn the timelines of other users into an incomprehensible mess.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+]]></description>
+    <pubDate>Sat, 31 Dec 2022 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2022/12/make-your-types-smaller/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
+    <title>Make Your Database Tables Smaller</title>
+    <link>https://jezenthomas.com/2022/12/make-your-database-tables-smaller/</link>
+    <description><![CDATA[<p>Every so often I will inspect the data that I’m storing in a web application
+and find columns that are near enough totally unused. This is a strong signal
+that the feature which relied on the column is not valuable, and the column along
+with the feature can and should be deleted.</p>
+<p>This is a good thing.</p>
+<p>One of the best moves you can make is to <a href="https://dev.tube/video/Ed94CfxgsCA">delete your code</a>.</p>
+<hr />
+<p>We often talk about reducing the scope of a problem until it fits inside your
+head. I think a similar principle often applies with database tables — a page
+of results when running <code>SELECT * FROM …</code> should be narrow enough to fit on the
+average laptop screen without wrapping.</p>
+<p>If the table is too wide, look for columns that share some narrow domain —
+narrower than whatever domain is shared by the rest of the columns in that
+table. Does your <code>users</code> table have a few columns prefixed with <code>oidc</code> for
+<em>single sign-on</em> authentication? Those should probably be in their own table.
+Joins are cheap. Normalise earlier.</p>
+<p>Sometimes for the sake of expediency people will throw a collection of keys and
+values into a single cell, encoded as JSON. I have done this, and I have
+encouraged others to do this. This can be all the more tempting given the JSON
+operators provided in PostgreSQL.</p>
+<p>In retrospect, I think this approach has been a false economy. It has most
+often caused more pain which could have been avoided with a relatively small
+portion of diligence. It may seem like persisting data in a flexible schema is
+<em>smaller</em> — perhaps because there are fewer columns in the table or because
+less effort is required upfront — but then querying becomes harder, analysis
+becomes harder, and data transformation becomes harder.</p>
+<p>Finally, language implementation details shouldn’t leak into the database. In
+the past — again for the sake of expediency — I have persisted values in the
+database with exactly the same representation as Haskell would use when
+printing that value to the screen. This means I would see the skeletons of
+<code>newtype</code> wrappers in the database, <em>e.g.</em>,</p>
+<pre><code>db=# select customer_id from subscriptions;
+                  customer_id
+--------------------------------------------------
+ CustomerKey {unCustomerKey = cus_Buc4bl7hPFJfcC}
+ CustomerKey {unCustomerKey = Cus_LO80QORn3LnNPV}
+ CustomerKey {unCustomerKey = Cus_GoRq02qsQbd3st}</code></pre>
+<p>The serialisation for this type is generated by the following Template Haskell:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>derivePersistField <span class="st">&quot;CustomerId&quot;</span></span></code></pre></div>
+<p>This is enticing because the amount of code is small, but as before, the data
+is now harder to work with and the signal to noise ratio is worse.</p>
+<p>Writing the persistence instances by hand to wrap and unwrap the inner values
+for retrieval and storage respectively might require five times the number of
+lines of code, but it would make the <em>problem space</em> smaller.</p>
+<p>It’s a little extra work up front, but the benefits of making investments like
+this compound over time. And making choices in software engineering is all
+about good <em>economics</em>.</p>
+]]></description>
+    <pubDate>Wed, 28 Dec 2022 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2022/12/make-your-database-tables-smaller/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
+    <title>At Least Assert Your Serialisation Roundtrips</title>
+    <link>https://jezenthomas.com/2022/12/at-least-roundtrip-serialisation/</link>
+    <description><![CDATA[<p>When you’re writing a web application, the values that flow through your system
+need to be serialised and deserialised. This could be for representation as
+JSON, XML, a parameter in a URI query string, or a field in a database, <em>etc</em>.</p>
+<p>The problem with teaching your program how to serialise or deserialise values
+is that it is manual and error-prone.</p>
+<p>Consider the follow enumeration type which models the status of a company in
+the United Kingdom.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Status</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">Active</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrder</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrderAdministrativeReceiver</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrderReceiverManager</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrderReceivership</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrativeReceiver</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedOrClosed</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedToPLC</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedToUKEIG</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedToUKSocietas</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- 23 more constructors…</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Bounded</span>, <span class="dt">Enum</span>, <span class="dt">Eq</span>, <span class="dt">Ord</span>, <span class="dt">Read</span>, <span class="dt">Show</span>)</span></code></pre></div>
+<p>If we wanted to teach our program to serialise each of these constructors as
+JSON but we stuck with the defaults, we would end up with values like
+<code>"Active"</code> and <code>"AdministrationOrder"</code> which mirror how the constructors are
+written.</p>
+<p>This isn’t what we want though — a consumer of this JSON data would expect
+something in perhaps snake case or kebab case, <em>i.e.</em>, <code>"administration_order"</code>
+or <code>"administration-order"</code> respectively.</p>
+<p>Of course, we could type out the desired conversions manually, like this:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  parseJSON <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;active&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">Active</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrder</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order_administrative_receiver&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrderAdministrativeReceiver</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order_receiver_manager&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrderReceiverManager</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order_receivership&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrderReceivership</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administrative_receiver&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrativeReceiver</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_or_closed&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedOrClosed</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_to_plc&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedToPLC</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_to_ukeig&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedToUKEIG</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_to_uk_societas&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedToUKSocietas</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- 23 more lines of tedium…</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Could not parse Status - was not a String&quot;</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">ToJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  toJSON <span class="ot">=</span> <span class="dt">String</span> <span class="op">.</span> \<span class="kw">case</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Active</span> <span class="ot">-&gt;</span> <span class="st">&quot;active&quot;</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrder</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order&quot;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrderAdministrativeReceiver</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order_administrative_receiver&quot;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrderReceiverManager</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order_receiver_manager&quot;</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrderReceivership</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order_receivership&quot;</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrativeReceiver</span> <span class="ot">-&gt;</span> <span class="st">&quot;administrative_receiver&quot;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedOrClosed</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_or_closed&quot;</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedToPLC</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_to_plc&quot;</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedToUKEIG</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_to_ukeig&quot;</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedToUKSocietas</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_to_uk_societas&quot;</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- This isn&#39;t what I signed up for ಠ_ಠ</span></span></code></pre></div>
+<p>While this does model exactly the representation we want, clearly this is not
+the kind of code we wish to maintain. At scale, it is inevitable that you or
+one your colleagues will mistype one of the strings, or forget to handle a case
+entirely.</p>
+<p>A better approach would be to use some function — we are programmers after all
+— to handle the conversions for us.</p>
+<p>We can neatly convert the representations of each of these constructors
+automatically with some string conversion function, <em>e.g.</em>, those available in
+the <a href="https://hackage.haskell.org/package/casing-0.1.4.1/docs/Text-Casing.html"><code>casing</code></a> library. This would lead us to write JSON instances for our
+type like this:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Control.Monad.Fail</span> (fail)</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Text.Casing</span> (kebab, pascal)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Text.Read</span> (readEither)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  parseJSON <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> s) <span class="ot">-&gt;</span> <span class="kw">case</span> deserialise s <span class="kw">of</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Left</span> err <span class="ot">-&gt;</span> <span class="fu">fail</span> (unpack err)</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Right</span> status <span class="ot">-&gt;</span> <span class="fu">pure</span> status</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Could not parse Status - was not a String&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">ToJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  toJSON <span class="ot">=</span> <span class="dt">String</span> <span class="op">.</span> serialise</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="ot">serialise ::</span> <span class="dt">Status</span> <span class="ot">-&gt;</span> <span class="dt">Text</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>serialise <span class="ot">=</span> <span class="fu">pack</span> <span class="op">.</span> kebab <span class="op">.</span> <span class="fu">show</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="ot">deserialise ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Status</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>deserialise t <span class="ot">=</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> readEither (pascal (unpack s)) <span class="kw">of</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Left</span> _ <span class="ot">-&gt;</span> <span class="dt">Left</span> <span class="op">$</span> <span class="st">&quot;Could not parse Status: &quot;</span> <span class="op">&lt;&gt;</span> t</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Right</span> status <span class="ot">-&gt;</span> <span class="fu">pure</span> status</span></code></pre></div>
+<p>This is an improvement. We now have 15 lines of code rather than the 71 lines
+of code we would have had after laboriously typing out all of the constructors.</p>
+<p>There could be problems in the logic though, which we’ll need to write a test
+for. The best way I have found for writing a test for this kind of problem is
+with a roundtrip property-based test.</p>
+<p>Roundtripping in this context just means that if you take some value and
+serialise it, then you’ll get back the same value when you deserialise it.</p>
+<p>I’m partial to both the <code>hspec</code> and <code>hedgehog</code> testing libraries, so naturally
+it makes sense to combine them with the <a href="https://hackage.haskell.org/package/hspec-hedgehog-0.0.1.2/docs/Test-Hspec-Hedgehog.html"><code>hspec-hedgehog</code></a> library.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Model.StatusSpec</span> (spec) <span class="kw">where</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Aeson</span> <span class="kw">as</span> <span class="dt">Aeson</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Hedgehog.Gen</span> <span class="kw">as</span> <span class="dt">Gen</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Model.Status</span> (<span class="dt">Status</span>)</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Test.Hspec.Hedgehog</span> (<span class="dt">Gen</span>, forAll, hedgehog, tripping)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">TestImport</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ot">spec ::</span> <span class="dt">Spec</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>spec <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  describe <span class="st">&quot;Status&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;roundtrips JSON&quot;</span> <span class="op">$</span> hedgehog <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      x <span class="ot">&lt;-</span> forAll (Gen.enumBounded<span class="ot"> ::</span> <span class="dt">Gen</span> <span class="dt">Status</span>)</span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      tripping x Aeson.encode Aeson.eitherDecode</span></code></pre></div>
+<p>This test says:</p>
+<blockquote>
+<p>Generate all the <code>Status</code> values and ensure each of them roundtrip.</p>
+</blockquote>
+<p>Hedgehog is able to give us all the values in our <code>Status</code> enumeration because
+we asked the compiler to derive instances for both the <code>Enum</code> and <code>Bounded</code>
+classes when we defined our type.</p>
+<p>What happens when we run this test?</p>
+<pre><code>Model.Status
+  Status
+    roundtrips JSON FAILED [1]
+
+Failures:
+
+  ./test/Model/StatusSpec.hs:20:7:
+  1) Model.Status.Status roundtrips JSON
+         ✗ &lt;interactive&gt; failed at ./test/Model/StatusSpec.hs:20:7
+           after 1 test.
+
+              ┏━━ ./test/Model/StatusSpec.hs ━━━
+           13 ┃ spec :: Spec
+           14 ┃ spec = do
+           15 ┃
+           16 ┃   describe &quot;Status&quot; $ do
+           17 ┃
+           18 ┃     it &quot;roundtrips JSON&quot; $ hedgehog $ do
+           19 ┃       x &lt;- forAll (Gen.enumBounded :: Gen Status)
+              ┃       │ ConvertedToPLC
+           20 ┃       tripping x Aeson.encode Aeson.eitherDecode
+              ┃       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+              ┃       │ ━━━ Intermediate ━━━
+              ┃       │ &quot;\&quot;converted-to-plc\&quot;&quot;
+              ┃       │ ━━━ - Original) (+ Roundtrip ━━━
+              ┃       │ - Right ConvertedToPLC
+              ┃       │ + Left &quot;Error in $: Could not parse Status: converted-to-plc&quot;
+
+           This failure can be reproduced by running:
+           &gt; recheck (Size 0) (Seed 15174119819274148648 1778119947192687319) &lt;property&gt;</code></pre>
+<p>It failed!</p>
+<p>If we fire up GHCi and import both our <code>Status</code> type and the <code>Text.Casing</code> module, we can see why this fails.</p>
+<pre><code>λ kebab $ show ConvertedToPLC
+&quot;converted-to-plc&quot;
+
+λ pascal $ kebab $ show ConvertedToPLC
+&quot;ConvertedToPlc&quot;</code></pre>
+<p>The <code>pascal</code> function is converting the serialised <code>"converted-to-plc"</code> into
+<code>"ConvertedToPlc"</code>, but this doesn’t match the derived <code>Read</code> instance for that
+type! For the same reason, this code would also fail on the <code>ConvertedToUKEIG</code>
+and <code>ConvertedToUKSocietas</code> constructors.</p>
+<p>To fix this we’ll have to handle those edge cases manually, like this:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">deserialise ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Status</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>deserialise <span class="ot">=</span> \<span class="kw">case</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;converted-to-plc&quot;</span> <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="dt">ConvertedToPLC</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;converted-to-ukeig&quot;</span> <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="dt">ConvertedToUKEIG</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;converted-to-uk-societas&quot;</span> <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="dt">ConvertedToUKSocietas</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">-&gt;</span> <span class="kw">case</span> readEither (pascal (unpack s)) <span class="kw">of</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Left</span> _ <span class="ot">-&gt;</span> <span class="dt">Left</span> <span class="op">$</span> <span class="st">&quot;Could not parse Status: &quot;</span> <span class="op">&lt;&gt;</span> s</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Right</span> status <span class="ot">-&gt;</span> <span class="fu">pure</span> status</span></code></pre></div>
+<p>Running this again shows us that our tests pass, and we can have confidence
+that our test coverage is exhaustive because we aren’t relying on human
+discipline to exercise all of the paths through this code.</p>
+<p>I don’t think there’s any reason not to test your custom serialisation and
+deserialisation code this way, and if you’re new to property-based testing then
+this is the easiest place to start.</p>
+]]></description>
+    <pubDate>Sat, 10 Dec 2022 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2022/12/at-least-roundtrip-serialisation/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
+    <title>We Deserve Better Than BEM</title>
+    <link>https://jezenthomas.com/2022/08/we-deserve-better-than-bem/</link>
+    <description><![CDATA[<p>The past decade has seen a number of CSS methodologies come and go in web
+development. The approach that seems to have become most widely adopted is
+called Block Element Modifier (BEM).</p>
+<p>BEM aims to make user interface code more manageable by ignoring the
+<em>cascading</em> part of Cascading Style Sheets, keeping the specificity of
+selectors low, and avoiding naming collisions. It does this by imposing a
+naming convention which programmers should rigidly adhere to.</p>
+<p>Applied BEM looks something like this:</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;header</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;header&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;img</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;header__logo header__logo--success&quot;</span> <span class="er">src</span><span class="ot">=</span><span class="st">&quot;/slava_ukraini.jpg&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/header&gt;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;style&gt;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.header</span> {</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span>: <span class="fu">linear-gradient(</span><span class="dv">-180</span><span class="dt">deg</span><span class="op">,</span> <span class="cn">royalblue</span> <span class="dv">50</span><span class="dt">%</span><span class="op">,</span> <span class="cn">yellow</span> <span class="dv">50</span><span class="dt">%</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.header__logo--success</span> {</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">position</span>: <span class="dv">absolute</span><span class="op">;</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/style&gt;</span></span></code></pre></div>
+<p>The <em>block</em> in this case is <code>header</code>. We delimit the block and the <em>element</em>
+with a couple of underscores, and appending two hyphens and some string denotes
+a modifier.</p>
+<p>In practice, not only does this turn into a mess of punctuation, but this
+approach is also rather fragile.</p>
+<p>There’s nothing but human discipline to stop you from accidentally mistyping a
+selector, or inadvertently introducing a naming collision. When the visual
+design of your software changes and some markup is removed, there is nothing to
+indicate that the associated styles are now dead code and can safely be
+removed.</p>
+<p>Fundamentally, I don’t believe that relying on human discipline is a sensible
+way to scale a software project. We deserve better. Computers are perfectly
+capable of managing the relationships between components of a software system,
+whether that’s some markup and its associated styles and scripts, or classes
+and functions and the data types that flow between.</p>
+<p>The tools are available to us. We just need to use them.</p>
+<p>At Supercede we’re leveraging a technique which I think scales better than BEM.
+The technique is facilitated by Yesod which is the Haskell web framework that
+we use, but there’s no reason why this technique couldn’t be recreated in other
+frameworks.</p>
+<p>Approaching the previous <code>header</code> component in Yesod would look like this<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">header ::</span> <span class="dt">Widget</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>header <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  theId <span class="ot">&lt;-</span> newIdent</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  [whamlet|</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;header </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;img </span><span class="er">class=&quot;logo</span><span class="kw"> </span><span class="er">success&quot;</span><span class="kw"> </span><span class="er">src=&quot;/slava_ukraini</span><span class="st">.jpg</span><span class="er">&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  |]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  toWidget [cassius|</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    ##{theId}</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      background: linear-gradient(-180deg, royalblue 50%, yellow 50%)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      .logo.success</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        position: absolute</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  |]</span></code></pre></div>
+<p>The interesting part here is the use of <code>newIdent</code>. This is a monadic action
+which will bind <code>theId</code> to an identifier which is guaranteed to not collide
+with any other identifiers on the page which are generated the same way.</p>
+<p>This works by maintaining a counter in some request-specific internal state. At
+runtime when a request comes in and the application begins building up the page
+to serve to the user, every run of the <code>newIdent</code> action asks the state for the
+current count. The count is then incremented and stored back in the state, and
+the new count is used to generate a unique identifier.</p>
+<p>Composing a couple of widgets together illustrates this effect.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">myWebPage ::</span> <span class="dt">Widget</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>myWebPage <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  theId <span class="ot">&lt;-</span> newIdent</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  [whamlet|</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">^{</span>header<span class="kw">}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">^{</span>footer<span class="kw">}</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  |]</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  toWidget [cassius|</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    ##{theId}</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      margin: auto</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  |]</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ot">  header ::</span> <span class="dt">Widget</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  header <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    theId <span class="ot">&lt;-</span> newIdent</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    [whamlet|</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;header </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span>Some header text…</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    |]</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    toWidget [cassius|</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      ##{theId}</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        background: royalblue</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    |]</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="ot">  footer ::</span> <span class="dt">Widget</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  footer <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    theId <span class="ot">&lt;-</span> newIdent</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    [whamlet|</span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;footer </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span>&amp;copy; Copyright Acme Inc. 2022</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    |]</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    toWidget [cassius|</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>      ##{theId}</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        background: yellow</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    |]</span></code></pre></div>
+<p>This Haskell code generates markup and styles which look like this:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">id</span><span class="ot">=</span><span class="st">&quot;hident3&quot;</span><span class="kw">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;header</span> <span class="er">id</span><span class="ot">=</span><span class="st">&quot;hident1&quot;</span><span class="kw">&gt;</span>Some header text…<span class="kw">&lt;/header&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;footer</span> <span class="er">id</span><span class="ot">=</span><span class="st">&quot;hident2&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;copy;</span> Copyright Acme Inc. 2022<span class="kw">&lt;/footer&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;style&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident1</span> { <span class="kw">background</span>: <span class="cn">royalblue</span><span class="op">;</span> }</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident2</span> { <span class="kw">background</span>: <span class="cn">yellow</span><span class="op">;</span> }</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident3</span> { <span class="kw">margin</span>: <span class="bu">auto</span><span class="op">;</span> }</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/style&gt;</span></span></code></pre></div>
+<p>So, correct use of the framework ensures our IDs are unique even when they’re
+all composed together, and the compiler ensures we don’t mistype the names that
+bind the HTML elements with their associated CSS and JavaScript. The compiler
+also helps us clean up dead code along the way.</p>
+<p>Ordinarily you might feel uncomfortable using a name as nondescriptive as
+<code>theId</code>, but in practice we tend to only use one unique identifier per widget.
+Each binding is scoped to its respective widget, and the name
+doesn’t appear verbatim in the generated HTML, CSS, or JavaScript.</p>
+<p>This approach also allows us to improve the <em>locality</em> of the code. Associated
+markup, styles, and scripts can all be written in adjacent code which makes the
+writing process less cumbersome.</p>
+<p>Because naming collisions are prevented by the application, we’re free to embrace
+specificity in CSS and just use IDs everywhere instead of limiting ourselves
+to classes. Relying on IDs in web development is usually avoided because
+they’re hard to manage manually at scale, but this pain goes away if you can
+delegate that management to a sufficiently sophisticated mechanism.</p>
+<p>Widget composition is one of the unsung heroes of the Yesod framework. Given
+that the framework is written in Haskell, I think people are often more
+interested in talking about exotic-sounding ideas like <em>zygohistomorphic
+prepromorphisms</em>, but the truth is that more basic concepts make up the vast
+majority of web development work, so those are the areas we should be focusing
+on. The composition of widgets and their associated styles and scripts is
+exactly one of those areas.</p>
+<p>I’ve found that the more responsibility I delegate away from humans and into
+the compiler, the fewer mistakes I tend to see in production. The mechanisms
+I’ve described here aren’t exactly new either — they’ve existed in Yesod for
+more than a decade. If your web framework of choice doesn’t have something like
+this, you should be asking yourself an important question: <em>Why not?</em></p>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Actually, it’s more typical to use <a href="https://www.yesodweb.com/book/shakespearean-templates#shakespearean-templates_attributes">syntactical conveniences</a> that Hamlet provides. The verbose version is used here so there is less unfamiliar syntax for the reader.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+]]></description>
+    <pubDate>Wed, 24 Aug 2022 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2022/08/we-deserve-better-than-bem/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
+    <title>Static Asset Hashing in Hakyll</title>
+    <link>https://jezenthomas.com/2022/08/static-asset-hashing-in-hakyll/</link>
+    <description><![CDATA[<p>A problem I encountered while working on this website is that when I edit one
+of the CSS files and publish my changes to the Internet, there’s a good chance
+your browser will have cached the previous CSS files that it served you, and
+you won’t see the new styles that I have written.</p>
+<p>To mitigate this, I decided to hack the compilation step in Hakyll so that my
+stylesheets are concatenated together, compressed, and then turned into an MD5
+hash. This hash is then used as the path to the resulting file which forces
+the browser to download the new file whenever I update the styles.</p>
+<p>The first step is to list the filepaths of the CSS files that should be
+compiled. The order in which rules are declared in CSS is important, so I
+prefer to list these filepaths explicitly.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- | All CSS files which should be compiled</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">styleSheets ::</span> [<span class="dt">FilePath</span>]</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>styleSheets <span class="ot">=</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  [ <span class="st">&quot;css/normalize.css&quot;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  , <span class="st">&quot;css/default.css&quot;</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  , <span class="st">&quot;css/syntax.css&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  ]</span></code></pre></div>
+<p>Next, we need to generate the MD5 hash for the compiled CSS file’s ultimate
+filepath. By leveraging Hakyll’s <code>preprocess</code> function, it’s possible to run
+some arbitrary IO effects during the site’s compilation step.</p>
+<p>The approach here is to:</p>
+<ol type="1">
+<li>Read the contents of each CSS file.</li>
+<li>Concatenate the CSS files into one big string with <code>mconcat</code>.</li>
+<li>Compress the string with Hakyll’s default <a href="https://hackage.haskell.org/package/hakyll-4.15.1.1/docs/Hakyll-Web-CompressCss.html#v:compressCss"><code>compressCss</code></a> function.</li>
+<li>Pack the string into a lazy bytestring, and build an MD5 digest with the <a href="https://hackage.haskell.org/package/pureMD5-2.1.4/docs/Data-Digest-Pure-MD5.html#v:md5"><code>md5</code></a> function.</li>
+<li>Convert the MD5 digest back into a filepath and return it.</li>
+</ol>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> hakyllWith config <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  compiledStylesheetPath <span class="ot">&lt;-</span> preprocess <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    styles <span class="ot">&lt;-</span> <span class="fu">mapM</span> <span class="fu">readFile</span> styleSheets</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> h <span class="ot">=</span> md5 <span class="op">$</span> fromStrict <span class="op">$</span> <span class="fu">pack</span> <span class="op">$</span> compressCss <span class="op">$</span> <span class="fu">mconcat</span> styles</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">pure</span> <span class="op">$</span> <span class="st">&quot;css/&quot;</span> <span class="op">&lt;&gt;</span> <span class="fu">show</span> h <span class="op">&lt;&gt;</span> <span class="st">&quot;.css&quot;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> cssPathCtx <span class="ot">=</span> constField <span class="st">&quot;cssPath&quot;</span> compiledStylesheetPath</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span></code></pre></div>
+<p>The <code>cssPathCtx</code> binding is a convenience. It’s handy because most pages that
+Hakyll generates will want CSS applied, which means most pages will need to
+know where to find the compiled stylesheet.</p>
+<p>Continuing on in our <code>Rules</code> monad, we need to add a rule that generates the
+file at the filepath we calculated in the preprocessing step. The route to this
+file is already correct, so we keep it as is with <code>route idRoute</code>. In the
+compilation step for this rule, we are again loading our list of CSS filepaths
+and adding them to some page context. The context here is only used in a
+special file that we’ll use in a moment to render all of the CSS.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> hakyllWith config <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  create [fromFilePath compiledStylesheetPath] <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    route idRoute</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      styles <span class="ot">&lt;-</span> <span class="fu">mapM</span> (load <span class="op">.</span> fromFilePath) styleSheets</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> ctx <span class="ot">=</span> listField <span class="st">&quot;styles&quot;</span> pageCtx (<span class="fu">pure</span> styles)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      makeItem <span class="st">&quot;&quot;</span> <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/all.css&quot;</span> ctx</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span></code></pre></div>
+<p>The snippet above references a template which doesn’t exist yet. We create that
+file, and add a single line of Hakyll’s templating DSL to render all of the
+contents of each of the CSS files by iterating over the <code>styles</code> context we
+defined.</p>
+<pre><code>$for(styles)$$body$$endfor$</code></pre>
+<p>At this point, the compiled stylesheet is being generated correctly, but the
+site’s outermost template layer doesn’t reference it yet. Any time you load and
+apply the outermost template layer — in this case called
+<code>templates/default.html</code> — you’ll need to pass in the <code>cssPathCtx</code> bound
+earlier, likely monoidally joined with some other context for that template.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> hakyllWith config <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  match <span class="st">&quot;index.html&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    route idRoute</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> ctx <span class="ot">=</span> cssPathCtx <span class="op">&lt;&gt;</span> someOtherCtx</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>      getResourceBody</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> applyAsTemplate (field <span class="st">&quot;posts&quot;</span> (<span class="fu">const</span> (recentPostList <span class="dv">3</span>)))</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/default.html&quot;</span> ctx</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> cleanIndexUrls</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span></code></pre></div>
+<p>Now that the default template knows the path to the compiled CSS file, we can update that reference.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;!DOCTYPE </span>html<span class="dt">&gt;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;html&gt;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;head&gt;</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;title&gt;</span>$title$<span class="kw">&lt;/title&gt;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;link</span> <span class="er">rel</span><span class="ot">=</span><span class="st">&quot;stylesheet&quot;</span> <span class="er">type</span><span class="ot">=</span><span class="st">&quot;text/css&quot;</span> <span class="er">href</span><span class="ot">=</span><span class="st">&quot;/$cssPath$&quot;</span> <span class="kw">/&gt;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;/head&gt;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;body&gt;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">&lt;!-- etc … --&gt;</span></span></code></pre></div>
+<p>Everything works as expected when compiling the site from scratch, but a
+typical development workflow involves running Hakyll’s filesystem monitor to
+watch for changes and incrementally recompile the site. If you run the <code>watch</code>
+command from your compiled Hakyll application binary and change one of the
+stylesheets, the files referencing the compiled stylesheet don’t yet know that
+they <em>also</em> need to be recompiled to reflect the new stylesheet path.</p>
+<p>Fortunately, Hakyll provides some building blocks for declaring extra
+dependencies in rules. Here’s the final necessary change.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> hakyllWith config <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  match <span class="st">&quot;index.html&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    route idRoute</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    dep <span class="ot">&lt;-</span> makePatternDependency <span class="st">&quot;css/*&quot;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    rulesExtraDependencies [dep] <span class="op">$</span> compile <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> ctx <span class="ot">=</span> cssPathCtx <span class="op">&lt;&gt;</span> someOtherCtx</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      getResourceBody</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> applyAsTemplate (field <span class="st">&quot;posts&quot;</span> (<span class="fu">const</span> (recentPostList <span class="dv">3</span>)))</span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> loadAndApplyTemplate <span class="st">&quot;templates/default.html&quot;</span> ctx</span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="op">&gt;&gt;=</span> cleanIndexUrls</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span></code></pre></div>
+<p>Now during local development the outermost template layer will always reference
+the correct compiled stylesheet.</p>
+<p>An added benefit of this approach is the concatenation step, which results in
+only a single HTTP request necessary to fetch all of the styles on page load.</p>
+<p>This approach is working nicely on this website. If there’s a neater way to do
+it, please let me know.</p>
+]]></description>
+    <pubDate>Thu, 18 Aug 2022 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2022/08/static-asset-hashing-in-hakyll/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+
+    </channel>
+</rss>

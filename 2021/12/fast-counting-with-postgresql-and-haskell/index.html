@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Fast Counting with PostgreSQL and Haskell</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="description" content="You can abuse the query planner in PostgreSQL to drastically improve performance when counting records in large tables, although it takes some finesse to implement this with Persistent and Esqueleto — two Haskell libraries for database access.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Fast Counting with PostgreSQL and Haskell">
+    <meta property="og:description" content="You can abuse the query planner in PostgreSQL to drastically improve performance when counting records in large tables, although it takes some finesse to implement this with Persistent and Esqueleto — two Haskell libraries for database access.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/fast-counting.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Fast Counting with PostgreSQL and Haskell">
+    <meta name="twitter:description" content="You can abuse the query planner in PostgreSQL to drastically improve performance when counting records in large tables, although it takes some finesse to implement this with Persistent and Esqueleto — two Haskell libraries for database access.">
+    <meta name="twitter:image" content="/static/img/fast-counting.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/8dd7495893b5a187b3cbbe8b46043572.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+  </head>
+  <body>
+    <div class="about">
+
+  <a class="portrait" href="/">
+    <img alt="Jezen Thomas" src="/static/img/jgt.jpg">
+  </a>
+
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+
+  <p class="bio">
+    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
+    Haskell programmer.
+    Writing about business and software engineering.
+    Working from anywhere.
+  </p>
+
+  <nav>
+    <ul>
+      <li>
+        <a href="/">Home</a>
+      </li>
+      <li>
+        <a aria-current="true" href="/posts">Blog</a>
+      </li>
+      <li>
+        <a href="/about">About</a>
+      </li>
+      <li id="bmac">
+        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
+      </li>
+    </ul>
+  </nav>
+
+  <footer>&copy; 2023 Jezen Thomas</footer>
+
+</div>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Fast Counting with PostgreSQL and Haskell</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        December 24<sup>th</sup>, 2021
+        
+        | Kyïv, Ukraine
+        
+      </p>
+    </div>
+    <p>One of my projects leans heavily on a PostgreSQL database. It allows users to
+arbitrarily filter through millions of rows of relational data. Ideally, the
+system should give the user a hint of the size of the result set. If there are
+too many results, they can apply more filters to narrow their search. Too few,
+<em>vice versa</em>.</p>
+<p>Naturally, every Internet user expects search to be fast.</p>
+<p><strong>Problem</strong>: Counting large result sets in PostgreSQL is… <em>slow</em>.</p>
+<p>While researching potential solutions to this problem, I learned that
+PostgreSQL <em>can</em> provide fast counting if you’re willing to sacrifice some
+accuracy. Whether or not this matters of course depends on the kind of
+application you’re writing. In my case, I’m fairly certain my users don’t care.
+Knowing that there are a few million results for a query is more than good
+enough.</p>
+<p>If a query is sufficiently focused though, you probably <em>don’t</em> want to show
+the user an estimate. If the page says “About 7 results”, it probably wouldn’t
+fill them with confidence if they can see the result length is clearly only
+<em>five</em>. Besides, PostgreSQL can count result sets in the hundreds and low
+thousands extremely quickly.</p>
+<p><strong>Solution</strong>: First get an estimate of the result length, and if it’s
+sufficiently small — say, fewer than 5,000 rows — <em>then</em> count again with total
+accuracy.</p>
+<p>This <a href="https://www.citusdata.com/blog/2016/10/12/count-performance/">rather good article</a> suggests several approaches for implementing fast
+counting with estimates. Not all of them work in my case, because the primary
+feature of my application is arbitrary filtering. Some clever abuse of the
+query planner output quickly gives us an estimate.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">FUNCTION</span> count_estimate(<span class="kw">query</span> text) RETURNS <span class="dt">integer</span> <span class="kw">AS</span> $$</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DECLARE</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  rec   <span class="dt">record</span>;</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">rows</span>  <span class="dt">integer</span>;</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">BEGIN</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">FOR</span> rec <span class="kw">IN</span> <span class="kw">EXECUTE</span> <span class="st">'EXPLAIN '</span> <span class="op">||</span> <span class="kw">query</span> <span class="cf">LOOP</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">rows</span> <span class="op">:=</span> substring(rec.<span class="ot">&quot;QUERY PLAN&quot;</span> <span class="kw">FROM</span> <span class="st">' rows=([[:digit:]]+)'</span>);</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    EXIT <span class="cf">WHEN</span> <span class="kw">rows</span> <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>;</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">END</span> <span class="cf">LOOP</span>;</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">RETURN</span> <span class="kw">rows</span>;</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">END</span>;</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>$$ LANGUAGE plpgsql VOLATILE STRICT;</span></code></pre></div>
+<p>The function above only needs to be defined once. In my case, I added it to my
+project’s database schema with the <a href="https://hackage.haskell.org/package/postgresql-simple-migration"><code>postgresql-simple-migration</code></a> library,
+as it’s perilous to try and manage database schemas by hand.</p>
+<p>If we’re writing plain SQL, we can use the <code>count_estimate</code> function like this:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> count_estimate(<span class="st">'SELECT 1 FROM items WHERE n &lt; 1000'</span>);</span></code></pre></div>
+<p>However, the whole point of writing Haskell is to avoid the pain of software
+constantly blowing up in our faces, so it’s better to lean on the
+<a href="https://hackage.haskell.org/package/persistent"><code>persistent</code></a> and <a href="https://hackage.haskell.org/package/esqueleto"><code>esqueleto</code></a> libraries where possible to leverage the
+compiler and gain <em>some</em> assurances of type safety.</p>
+<p>I think there are a couple of ways to write the above query with the
+aforementioned Haskell libraries. Implementation in terms of
+<a href="https://hackage.haskell.org/package/esqueleto-3.5.3.0/docs/Database-Esqueleto-Internal-Internal.html#v:unsafeSqlFunction"><code>unsafeSqlFunction</code></a> might work, but I chose to use the <a href="https://hackage.haskell.org/package/persistent-2.13.2.1/docs/Database-Persist-Sql.html#v:rawSql"><code>rawSql</code></a>
+function instead<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes #-}</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell #-}</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Database.Esqueleto.Experimental</span>  <span class="co">-- from esqueleto</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Text.Shakespeare.Text</span> (st)       <span class="co">-- from shakespeare</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- | The length of a result set for a query.</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">ResultLength</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">Approximate</span> <span class="dt">Int</span> <span class="co">-- ^ An estimate from the PostgreSQL query planner</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">Precise</span> <span class="dt">Int</span>     <span class="co">-- ^ A precise result from running a real @COUNT(*)@ query</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Read</span>, <span class="dt">Show</span>)</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>derivePersistField <span class="st">&quot;ResultLength&quot;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- | Quickly return an estimate from the query planner.</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">--</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">-- This leans on the PostgreSQL query planner to come up with an /approximate/</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">-- result length. If the @count_estimate@ function is not already defined in</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">-- the database, this function will throw an exception.</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">--</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">-- To prevent SQL injection, the tag should be dynamically generated.</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>getEstimate</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- | A randomly-generated alphabetical string.</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="ot">  ::</span> <span class="dt">Text</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- | The SQL query with placeholders, and a list of parameters.</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> (<span class="dt">Text</span>, [<span class="dt">PersistValue</span>])</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- | The 'ResultLength' here will always be an 'Approximate'.</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">DB</span> (<span class="dt">Maybe</span> <span class="dt">ResultLength</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>getEstimate tag (query, params) <span class="ot">=</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span><span class="ot"> resultLength ::</span> [<span class="dt">Single</span> <span class="dt">Int64</span>] <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">ResultLength</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>      resultLength <span class="ot">=</span> <span class="fu">fmap</span> (<span class="dt">Approximate</span> <span class="op">.</span> <span class="fu">fromIntegral</span> <span class="op">.</span> unSingle) <span class="op">.</span> listToMaybe</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>   <span class="kw">in</span> resultLength <span class="op">&lt;$&gt;</span> rawSql [st|</span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>      SELECT count_estimate($#{tag}$#{query}$#{tag}$);</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>      |] params</span></code></pre></div>
+<p>We define a new data type with two constructors to represent the idea that the
+length of a result set can either be <em>approximate</em> (if there are more than
+5,000 results), or <em>precise</em> by running a real <code>COUNT(*)</code> query.</p>
+<p>To be able to return that type from a database query, the compiler needs to
+know how values of that type should be represented. I don’t actually care how
+they’re represented, so I’m happy to use Template Haskell to just derive the
+<code>PersistField</code> instance. If I <em>did</em> care, I’d probably opt to serialise these
+values as JSON objects. But I don’t, so I didn’t.</p>
+<p>Deriving that instance this way uses the type’s <code>Read</code> and <code>Show</code> instances
+under the hood, so that’s why those are also derived.</p>
+<p>The <code>DB</code> type in the return type for <code>getEstimate</code> is actually a type alias
+used for the sake of legibility. It’s included in the scaffolding for any new
+<code>yesod-postgres</code> project. Its use necessitates a couple of language extensions,
+and it has the following definition.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE KindSignatures #-}</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE RankNTypes #-}</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">DB</span> a <span class="ot">=</span> <span class="kw">forall</span> (<span class="ot">m ::</span> <span class="op">*</span> <span class="ot">-&gt;</span> <span class="op">*</span>)<span class="op">.</span> (<span class="dt">MonadIO</span> m) <span class="ot">=&gt;</span> <span class="dt">ReaderT</span> <span class="dt">SqlBackend</span> m a</span></code></pre></div>
+<p>Use of the <code>rawSql</code> function would ordinarily give us a list of single column
+values, which in a type signature would look like <code>[Single a]</code>. However, this
+isn’t the type I wish I had. I’m using a few functions to massage the value the
+query returns into something I actually want floating through my system.</p>
+<ol type="1">
+<li>The query is only ever expected to return one result, so a list doesn’t make
+much sense. The <code>listToMaybe</code> function can safely turn it into a
+<code>Maybe (Single Int64)</code> instead.</li>
+<li>The <code>unSingle</code> function unwraps whatever is inside that <code>Single</code> column
+value, giving us a <code>Maybe Int64</code>.</li>
+<li>As the database actually returns an <code>Int64</code> value, the <code>fromIntegral</code>
+function is used to change that value into an <code>Int</code>.</li>
+<li>The <code>Approximate</code> constructor allows us to tell our <code>Int</code> value apart from
+a precise result. This will be important for rendering the value in the UI.</li>
+</ol>
+<p>With the type-juggling out of the way, we can look at using the <code>rawSql</code>
+function to express the SQL query. The use of a quasiquoter here makes it neat
+to interpolate values into the text value. Like Template Haskell, the
+appropriate language extension needs to be enabled.</p>
+<p>This function takes two arguments:</p>
+<ol type="1">
+<li>The SQL query, potentially with <code>?</code> characters to denote placeholders</li>
+<li>A list of values to fill those placeholders</li>
+</ol>
+<p>Conveniently enough, <code>esqueleto</code> actually provides a function called
+<a href="https://hackage.haskell.org/package/esqueleto-3.5.3.0/docs/Database-Esqueleto-Internal-Internal.html#v:renderQuerySelect"><code>renderQuerySelect</code></a> for rendering a <code>SELECT</code> query into a tuple that
+neatly matches these two arguments. We can pair this function with some
+arbitrary query. For example, assume we have some persistent entity in our
+system called a <code>Thing</code> which has a field called <code>thingStatus</code>, and we want to
+select all of the things in our database where the <code>thingStatus</code> is either
+<code>Active</code> or <code>Pending</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Get all our active and pending things…</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ot">getThings ::</span> <span class="dt">SqlQuery</span> (<span class="dt">SqlExpr</span> (<span class="dt">Entity</span> <span class="dt">Thing</span>))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>getThings <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  thing <span class="ot">&lt;-</span> from <span class="op">$</span> table <span class="op">@</span><span class="dt">Thing</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  where_ <span class="op">$</span> thing<span class="op">^.</span><span class="dt">ThingStatus</span> <span class="ot">`in_`</span> valList [ <span class="dt">Active</span>, <span class="dt">Pending</span> ]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> thing</span></code></pre></div>
+<p>To render this query, we should run <code>renderQuerySelect</code> with <code>getThings</code> as its
+argument in the database querying monad.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>runDB <span class="op">$</span> renderQuerySelect getThings</span></code></pre></div>
+<p>We can’t just stuff the result of this into the <code>getEstimate</code> function however.
+The tricky part here is that we are essentially having to write one SQL query
+<em>inside another SQL query!</em> Without being careful to escape the single quotes
+that were added by <code>rawSql</code>, we would end up with a query like this being sent
+to the database.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> count_estimate(<span class="st">'SELECT * FROM things WHERE status IN ('</span>Active<span class="st">', '</span>Pending<span class="st">')'</span>);</span></code></pre></div>
+<p>Of course, this fails as it’s a syntax error.</p>
+<p>Even the syntax highlighting on this page reveals that it is a syntax error.</p>
+<p>One approach might be to escape the single quotes, and try to generate a query
+like the following.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> count_estimate(<span class="st">'SELECT * FROM things WHERE status IN (</span><span class="ch">''</span><span class="st">Active</span><span class="ch">''</span><span class="st">, </span><span class="ch">''</span><span class="st">Pending</span><span class="ch">''</span><span class="st">)'</span>);</span></code></pre></div>
+<p>This works, but I think it’s error prone. You would need to escape the single
+quotes in each of the query parameters, and <em>also</em> escape the single quotes in
+the query itself. You would need to use unescaped literals, and then add the
+escaping back in manually.</p>
+<p>Fortunately, there’s a better way.</p>
+<p>PostgreSQL supports <em>dollar quoting</em>, which means the rendered query can be
+embedded like this instead (syntax highlighting disabled to avoid confusion).
+With this approach, we don’t need to worry about correctly escaping single
+quotes.</p>
+<pre><code>SELECT count_estimate($$SELECT * FROM things WHERE status IN ('Active', 'Pending')$$);</code></pre>
+<p>This is easier to work with, but it’s still not a total solution. If a user
+found a way to send a <code>$$</code> sequence into your application, there would be a
+syntax error again, and possibly even a SQL injection vulnerability.</p>
+<p>A way to mitigate that threat is to add tags to the dollar quotes.</p>
+<pre><code>SELECT count_estimate($someTag$SELECT * FROM things WHERE status IN ('Active', 'Pending')$someTag$);</code></pre>
+<p>The tags must match on both sides, and as far as I can tell (though I didn’t
+see this specified in the documentation), the tag should only contain
+alphabetical characters.</p>
+<p>To avoid the possibility of an attacker brute-forcing the tag inside the dollar
+quotes, a random alphabetical string can be generated every time the query is
+run, and that random string can be used as the tag.</p>
+<p>To tie this all together, here’s the kind of thing you would write in your HTTP
+request handler. If the query planner thinks the result set will be greater
+than 5,000 rows then we don’t bother trying to precisely count the results and
+instead return the approximation. Otherwise, run the real <code>COUNT(*)</code> query.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getThingsR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>getThingsR <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- some handler code…</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Random string generation from the random-strings package</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  tag <span class="ot">&lt;-</span> <span class="fu">pack</span> <span class="op">&lt;$&gt;</span> liftIO (randomWord (onlyAlpha randomASCII) <span class="dv">10</span>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  resultLen <span class="ot">&lt;-</span> runDB <span class="op">$</span> <span class="kw">do</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    rendered <span class="ot">&lt;-</span> renderQuerySelect getThings</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    getEstimate tag rendered <span class="op">&gt;&gt;=</span> \<span class="kw">case</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Just</span> (<span class="dt">Approximate</span> n)</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">5000</span>  <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="op">$</span> <span class="dt">Approximate</span> n <span class="co">-- Return the estimate</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">-&gt;</span> getThingsCount       <span class="co">-- Run an accurate @COUNT(*)@ query</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>      _ <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="op">$</span> <span class="dt">Precise</span> <span class="dv">0</span>                 <span class="co">-- Should never happen…</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- more handler code…</span></span></code></pre></div>
+<p>Finally, when it comes to presenting the result length to the user, we’re able
+to implement a more informative UI owing to the fact that our figures are
+meaningfully tagged.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode hamlet"><code class="sourceCode hamlet"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;p.results-length&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">$</span><span class="er">case</span> <span class="er">resultLen</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">$</span><span class="er">of</span> <span class="er">Approximate</span> <span class="er">n</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      About <span class="kw">#{</span>format commas n<span class="kw">}</span> results</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">$</span><span class="er">of</span> <span class="er">Precise</span> <span class="er">n</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">$if</span> n <span class="op">==</span> <span class="dv">1</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        1 result</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">$else</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">#{</span>format commas n<span class="kw">}</span> results</span></code></pre></div>
+<p>This approach has soothed my counting performance woes in <a href="https://newbusinessmonitor.co.uk/">my hobby
+business</a> and I’m quite pleased with the result. Further performance gains
+could likely be had from tuning the database configuration, a smarter use of
+indexes, or perhaps just throwing better hardware at the problem.</p>
+<p>I think this code would benefit from some property-based tests, which I am yet
+to write. I’d like to verify that none of this function chain causes a syntax
+error in the database, no matter what kind of query you throw at it. I may find
+that I need to carefully sanitise inputs in addition to the dollar quote
+escaping.</p>
+<p>Hopefully this also shows that Haskell is perfectly suitable — <em>ideal</em>, even —
+for real world work.</p>
+<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1" role="doc-endnote"><p>Yes, I’m aware neither <code>unsafeSqlFunction</code> nor <code>rawSql</code> are particularly <em>safe</em> functions, but sometimes we need escape hatches. Let’s not throw the baby out with the bath water.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+  </article>
+</div>
+</div>
+
+    <script type="text/javascript">
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+    ga('create', 'UA-37713515-1', 'auto');
+    ga('send', 'pageview');
+    </script>
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script defer src="/static/js/katex/katex.min.js"></script>
+    <script defer src="/static/js/katex/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+  </body>
+</html>
