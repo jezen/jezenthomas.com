@@ -48,12 +48,8 @@ styleSheets =
   , "css/syntax.css"
   ]
 
-config :: Configuration
-config = defaultConfiguration
-  { deployCommand = "yarn surge _site jezenthomas.com" }
-
 main :: IO ()
-main = hakyllWith config $ do
+main = hakyll $ do
 
   compiledStylesheetPath <- preprocess $ do
     styles <- mapM readFile styleSheets
