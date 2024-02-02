@@ -1,5 +1,5 @@
 ---
-title: Kill On The Cover Letter, But Not Like That
+title: Kill on the Cover Letter, but Not Like That
 date: 2024-02-02
 location: Gdynia, Poland
 excerpt:
