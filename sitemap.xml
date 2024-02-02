@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 
     <url>
+        <loc>https://jezenthomas.com/2024/02/kill-on-the-cover-letter-but-not-literally/</loc>
+        <changefreq>weekly</changefreq>
+        
+        <priority>0.8</priority>
+    </url>
+
+    <url>
         <loc>https://jezenthomas.com/2023/11/stubbing-io-in-yesod/</loc>
         <changefreq>weekly</changefreq>
         
