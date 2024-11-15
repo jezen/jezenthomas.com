@@ -10,20 +10,20 @@
 -->
 <html lang="en">
   <head>
-    <title>Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship.</title>
+    <title>I Feel Unsafe</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <meta name="description" content="Haskell programmer, entrepreneur, co-founder & CTO of Supercede.">
+    <meta name="description" content="The local air defence would light up the sky when attacks came at night; as they often did. One attack in 2022 saw an apartment building struck a few streets behind mine, killing a young woman and her two children.">
     <meta name="author" content="Jezen Thomas">
-    <meta property="og:title" content="Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship.">
-    <meta property="og:description" content="Haskell programmer, entrepreneur, co-founder & CTO of Supercede.">
+    <meta property="og:title" content="I Feel Unsafe">
+    <meta property="og:description" content="The local air defence would light up the sky when attacks came at night; as they often did. One attack in 2022 saw an apartment building struck a few streets behind mine, killing a young woman and her two children.">
     <meta property="og:type" content="article">
-    <meta property="og:image" content="/static/img/prestiz.jpg">
+    <meta property="og:image" content="/static/img/i-feel-unsafe/tavriya-v.jpg">
     <meta property="og:site_name" content="Jezen Thomas">
     <meta name="twitter:card" content="summary_large_image">
     <meta property="twitter:domain" content="jezenthomas.com">
-    <meta name="twitter:title" content="Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship.">
-    <meta name="twitter:description" content="Haskell programmer, entrepreneur, co-founder & CTO of Supercede.">
-    <meta name="twitter:image" content="/static/img/prestiz.jpg">
+    <meta name="twitter:title" content="I Feel Unsafe">
+    <meta name="twitter:description" content="The local air defence would light up the sky when attacks came at night; as they often did. One attack in 2022 saw an apartment building struck a few streets behind mine, killing a young woman and her two children.">
+    <meta name="twitter:image" content="/static/img/i-feel-unsafe/tavriya-v.jpg">
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
@@ -51,10 +51,10 @@
   <nav>
     <ul>
       <li>
-        <a aria-current="true" href="/">Home</a>
+        <a href="/">Home</a>
       </li>
       <li>
-        <a href="/posts">Blog</a>
+        <a aria-current="true" href="/posts">Blog</a>
       </li>
       <li>
         <a href="/about">About</a>
@@ -69,19 +69,18 @@
 
 </div>
 
-    <div id="main"><article>
-  <h2 class="post-title">
-    <a href="/2024/11/I-feel-unsafe/">I Feel Unsafe</a>
-  </h2>
-  <div class="post-meta">
-    <p class="post-date">
-      <span>November 15, 2024</span>
-      
-      | Hua Hin, Thailand
-      
-    </p>
-  </div>
-  <p>I awoke to the sound of a violent explosion earlier than I had wanted that
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">I Feel Unsafe</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        November 15<sup>th</sup>, 2024
+        
+        | Hua Hin, Thailand
+        
+      </p>
+    </div>
+    <p>I awoke to the sound of a violent explosion earlier than I had wanted that
 morning. The walls, windows, and furniture vibrated. A cruise missile had
 struck a warehouse owned by a national supermarket chain, roughly a kilometre
 from the hotel I was staying in. The russians had fired it – targeting civilian
@@ -176,79 +175,8 @@ I were to say that I “feel unsafe” — I somehow doubt that my complaint wou
 taken seriously. I am — superficially anyway — not a part of the persecuted
 class, so violence against me is fine.</p>
 
-</article>
-<article>
-  <h2 class="post-title">
-    <a href="/2024/07/is-it-c/">Is it c? Or is it с?</a>
-  </h2>
-  <div class="post-meta">
-    <p class="post-date">
-      <span>July 16, 2024</span>
-      
-      | Kraków, Poland
-      
-    </p>
-  </div>
-  <p>Someone working on the team at Supercede asked the following question
-regarding some perplexing GHCi output.</p>
-<blockquote>
-<p>I must have missed something obvious because I’ve been staring myself blind
-at this for the past few minutes. Isn’t it saying one thing is not in scope
-and then immediately suggesting that very same thing as a replacement?</p>
-</blockquote>
-<pre><code>ghci&gt; :t API.Handler.V20201001.Types.tscaExcluded
-
-&lt;interactive&gt;:1:1-40: error:
-    Not in scope: 'API.Handler.V20201001.Types.tscaExcluded'
-    Perhaps you meant one of these:
-      'API.Handler.V20201001.Types.tsсaExcluded' (imported from API.Handler.V20201001.Types),</code></pre>
-<p>Can you spot the error?</p>
-<p>The problem could have been related to some surprising behaviour in GHCi when
-references are held to old values after their names are shadowed. Or perhaps it
-was something related to the build cache since we use incremental compilation.
-But those would have been guesses two and three.</p>
-<p>Based on experience — and some luck — here was my first guess.</p>
-<blockquote>
-<p>You know, we had an interesting issue once where a c was substituted for a с.
-See the difference?</p>
-</blockquote>
-<p>Lo and behold…</p>
-<blockquote>
-<p>Emacs says one is a LATIN SMALL LETTER C and the other is a CYRILLIC SMALL
-LETTER ES but I would never have guessed. And would you believe – this is
-indeed what has happened. Wow!</p>
-</blockquote>
-<p>Perhaps this deserves a new linting rule.</p>
-
-</article>
-<article>
-  <h2 class="post-title">
-    <a href="/2024/02/kill-on-the-cover-letter-but-not-literally/">Kill on the Cover Letter, but Not Like That</a>
-  </h2>
-  <div class="post-meta">
-    <p class="post-date">
-      <span>February  2, 2024</span>
-      
-      | Gdynia, Poland
-      
-    </p>
-  </div>
-  <p>A couple of years ago, I received the following email in response to a Haskell programming job I had advertised.</p>
-<blockquote>
-<p>Life is cheap. I would kill someone for a Haskell job. Thanks for your consideration.</p>
-</blockquote>
-<p>That was it. That was the entire email.</p>
-<p>The applicant had attached their résumé to the email, and in fairness the résumé showed that this person would bring relevant and valuable experience to the team.</p>
-<p>Now, I do love all sorts of humour, and I’m 99.9% certain that rather than being serious, this person was a little trigger happy with the hyperbole cannon.</p>
-<p>But on the off chance that they <em>were</em> serious, how could I have it on my conscience that we ended up with a killer on the team <em>even after they told me about it</em>?! Could you imagine that tribunal?</p>
-<p>I’m fortunate that when I do advertise a programming job on the internet, I’m inundated with strong applications. All of the best applications take the form of a brief couple of paragraphs in an email which describe why the applicant believes they’re a particularly good fit for the job. This is what I regard as the cover letter. The résumé should still be attached, but it’s the cover letter I’m reading first.</p>
-<p>The cover letter sets the tone. It says “this is who I am, this is my understanding of what you’re looking for, and this is why I believe I’m the right choice.”</p>
-<p>The cover letter is the perfect place to make the right introduction.</p>
-<p>But, come on.</p>
-<p>This ain’t it.</p>
-
-</article>
-
+  </article>
+</div>
 </div>
 
     <script type="text/javascript">

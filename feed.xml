@@ -7,8 +7,116 @@
         <description><![CDATA[Thoughts on Haskell, Business, Unix, and more.]]></description>
         <atom:link href="https://jezenthomas.com/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Tue, 16 Jul 2024 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Fri, 15 Nov 2024 00:00:00 UT</lastBuildDate>
         <item>
+    <title>I Feel Unsafe</title>
+    <link>https://jezenthomas.com/2024/11/I-feel-unsafe/</link>
+    <description><![CDATA[<p>I awoke to the sound of a violent explosion earlier than I had wanted that
+morning. The walls, windows, and furniture vibrated. A cruise missile had
+struck a warehouse owned by a national supermarket chain, roughly a kilometre
+from the hotel I was staying in. The russians had fired it – targeting civilian
+infrastructure as they regularly do – perhaps a dozen minutes earlier. It was
+June 24th, 2024. The time was 07:03.</p>
+<figure>
+<img
+    alt="Plume of smoke from russian cruise missile attack on civilian infrastructure."
+    src="/static/img/i-feel-unsafe/tavriya-v.jpg">
+<figcaption>
+Plume of smoke from a russian cruise missile hitting a supermarket warehouse,
+shot from the window of my hotel room in Odesa, Ukraine.
+</figcaption>
+</figure>
+<p>This was hardly my first rodeo. Cruise missiles regularly flew over the
+apartment I was renting in Odesa. The local air defence would light up the sky
+when attacks came at night; as they often did. One attack in 2022 saw an
+apartment building struck a few streets behind mine, killing a young woman and
+her two children. Her husband wasn’t in the building at the time, and
+distraught by the slaughter of his entire family, he joined his country’s
+defence on the front line. Ultimately, he died too.</p>
+<figure>
+<img
+    alt="Smoke trail from an air defence missile after destroying an incoming Shahed drone."
+    src="/static/img/i-feel-unsafe/fontanska.jpg">
+<figcaption>
+Trail from an air defence missile, and the smoke from a successfully
+destroyed Shahed drone, shot from the kitchen window of my rental apartment
+in Odesa, October 2022.
+</figcaption>
+</figure>
+<p>With my British passport, I have the luxury of leaving any time living in an
+active war zone begins to take its toll. My closest friends however, enjoy no
+such luxury. The russians came to rape, torture, and kill. Neither women nor
+children are spared. Countless invaders have admitted to the brutality, at
+times recounting that <a href="https://www.politico.eu/article/former-wagner-group-commanders-azmat-uldarov-alexey-savichev-confess-murder-ukraine-civilians-including-children/">even small children are executed</a> with a bullet in
+the brain at point blank range. The Ukrainians have no choice but to stay and
+fight.</p>
+<hr />
+<p>I attended NixCon a few weeks ago in Berlin. Overall I enjoyed the experience;
+it feels a little less like a conference, and a little more like a get together
+for the relatively small NixOS community. About half way through the
+conference, the organisers announced that one attendee had been asked to leave.
+They were alleged to have made another attendee “feel unsafe”.</p>
+<p>I don’t know specifically what happened, beyond someone being made to “feel
+unsafe”, nor do I have any reason to doubt the accusation (and I’m glad the
+moderators took the complaint seriously and acted upon it).</p>
+<p>What sticks in my mind is the phrase “feel unsafe”. In my experience, I’ve only
+ever heard this phrase said by people who hold political views radically more
+left-wing than my own (and for the avoidance of doubt, I’m a bit of a leftie).
+NixCon – and perhaps the NixOS community more broadly – appears to have an
+atypically high concentration of people who would describe themselves as
+Marxists, or Communists, or Anarchists, <em>etc</em>.</p>
+<p>Indeed, walking around the conference venue, I spotted at least two dozen Nix
+hackers with radical left-wing political symbols and slogans emblazoned across
+their laptops. In the heart of Berlin, the hammer and sickle is apparently fine
+and reasonable.</p>
+<p>My heritage is Polish. I have good memory of my great-grandmother. Her husband,
+I never met. He died as a slave in a Nazi concentration camp. That side of my
+family has always lived on the West side of Poland. If they had lived as far
+East as they do West, then no doubt my great-grandfather would have died at the
+hands of the Soviets. The Nazis and the Soviets were allied at the start of The
+Second World War, so to me — and to millions of other Poles no doubt — the
+hammer and sickle and the swastika are essentially interchangeable.</p>
+<p>And the discomfort I experience seeing these political symbols and slogans is not
+so abstract. The commonly held position among people who describe themselves as
+Communist today is that Ukraine should not be given the lethal aid they need
+to defend themselves from a genocide that, to date, by some estimates has seen
+about a million casualties.</p>
+<figure>
+<img
+    alt="Campaign material from a Danish revolutionary communist organisation saying 'Books, not Bombs'."
+    src="/static/img/i-feel-unsafe/books-not-bombs.jpg">
+<figcaption>
+Campaign material from the ‘Revolutionary Communist Party’ in Denmark, who are <a href="https://marxist.dk/boeger-ikke-bomber/">explicitly against arming Ukraine</a>.
+</figcaption>
+</figure>
+<p>The reasoning I have been able to discern for this position is:</p>
+<ol type="1">
+<li>Guns and bombs are bad and kill people, so the West shouldn’t make them or
+send them to Ukraine.</li>
+<li>Naziism is bad, and the Communists defeated the Nazis, therefore Communism
+is good (conveniently forgetting the Molotov-Ribbentrop Pact).</li>
+</ol>
+<p>The reason why my closest friends in Odesa are not dead today is because
+hundreds of thousands of brave Ukrainian men and women have been successfully
+defending their country from terrorists and barbarians with the use of Western
+weapons.</p>
+<p>To say that Ukraine should not be given weapons is tantamount to saying that
+all of my friends should be dead. And, I suppose, that I should be dead too.
+It’s only blind luck that neither cruise missiles nor Shahed drones have
+struck a building that I was staying in. Although come to think of it, a
+Shahed drone did indeed hit a building where I used to live. Possibly even the
+same floor of that building. There have been so many attacks that I don’t
+perfectly recall.</p>
+<p>And yet, I’ll bet that if I were to use the same phrase at that conference — if
+I were to say that I “feel unsafe” — I somehow doubt that my complaint would be
+taken seriously. I am — superficially anyway — not a part of the persecuted
+class, so violence against me is fine.</p>
+]]></description>
+    <pubDate>Fri, 15 Nov 2024 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2024/11/I-feel-unsafe/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
     <title>Is it c? Or is it с?</title>
     <link>https://jezenthomas.com/2024/07/is-it-c/</link>
     <description><![CDATA[<p>Someone working on the team at Supercede asked the following question
@@ -622,191 +730,6 @@ about good <em>economics</em>.</p>
 ]]></description>
     <pubDate>Wed, 28 Dec 2022 00:00:00 UT</pubDate>
     <guid>https://jezenthomas.com/2022/12/make-your-database-tables-smaller/</guid>
-    <dc:creator>Jezen Thomas</dc:creator>
-</item>
-<item>
-    <title>At Least Assert Your Serialisation Roundtrips</title>
-    <link>https://jezenthomas.com/2022/12/at-least-roundtrip-serialisation/</link>
-    <description><![CDATA[<p>When you’re writing a web application, the values that flow through your system
-need to be serialised and deserialised. This could be for representation as
-JSON, XML, a parameter in a URI query string, or a field in a database, <em>etc</em>.</p>
-<p>The problem with teaching your program how to serialise or deserialise values
-is that it is manual and error-prone.</p>
-<p>Consider the follow enumeration type which models the status of a company in
-the United Kingdom.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Status</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">Active</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrder</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrderAdministrativeReceiver</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrderReceiverManager</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrationOrderReceivership</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">AdministrativeReceiver</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedOrClosed</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedToPLC</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedToUKEIG</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">ConvertedToUKSocietas</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- 23 more constructors…</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Bounded</span>, <span class="dt">Enum</span>, <span class="dt">Eq</span>, <span class="dt">Ord</span>, <span class="dt">Read</span>, <span class="dt">Show</span>)</span></code></pre></div>
-<p>If we wanted to teach our program to serialise each of these constructors as
-JSON but we stuck with the defaults, we would end up with values like
-<code>"Active"</code> and <code>"AdministrationOrder"</code> which mirror how the constructors are
-written.</p>
-<p>This isn’t what we want though — a consumer of this JSON data would expect
-something in perhaps snake case or kebab case, <em>i.e.</em>, <code>"administration_order"</code>
-or <code>"administration-order"</code> respectively.</p>
-<p>Of course, we could type out the desired conversions manually, like this:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  parseJSON <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;active&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">Active</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrder</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order_administrative_receiver&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrderAdministrativeReceiver</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order_receiver_manager&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrderReceiverManager</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administration_order_receivership&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrationOrderReceivership</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;administrative_receiver&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">AdministrativeReceiver</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_or_closed&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedOrClosed</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_to_plc&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedToPLC</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_to_ukeig&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedToUKEIG</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> <span class="st">&quot;converted_to_uk_societas&quot;</span>) <span class="ot">-&gt;</span> <span class="dt">ConvertedToUKSocietas</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- 23 more lines of tedium…</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Could not parse Status - was not a String&quot;</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">ToJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  toJSON <span class="ot">=</span> <span class="dt">String</span> <span class="op">.</span> \<span class="kw">case</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Active</span> <span class="ot">-&gt;</span> <span class="st">&quot;active&quot;</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrder</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order&quot;</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrderAdministrativeReceiver</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order_administrative_receiver&quot;</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrderReceiverManager</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order_receiver_manager&quot;</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrationOrderReceivership</span> <span class="ot">-&gt;</span> <span class="st">&quot;administration_order_receivership&quot;</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">AdministrativeReceiver</span> <span class="ot">-&gt;</span> <span class="st">&quot;administrative_receiver&quot;</span></span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedOrClosed</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_or_closed&quot;</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedToPLC</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_to_plc&quot;</span></span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedToUKEIG</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_to_ukeig&quot;</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">ConvertedToUKSocietas</span> <span class="ot">-&gt;</span> <span class="st">&quot;converted_to_uk_societas&quot;</span></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">-- This isn&#39;t what I signed up for ಠ_ಠ</span></span></code></pre></div>
-<p>While this does model exactly the representation we want, clearly this is not
-the kind of code we wish to maintain. At scale, it is inevitable that you or
-one your colleagues will mistype one of the strings, or forget to handle a case
-entirely.</p>
-<p>A better approach would be to use some function — we are programmers after all
-— to handle the conversions for us.</p>
-<p>We can neatly convert the representations of each of these constructors
-automatically with some string conversion function, <em>e.g.</em>, those available in
-the <a href="https://hackage.haskell.org/package/casing-0.1.4.1/docs/Text-Casing.html"><code>casing</code></a> library. This would lead us to write JSON instances for our
-type like this:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Control.Monad.Fail</span> (fail)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Text.Casing</span> (kebab, pascal)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Text.Read</span> (readEither)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  parseJSON <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> s) <span class="ot">-&gt;</span> <span class="kw">case</span> deserialise s <span class="kw">of</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Left</span> err <span class="ot">-&gt;</span> <span class="fu">fail</span> (unpack err)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Right</span> status <span class="ot">-&gt;</span> <span class="fu">pure</span> status</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Could not parse Status - was not a String&quot;</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">ToJSON</span> <span class="dt">Status</span> <span class="kw">where</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  toJSON <span class="ot">=</span> <span class="dt">String</span> <span class="op">.</span> serialise</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="ot">serialise ::</span> <span class="dt">Status</span> <span class="ot">-&gt;</span> <span class="dt">Text</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>serialise <span class="ot">=</span> <span class="fu">pack</span> <span class="op">.</span> kebab <span class="op">.</span> <span class="fu">show</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="ot">deserialise ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Status</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>deserialise t <span class="ot">=</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> readEither (pascal (unpack s)) <span class="kw">of</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Left</span> _ <span class="ot">-&gt;</span> <span class="dt">Left</span> <span class="op">$</span> <span class="st">&quot;Could not parse Status: &quot;</span> <span class="op">&lt;&gt;</span> t</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Right</span> status <span class="ot">-&gt;</span> <span class="fu">pure</span> status</span></code></pre></div>
-<p>This is an improvement. We now have 15 lines of code rather than the 71 lines
-of code we would have had after laboriously typing out all of the constructors.</p>
-<p>There could be problems in the logic though, which we’ll need to write a test
-for. The best way I have found for writing a test for this kind of problem is
-with a roundtrip property-based test.</p>
-<p>Roundtripping in this context just means that if you take some value and
-serialise it, then you’ll get back the same value when you deserialise it.</p>
-<p>I’m partial to both the <code>hspec</code> and <code>hedgehog</code> testing libraries, so naturally
-it makes sense to combine them with the <a href="https://hackage.haskell.org/package/hspec-hedgehog-0.0.1.2/docs/Test-Hspec-Hedgehog.html"><code>hspec-hedgehog</code></a> library.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Model.StatusSpec</span> (spec) <span class="kw">where</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.Aeson</span> <span class="kw">as</span> <span class="dt">Aeson</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Hedgehog.Gen</span> <span class="kw">as</span> <span class="dt">Gen</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Model.Status</span> (<span class="dt">Status</span>)</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Test.Hspec.Hedgehog</span> (<span class="dt">Gen</span>, forAll, hedgehog, tripping)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">TestImport</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ot">spec ::</span> <span class="dt">Spec</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>spec <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  describe <span class="st">&quot;Status&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;roundtrips JSON&quot;</span> <span class="op">$</span> hedgehog <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>      x <span class="ot">&lt;-</span> forAll (Gen.enumBounded<span class="ot"> ::</span> <span class="dt">Gen</span> <span class="dt">Status</span>)</span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>      tripping x Aeson.encode Aeson.eitherDecode</span></code></pre></div>
-<p>This test says:</p>
-<blockquote>
-<p>Generate all the <code>Status</code> values and ensure each of them roundtrip.</p>
-</blockquote>
-<p>Hedgehog is able to give us all the values in our <code>Status</code> enumeration because
-we asked the compiler to derive instances for both the <code>Enum</code> and <code>Bounded</code>
-classes when we defined our type.</p>
-<p>What happens when we run this test?</p>
-<pre><code>Model.Status
-  Status
-    roundtrips JSON FAILED [1]
-
-Failures:
-
-  ./test/Model/StatusSpec.hs:20:7:
-  1) Model.Status.Status roundtrips JSON
-         ✗ &lt;interactive&gt; failed at ./test/Model/StatusSpec.hs:20:7
-           after 1 test.
-
-              ┏━━ ./test/Model/StatusSpec.hs ━━━
-           13 ┃ spec :: Spec
-           14 ┃ spec = do
-           15 ┃
-           16 ┃   describe &quot;Status&quot; $ do
-           17 ┃
-           18 ┃     it &quot;roundtrips JSON&quot; $ hedgehog $ do
-           19 ┃       x &lt;- forAll (Gen.enumBounded :: Gen Status)
-              ┃       │ ConvertedToPLC
-           20 ┃       tripping x Aeson.encode Aeson.eitherDecode
-              ┃       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-              ┃       │ ━━━ Intermediate ━━━
-              ┃       │ &quot;\&quot;converted-to-plc\&quot;&quot;
-              ┃       │ ━━━ - Original) (+ Roundtrip ━━━
-              ┃       │ - Right ConvertedToPLC
-              ┃       │ + Left &quot;Error in $: Could not parse Status: converted-to-plc&quot;
-
-           This failure can be reproduced by running:
-           &gt; recheck (Size 0) (Seed 15174119819274148648 1778119947192687319) &lt;property&gt;</code></pre>
-<p>It failed!</p>
-<p>If we fire up GHCi and import both our <code>Status</code> type and the <code>Text.Casing</code> module, we can see why this fails.</p>
-<pre><code>λ kebab $ show ConvertedToPLC
-&quot;converted-to-plc&quot;
-
-λ pascal $ kebab $ show ConvertedToPLC
-&quot;ConvertedToPlc&quot;</code></pre>
-<p>The <code>pascal</code> function is converting the serialised <code>"converted-to-plc"</code> into
-<code>"ConvertedToPlc"</code>, but this doesn’t match the derived <code>Read</code> instance for that
-type! For the same reason, this code would also fail on the <code>ConvertedToUKEIG</code>
-and <code>ConvertedToUKSocietas</code> constructors.</p>
-<p>To fix this we’ll have to handle those edge cases manually, like this:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="ot">deserialise ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Status</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>deserialise <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;converted-to-plc&quot;</span> <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="dt">ConvertedToPLC</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;converted-to-ukeig&quot;</span> <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="dt">ConvertedToUKEIG</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;converted-to-uk-societas&quot;</span> <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="dt">ConvertedToUKSocietas</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  s <span class="ot">-&gt;</span> <span class="kw">case</span> readEither (pascal (unpack s)) <span class="kw">of</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Left</span> _ <span class="ot">-&gt;</span> <span class="dt">Left</span> <span class="op">$</span> <span class="st">&quot;Could not parse Status: &quot;</span> <span class="op">&lt;&gt;</span> s</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Right</span> status <span class="ot">-&gt;</span> <span class="fu">pure</span> status</span></code></pre></div>
-<p>Running this again shows us that our tests pass, and we can have confidence
-that our test coverage is exhaustive because we aren’t relying on human
-discipline to exercise all of the paths through this code.</p>
-<p>I don’t think there’s any reason not to test your custom serialisation and
-deserialisation code this way, and if you’re new to property-based testing then
-this is the easiest place to start.</p>
-]]></description>
-    <pubDate>Sat, 10 Dec 2022 00:00:00 UT</pubDate>
-    <guid>https://jezenthomas.com/2022/12/at-least-roundtrip-serialisation/</guid>
     <dc:creator>Jezen Thomas</dc:creator>
 </item>
 
