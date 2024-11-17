@@ -88,19 +88,19 @@ called Block Element Modifier (BEM).</p>
 selectors low, and avoiding naming collisions. It does this by imposing a
 naming convention which programmers should rigidly adhere to.</p>
 <p>Applied BEM looks something like this:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;header</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;header&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;img</span> <span class="er">class</span><span class="ot">=</span><span class="st">&quot;header__logo header__logo--success&quot;</span> <span class="er">src</span><span class="ot">=</span><span class="st">&quot;/slava_ukraini.jpg&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/header&gt;</span></span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">header</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;header&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;header__logo header__logo--success&quot;</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;/slava_ukraini.jpg&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">header</span><span class="dt">&gt;</span></span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;style&gt;</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="dt">&gt;</span></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.header</span> {</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span>: <span class="fu">linear-gradient(</span><span class="dv">-180</span><span class="dt">deg</span><span class="op">,</span> <span class="cn">royalblue</span> <span class="dv">50</span><span class="dt">%</span><span class="op">,</span> <span class="cn">yellow</span> <span class="dv">50</span><span class="dt">%</span><span class="fu">)</span><span class="op">;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span><span class="ch">:</span> <span class="fu">linear-gradient(</span><span class="dv">-180</span><span class="dt">deg</span><span class="op">,</span> <span class="cn">royalblue</span> <span class="dv">50</span><span class="dt">%</span><span class="op">,</span> <span class="cn">yellow</span> <span class="dv">50</span><span class="dt">%</span><span class="fu">)</span><span class="op">;</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  }</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.header__logo--success</span> {</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">position</span>: <span class="dv">absolute</span><span class="op">;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">position</span><span class="ch">:</span> <span class="dv">absolute</span><span class="op">;</span></span>
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/style&gt;</span></span></code></pre></div>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span></code></pre></div>
 <p>The <em>block</em> in this case is <code>header</code>. We delimit the block and the <em>element</em>
 with a couple of underscores, and appending two hyphens and some string denotes
 a modifier.</p>
@@ -181,16 +181,16 @@ the new count is used to generate a unique identifier.</p>
 <span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        background: yellow</span>
 <span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    |]</span></code></pre></div>
 <p>This Haskell code generates markup and styles which look like this:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;div</span> <span class="er">id</span><span class="ot">=</span><span class="st">&quot;hident3&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;header</span> <span class="er">id</span><span class="ot">=</span><span class="st">&quot;hident1&quot;</span><span class="kw">&gt;</span>Some header text…<span class="kw">&lt;/header&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">&lt;footer</span> <span class="er">id</span><span class="ot">=</span><span class="st">&quot;hident2&quot;</span><span class="kw">&gt;</span><span class="dv">&amp;copy;</span> Copyright Acme Inc. 2022<span class="kw">&lt;/footer&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/div&gt;</span></span>
+<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;hident3&quot;</span><span class="dt">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">header</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;hident1&quot;</span><span class="dt">&gt;</span>Some header text…<span class="dt">&lt;/</span><span class="kw">header</span><span class="dt">&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">footer</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;hident2&quot;</span><span class="dt">&gt;</span><span class="dv">&amp;copy;</span> Copyright Acme Inc. 2022<span class="dt">&lt;/</span><span class="kw">footer</span><span class="dt">&gt;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;style&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident1</span> { <span class="kw">background</span>: <span class="cn">royalblue</span><span class="op">;</span> }</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident2</span> { <span class="kw">background</span>: <span class="cn">yellow</span><span class="op">;</span> }</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident3</span> { <span class="kw">margin</span>: <span class="bu">auto</span><span class="op">;</span> }</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;/style&gt;</span></span></code></pre></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="dt">&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident1</span> { <span class="kw">background</span><span class="ch">:</span> <span class="cn">royalblue</span><span class="op">;</span> }</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident2</span> { <span class="kw">background</span><span class="ch">:</span> <span class="cn">yellow</span><span class="op">;</span> }</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident3</span> { <span class="kw">margin</span><span class="ch">:</span> <span class="bu">auto</span><span class="op">;</span> }</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span></code></pre></div>
 <p>So, correct use of the framework ensures our IDs are unique even when they’re
 all composed together, and the compiler ensures we don’t mistype the names that
 bind the HTML elements with their associated CSS and JavaScript. The compiler
@@ -219,10 +219,10 @@ the compiler, the fewer mistakes I tend to see in production. The mechanisms
 I’ve described here aren’t exactly new either — they’ve existed in Yesod for
 more than a decade. If your web framework of choice doesn’t have something like
 this, you should be asking yourself an important question: <em>Why not?</em></p>
-<section class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
 <hr />
 <ol>
-<li id="fn1" role="doc-endnote"><p>Actually, it’s more typical to use <a href="https://www.yesodweb.com/book/shakespearean-templates#shakespearean-templates_attributes">syntactical conveniences</a> that Hamlet provides. The verbose version is used here so there is less unfamiliar syntax for the reader.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn1"><p>Actually, it’s more typical to use <a href="https://www.yesodweb.com/book/shakespearean-templates#shakespearean-templates_attributes">syntactical conveniences</a> that Hamlet provides. The verbose version is used here so there is less unfamiliar syntax for the reader.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
 </ol>
 </section>
 
