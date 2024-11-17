@@ -10,8 +10,8 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-unstable
       - uses: DeterminateSystems/magic-nix-cache-action@v2
-      - run: nix-build
-      - run: ./result/bin/jgt rebuild
+      - run: nix build
+      - run: ./result/bin/site rebuild
 
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4

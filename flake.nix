@@ -1,28 +1,47 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/dbb62c34bbb5cdf05f1aeab07638b24b0824d605";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
-  outputs = { self, nixpkgs }:
-    let
-      pkgs = import nixpkgs { };
-    in {
-      packages = {
-        default = pkgs.stdenv.mkDerivation {
-          pname = "jgt";
-          version = "0.1.0";
-
-          src = ./src;
-
-          phases = "unpackPhase buildPhase";
-          buildInputs = [
-            (pkgs.haskellPackages.ghcWithPackages (p: with p; [ hakyll pureMD5 ]))
+  outputs =
+    { self
+    , nixpkgs
+    , flake-utils
+    }:
+    flake-utils.lib.eachDefaultSystem
+      (system:
+      let
+        pkgs = import nixpkgs {
+          inherit system;
+          overlays = [
+            self.overlays.default
           ];
+        };
+      in {
+        packages.default = pkgs.lib.trivial.pipe pkgs.haskellPackages.jgt
+          [
+            pkgs.haskell.lib.dontHaddock
+            pkgs.haskell.lib.enableStaticLibraries
+            pkgs.haskell.lib.justStaticExecutables
+            pkgs.haskell.lib.disableLibraryProfiling
+            pkgs.haskell.lib.disableExecutableProfiling
+          ];
+      }) // {
+      overlays.default = _: prev: {
+        haskell = prev.haskell // {
+          packageOverrides = prev.lib.composeExtensions prev.haskell.packageOverrides (_: hprev: {
 
-          buildPhase = ''
-            mkdir -p $out/bin
-            ghc -O2 -dynamic --make Main.hs -o $out/bin/jgt
-          '';
+            jgt =
+              let
+                haskellSourceFilter = prev.lib.sourceFilesBySuffices ./. [
+                  ".cabal"
+                  ".hs"
+                  "LICENSE"
+                ];
+              in
+              hprev.callCabal2nix "jgt" haskellSourceFilter { };
+          });
         };
       };
     };

@@ -1,9 +1,9 @@
 ```bash
 # Compile app
-nix-build
+nix build
 
 # Development server
-./result/bin/jgt watch
+./result/bin/site watch
 ```
 
 ![Computers in a nutshell](/static/img/robotfail.gif)
