@@ -44,7 +44,7 @@ commas, and the `-f` flag allows us to choose which field we're interested in.
 For my script, I'm pulling fields six, eight, and nine to grab the city,
 latitude, and longitude values respectively.
 
-```
+```bash
 LOCATION=$(curl --silent http://ip-api.com/csv)
 CITY=$(echo "$LOCATION" | cut -d , -f 6)
 LAT=$(echo "$LOCATION" | cut -d , -f 8)
@@ -77,7 +77,7 @@ can use your favourite package manager to install a JSON parser called _jq_.
 Accessing fields with _jq_ is syntactically the same as looking up array indexes
 and object properties in JavaScript.
 
-```
+```bash
 WEATHER=$(curl --silent http://api.openweathermap.org/data/2.5/weather\?lat="$LAT"\&lon="$LON"\&APPID="$API_KEY"\&units=metric)
 
 CATEGORY=$(echo "$WEATHER" | jq .weather[0].id)
@@ -105,7 +105,7 @@ executable. The weather script can now be called from your Tmux configuration.
 
 When I open up my `~/.tmux.conf` file, I have these lines:
 
-```
+```bash
 set -g status-right-length 50
 set -g status-right '#[fg=green][#[default]#($HOME/.bin/weather)#[fg=green]] #[fg=green][#[fg=blue]%Y-%m-%d #[fg=white]%H:%M#[default]#[fg=green]] #[fg=green][#($HOME/.bin/battery)#[fg=green]]'
 set -g status-interval 1
@@ -122,7 +122,7 @@ time.
 And that's all there is to it! For completeness, here's the entire `weather`
 script:
 
-```
+```bash
 #!/bin/bash
 #
 # Weather
@@ -182,5 +182,5 @@ ICON=$(weather_icon "$CATEGORY")
 printf "%s" "$CITY:$ICON $TEMP, $WIND_SPEED"
 ```
 
-n.b. I realise I could just stand on my balcony to see what the weather is like,
+_n.b._ I realise I could just stand on my balcony to see what the weather is like,
 but what kind of nerd would I be if I didn't script it somehow?!

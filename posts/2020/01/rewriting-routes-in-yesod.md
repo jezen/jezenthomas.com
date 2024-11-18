@@ -41,7 +41,7 @@ The example below changes the way auth routes from the
 [yesod-auth-simple][plugin] auth plugin are rendered. Your own implementation
 may slightly differ.
 
-```
+```haskell
 instance Yesod App where
 
   -- other typeclass method overrides
@@ -63,7 +63,7 @@ them to their full form under the hood. This is where our WAI middleware comes
 in. Pay special attention to the final pattern match of the `rw` function — you
 want all other routes in your application to pass through unaltered.
 
-```
+```haskell
 import Network.Wai.Middleware.Rewrite (rewritePureWithQueries)
 
 rewriteAuthRoutes :: Middleware

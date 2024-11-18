@@ -50,7 +50,7 @@ fi
 git stash save --keep-index --include-untracked
 ~~~
 
-# Quality Control
+## Quality Control
 
 For a git-hook to succeed, the script should exit with an error code of `0`.
 After each check I add the exit code of that check to a counter, and exit the

@@ -46,6 +46,7 @@ styleSheets =
   , "css/default.css"
   , "css/header.css"
   , "css/syntax.css"
+  , "css/spirograph.css"
   ]
 
 main :: IO ()

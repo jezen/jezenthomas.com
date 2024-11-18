@@ -39,10 +39,10 @@ The first two constraints are trivial to solve — we can use the `uuid` and
 `base64-bytestring` libraries to produce our nonces.
 
 ```haskell
-import           ClassyPrelude.Yesod
-import qualified Data.ByteString.Base64 as B64
-import           Data.UUID              (toASCIIBytes)
-import           Data.UUID.V4           (nextRandom)
+import ClassyPrelude.Yesod
+import Data.ByteString.Base64 qualified as B64
+import Data.UUID (toASCIIBytes)
+import Data.UUID.V4 (nextRandom)
 
 generateRequestNonce :: MonadHandler m => m Text
 generateRequestNonce = do

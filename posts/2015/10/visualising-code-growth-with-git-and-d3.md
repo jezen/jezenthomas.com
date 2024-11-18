@@ -10,7 +10,9 @@ tags: git, javascript, bash
 Warsaw, Poland where I discussed this topic. You can now watch the video from
 the conference here. Original article is found below.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/c9CoBR6_OkI?rel=0" frameborder="0" allowfullscreen></iframe>
+<div class="youtube-embed">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/c9CoBR6_OkI?rel=0" frameborder="0" allowfullscreen></iframe>
+</div>
 
 <span class="run-in"><span class="drop">I</span> recently watched a
 screencast</span> that discussed the idea of generating statistics about a

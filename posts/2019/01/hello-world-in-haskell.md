@@ -42,8 +42,8 @@ effects.
 
 module Main where
 
-import           Foreign.C.Types
-import qualified Language.C.Inline as C
+import Foreign.C.Types
+import Language.C.Inline qualified as C
 
 C.include "<stdio.h>"
 C.include "<stdlib.h>"
@@ -72,8 +72,8 @@ wielding the _Right Tool for the Job_.
 
 module Main where
 
-import           Foreign.C.Types
-import qualified Language.C.Inline as C
+import Foreign.C.Types
+import Language.C.Inline qualified as C
 
 C.include "<stdio.h>"
 C.include "<stdlib.h>"

@@ -1,3 +1,10 @@
+:root {
+  --main-bg-color: #fff;
+  --main-fg-color: #000;
+  --main-fg-secondary-color: #333;
+  --border-color: #e3e3e3;
+}
+
 /* Scaffold ------------------------------------------------------------- {{{ */
 *,
 *::before,
@@ -13,21 +20,29 @@ body {
 }
 
 body {
-  color: #000;
+  background-color: var(--main-bg-color);
+  color: var(--main-fg-color);
   font-size: 15px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --main-bg-color: #191919;
+    --main-fg-color: #ece9e6;
+    --main-fg-secondary-color: #aaa;
+    --border-color: #333;
+  }
 }
 
 #main {
   overflow: hidden;
 }
 
-@media (min-width: 920px) {
-  #main {
-    margin-left: 300px;
-  }
-}
-
 img {
+  border-color: var(--border-color);
+  border-radius: 10px;
+  border-style: solid;
+  border-width: 1px;
   max-width: 100%;
 }
 
@@ -56,7 +71,7 @@ img {
 }
 
 .post-title {
-  color: #000;
+  color: var(--main-fg-color);
   font-size: 20px;
   letter-spacing: normal;
   margin: 0;
@@ -82,7 +97,7 @@ article .post-title {
 }
 
 .posts .post-excerpt {
-  color: #000;
+  color: var(--main-fg-color);
   font-size: 14px;
   margin: 8px 0 10px;
   max-width: 600px;
@@ -96,20 +111,8 @@ body {
 }
 
 article > hr {
-  background: none;
-  border: 0;
-  height: auto;
-  margin: 3em 0;
+  margin: 3em auto;
   max-width: 600px;
-  padding: 0;
-}
-
-article > hr::after {
-  content: '⁂';
-  display: block;
-  line-height: 1;
-  opacity: 0.8;
-  text-align: center;
 }
 
 .footnotes hr {
@@ -125,7 +128,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 h2 {
-  color: #000;
+  color: var(--main-fg-color);
   font-size: 2.4rem;
   margin: 3em 0 1em;
 }
@@ -197,7 +200,7 @@ pre {
   pre {
     border-radius: 4px 0 0 4px;
     border-width: 1px 0 1px 1px;
-    margin: 0;
+    margin-left: calc(50% - 300px);
   }
 }
 
@@ -220,6 +223,7 @@ code {
 @media (min-width: 920px) {
   .sourceCode {
     margin: 3em 0;
+    margin-left: calc(50% - 300px);
   }
 }
 
@@ -232,7 +236,6 @@ sup {
 }
 
 ul {
-  list-style: square;
   margin: 2em 0 3em 30px;
 }
 
@@ -284,22 +287,22 @@ blockquote p em {
 /* }}} */
 /* About ---------------------------------------------------------------- {{{ */
 .about-page {
-  padding: 40px 20px;
+  margin: auto;
+  padding: 20px;
 }
 
-@media (min-width: 920px) {
+@media (min-width: 640px) {
   .about-page {
-    padding: 40px 20px 40px 60px;
+    max-width: 600px;
+    padding: 20px 0;
   }
 }
 
-.about-page {
-  max-width: 600px;
-}
-
 .about-page h2 {
-  font-size: 1.8rem;
-  margin: 0 0 4rem;
+  border-bottom: 1px solid #ddd;
+  font-size: 1.6rem;
+  margin-top: 0;
+  padding-bottom: .5rem;
 }
 
 .about-page h3 {
@@ -384,14 +387,7 @@ blockquote p em {
 /* }}} */
 /* Article -------------------------------------------------------------- {{{ */
 article {
-  padding: 20px 20px 100px;
-  position: relative;
-}
-
-@media (min-width: 920px) {
-  article {
-    padding: 40px 0 100px 60px;
-  }
+  padding: 0 20px;
 }
 
 article h2 {
@@ -399,8 +395,24 @@ article h2 {
 }
 
 article p,
-article li {
+article h1,
+article h2,
+article h3,
+article ol,
+article ul,
+article blockquote,
+article #footnotes,
+article .cp_embed_wrapper,
+article .youtube-embed,
+.post-title,
+.post-meta {
   max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.youtube-embed iframe {
+  width: 100%;
 }
 
 article h1 {
@@ -408,18 +420,10 @@ article h1 {
   font-weight: bold;
   letter-spacing: -1px;
   padding: 0;
-  margin: 0;
-}
-
-article > p:last-of-type::after {
-  color: #666;
-  content: ' ■';
-  font-family: TimesNewRoman, "Times New Roman", Times, Baskerville, Georgia, serif;
-  font-size: 17px;
 }
 
 article figure {
-  margin: 3em 0px;
+  margin: 3em auto;
   max-width: 600px;
 }
 
@@ -444,17 +448,16 @@ ol {
 /* }}} */
 
 footer {
-  bottom: 20px;
-  color: #666;
-  display: none;
+  color: var(--main-fg-secondary-color);
   font-size: 11px;
-  left: 40px;
-  position: absolute;
+  margin: auto;
+  padding: 20px;
 }
 
-@media (min-width: 920px) {
+@media (min-width: 640px) {
   footer {
-    display: block;
+    max-width: 600px;
+    padding: 20px 0 40px;
   }
 }
 
@@ -465,4 +468,179 @@ footer {
 
 .footnotes p {
   margin: 1em 0;
+}
+
+#arcify {
+  background-color: #212121;
+  border-radius: 10px;
+  height: 300px;
+  margin: 40px auto;
+  max-width: 600px;
+  position: relative;
+  width: 100%;
+}
+
+#arcify ul {
+  height: 100%;
+  width: 100%;
+  display: block;
+  margin: 0 auto;
+}
+
+#arcify li {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: block;
+  background: transparent;
+  border: 10px solid rgba(23,246,251, 1.0);
+  border-radius: 500px;
+  transition: all 0.5s ease;
+}
+
+#arcify li:first-child{
+  margin-left: -130px;
+  margin-top: -130px;
+  width: 240px;
+  height: 240px;
+  border-color: #e000c9;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: spin 12s infinite linear;
+}
+
+#arcify li:nth-child(2) {
+  margin-left: -120px;
+  margin-top: -120px;
+  width: 220px;
+  height: 220px;
+  border-color: #7500ad;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  animation: spin2 12s infinite linear;
+}
+
+#arcify li:nth-child(3) {
+  margin-left: -110px;
+  margin-top: -110px;
+  width: 200px;
+  height: 200px;
+  border-color: #0049d8;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: spin3 4s infinite linear;
+}
+
+#arcify li:nth-child(4) {
+  margin-left: -80px;
+  margin-top: -80px;
+  width: 140px;
+  height: 140px;
+  border-color: #0089ed;
+  border-left-color: transparent;
+  border-top-color: transparent;
+  animation: spin4 4s infinite linear;
+}
+
+#arcify li:nth-child(5) {
+  margin-left: -70px;
+  margin-top: -70px;
+  width: 120px;
+  height: 120px;
+  border-color: #00f2a9;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: spin5 4s infinite linear;
+}
+
+#arcify li:nth-child(6) {
+  margin-left: -60px;
+  margin-top: -60px;
+  width: 100px;
+  height: 100px;
+  border-color: #009e2c;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: spin6 4s infinite linear;
+}
+
+#arcify li:nth-child(7) {
+  margin-left: -40px;
+  margin-top: -40px;
+  width: 60px;
+  height: 60px;
+  border-color: #d4d800;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-top-color: transparent;
+  animation: spin7 2s infinite linear;
+}
+
+#arcify li:nth-child(8) {
+  margin-left: -30px;
+  margin-top: -30px;
+  width: 40px;
+  height: 40px;
+  border-color: #c18b00;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  animation: spin8 2s infinite linear;
+}
+
+/* Animations */
+
+@keyframes spin {
+  0%  {transform: rotate(0deg);}
+  10%  {transform: rotate(-25deg);}
+  20%  {transform: rotate(47deg);}
+  30%  {transform: rotate(-125deg);}
+  40%  {transform: rotate(-25deg);}
+  50%  {transform: rotate(25deg);}
+  60%  {transform: rotate(165deg);}
+  70%  {transform: rotate(42deg);}
+  80%  {transform: rotate(180deg);}
+  90%  {transform: rotate(-300deg);}
+  100%{transform: rotate(360deg);}
+}
+
+@keyframes spin2 {
+  0%  {transform: rotate(0deg);}
+  100%{transform: rotate(360deg);}
+}
+
+@keyframes spin3 {
+  0%  {transform: rotate(0deg);}
+  60%  {transform: rotate(165deg);}
+  70%  {transform: rotate(42deg);}
+  100%{transform: rotate(360deg);}
+}
+
+@keyframes spin4 {
+  0%  {transform: rotate(0deg);}
+  100%{transform: rotate(360deg);}
+}
+
+@keyframes spin5 {
+  0%  {transform: rotate(0deg);}
+  10%  {transform: rotate(-25deg);}
+  20%  {transform: rotate(47deg);}
+  30%  {transform: rotate(-125deg);}
+  100%{transform: rotate(360deg);}
+}
+
+@keyframes spin6 {
+  0%  {transform: rotate(0deg);}
+  80%  {transform: rotate(180deg);}
+  90%  {transform: rotate(-300deg);}
+  100%{transform: rotate(360deg);}
+}
+
+@keyframes spin7 {
+  0%  {transform: rotate(0deg);}
+  100%{transform: rotate(-360deg);}
+}
+
+@keyframes spin8 {
+  0%  {transform: rotate(0deg);}
+  100%{transform: rotate(360deg);}
 }

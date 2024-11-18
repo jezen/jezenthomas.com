@@ -79,7 +79,7 @@ infinite implementations in the sense that you could implement it as the input
 alone, or concatenated with itself, or concatenated with itself twice, or
 thrice, and so on to infinity.
 
-```
+```haskell
 f :: [a] -> [a]
 f a = a ++ a
 -- or
@@ -102,7 +102,7 @@ circumstances) could _also_ push your CPU so hard that your machine overheats,
 bursts into flames, and melts into its own little pool of glowing lava. That'd
 be one hell of a side-effect.
 
-```
+```haskell
 f :: [a] -> [a]
 f a = f a
 ```
@@ -116,7 +116,7 @@ Let's retreat to the realm of the reasonable. Could this function be `reverse`?
 Yeah, sure. You could recursively call this function with all the elements
 except the first one, joined with a list of just the first item.
 
-```
+```haskell
 reverse' :: [a] -> [a]
 reverse' [] = []
 reverse' (x:xs) = reverse' xs ++ [x]
@@ -140,13 +140,13 @@ transparency, what would happen on subsequent calls to this function?
 For it to do a shuffle, it would need a random seed. You could either pass that
 in, which would make it something like
 
-```
+```haskell
 f :: Seed -> [a] -> [a]
 ```
 
 …or you would have to do it in IO, which would make it
 
-```
+```haskell
 f :: [a] -> IO [a]
 ```
 

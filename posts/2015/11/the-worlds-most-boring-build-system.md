@@ -11,7 +11,9 @@ talk at the Falsy Values developer conference in Warsaw, Poland. In the talk I
 discussed the idea of abandoning convoluted JavaScript build systems and instead
 falling back to the tried-and-true original *Make* utility.
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/JdqBbBazSPE" frameborder="0" allowfullscreen></iframe>
+<div class="youtube-embed">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/JdqBbBazSPE" frameborder="0" allowfullscreen></iframe>
+</div>
 
 I think the important point to take away from this talk is that most day-to-day
 programming work can be solved elegantly with simple tools, and that adopting
