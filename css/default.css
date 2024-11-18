@@ -3,6 +3,7 @@
   --main-fg-color: #000;
   --main-fg-secondary-color: #333;
   --border-color: #e3e3e3;
+  --code-bg: #f5f5f5;
 }
 
 /* Scaffold ------------------------------------------------------------- {{{ */
@@ -31,6 +32,7 @@ body {
     --main-fg-color: #ece9e6;
     --main-fg-secondary-color: #aaa;
     --border-color: #333;
+    --code-bg: #272822;
   }
 }
 
@@ -204,7 +206,11 @@ pre > code {
 }
 
 code {
-  background: #f5f5f5;
+  background: var(--code-bg);
+  border-radius: 6px;
+  font-size: 13px;
+  padding: 2px 4px;
+  white-space: break-spaces;
 }
 
 sup {
