@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -79,23 +79,27 @@ accuracy.</p>
 counting with estimates. Not all of them work in my case, because the primary
 feature of my application is arbitrary filtering. Some clever abuse of the
 query planner output quickly gives us an estimate.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">FUNCTION</span> count_estimate(<span class="kw">query</span> text) RETURNS <span class="dt">integer</span> <span class="kw">AS</span> $$</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">DECLARE</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  rec   <span class="dt">record</span>;</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">rows</span>  <span class="dt">integer</span>;</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">BEGIN</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">FOR</span> rec <span class="kw">IN</span> <span class="kw">EXECUTE</span> <span class="st">'EXPLAIN '</span> <span class="op">||</span> <span class="kw">query</span> <span class="cf">LOOP</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">rows</span> <span class="op">:=</span> substring(rec.<span class="ot">&quot;QUERY PLAN&quot;</span> <span class="kw">FROM</span> <span class="st">' rows=([[:digit:]]+)'</span>);</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    EXIT <span class="cf">WHEN</span> <span class="kw">rows</span> <span class="kw">IS</span> <span class="kw">NOT</span> <span class="kw">NULL</span>;</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="cf">END</span> <span class="cf">LOOP</span>;</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="kw">RETURN</span> <span class="kw">rows</span>;</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">END</span>;</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>$$ LANGUAGE plpgsql VOLATILE STRICT;</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="k">CREATE</span><span class="w"> </span><span class="k">FUNCTION</span><span class="w"> </span><span class="n">count_estimate</span><span class="p">(</span><span class="n">query</span><span class="w"> </span><span class="nb">text</span><span class="p">)</span><span class="w"> </span><span class="k">RETURNS</span><span class="w"> </span><span class="nb">integer</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="err">$$</span>
+<span class="k">DECLARE</span>
+<span class="w">  </span><span class="n">rec</span><span class="w">   </span><span class="n">record</span><span class="p">;</span>
+<span class="w">  </span><span class="k">rows</span><span class="w">  </span><span class="nb">integer</span><span class="p">;</span>
+<span class="k">BEGIN</span>
+<span class="w">  </span><span class="k">FOR</span><span class="w"> </span><span class="n">rec</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="k">EXECUTE</span><span class="w"> </span><span class="s1">'EXPLAIN '</span><span class="w"> </span><span class="o">||</span><span class="w"> </span><span class="n">query</span><span class="w"> </span><span class="n">LOOP</span>
+<span class="w">    </span><span class="k">rows</span><span class="w"> </span><span class="p">:</span><span class="o">=</span><span class="w"> </span><span class="k">substring</span><span class="p">(</span><span class="n">rec</span><span class="p">.</span><span class="ss">&quot;QUERY PLAN&quot;</span><span class="w"> </span><span class="k">FROM</span><span class="w"> </span><span class="s1">' rows=([[:digit:]]+)'</span><span class="p">);</span>
+<span class="w">    </span><span class="n">EXIT</span><span class="w"> </span><span class="k">WHEN</span><span class="w"> </span><span class="k">rows</span><span class="w"> </span><span class="k">IS</span><span class="w"> </span><span class="k">NOT</span><span class="w"> </span><span class="k">NULL</span><span class="p">;</span>
+<span class="w">  </span><span class="k">END</span><span class="w"> </span><span class="n">LOOP</span><span class="p">;</span>
+<span class="w">  </span><span class="k">RETURN</span><span class="w"> </span><span class="k">rows</span><span class="p">;</span>
+<span class="k">END</span><span class="p">;</span>
+<span class="err">$$</span><span class="w"> </span><span class="k">LANGUAGE</span><span class="w"> </span><span class="n">plpgsql</span><span class="w"> </span><span class="k">VOLATILE</span><span class="w"> </span><span class="k">STRICT</span><span class="p">;</span>
+</pre></div>
+
 <p>The function above only needs to be defined once. In my case, I added it to my
 project’s database schema with the <a href="https://hackage.haskell.org/package/postgresql-simple-migration"><code>postgresql-simple-migration</code></a> library,
 as it’s perilous to try and manage database schemas by hand.</p>
 <p>If we’re writing plain SQL, we can use the <code>count_estimate</code> function like this:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> count_estimate(<span class="st">'SELECT 1 FROM items WHERE n &lt; 1000'</span>);</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">count_estimate</span><span class="p">(</span><span class="s1">'SELECT 1 FROM items WHERE n &lt; 1000'</span><span class="p">);</span>
+</pre></div>
+
 <p>However, the whole point of writing Haskell is to avoid the pain of software
 constantly blowing up in our faces, so it’s better to lean on the
 <a href="https://hackage.haskell.org/package/persistent"><code>persistent</code></a> and <a href="https://hackage.haskell.org/package/esqueleto"><code>esqueleto</code></a> libraries where possible to leverage the
@@ -104,40 +108,42 @@ compiler and gain <em>some</em> assurances of type safety.</p>
 aforementioned Haskell libraries. Implementation in terms of
 <a href="https://hackage.haskell.org/package/esqueleto-3.5.3.0/docs/Database-Esqueleto-Internal-Internal.html#v:unsafeSqlFunction"><code>unsafeSqlFunction</code></a> might work, but I chose to use the <a href="https://hackage.haskell.org/package/persistent-2.13.2.1/docs/Database-Persist-Sql.html#v:rawSql"><code>rawSql</code></a>
 function instead<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes #-}</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell #-}</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Database.Esqueleto.Experimental</span>  <span class="co">-- from esqueleto</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Text.Shakespeare.Text</span> (st)       <span class="co">-- from shakespeare</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- | The length of a result set for a query.</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">ResultLength</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">Approximate</span> <span class="dt">Int</span> <span class="co">-- ^ An estimate from the PostgreSQL query planner</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">Precise</span> <span class="dt">Int</span>     <span class="co">-- ^ A precise result from running a real @COUNT(*)@ query</span></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Read</span>, <span class="dt">Show</span>)</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>derivePersistField <span class="st">&quot;ResultLength&quot;</span></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- | Quickly return an estimate from the query planner.</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">--</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">-- This leans on the PostgreSQL query planner to come up with an /approximate/</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">-- result length. If the @count_estimate@ function is not already defined in</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">-- the database, this function will throw an exception.</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="co">--</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="co">-- To prevent SQL injection, the tag should be dynamically generated.</span></span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>getEstimate</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- | A randomly-generated alphabetical string.</span></span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="ot">  ::</span> <span class="dt">Text</span></span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- | The SQL query with placeholders, and a list of parameters.</span></span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> (<span class="dt">Text</span>, [<span class="dt">PersistValue</span>])</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- | The 'ResultLength' here will always be an 'Approximate'.</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">DB</span> (<span class="dt">Maybe</span> <span class="dt">ResultLength</span>)</span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>getEstimate tag (query, params) <span class="ot">=</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span><span class="ot"> resultLength ::</span> [<span class="dt">Single</span> <span class="dt">Int64</span>] <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">ResultLength</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>      resultLength <span class="ot">=</span> <span class="fu">fmap</span> (<span class="dt">Approximate</span> <span class="op">.</span> <span class="fu">fromIntegral</span> <span class="op">.</span> unSingle) <span class="op">.</span> listToMaybe</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>   <span class="kw">in</span> resultLength <span class="op">&lt;$&gt;</span> rawSql [st|</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>      SELECT count_estimate($#{tag}$#{query}$#{tag}$);</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>      |] params</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="cm">{-# LANGUAGE QuasiQuotes #-}</span>
+<span class="cm">{-# LANGUAGE TemplateHaskell #-}</span>
+
+<span class="kr">import</span><span class="w"> </span><span class="nn">Database.Esqueleto.Experimental</span><span class="w">  </span><span class="c1">-- from esqueleto</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Text.Shakespeare.Text</span><span class="w"> </span><span class="p">(</span><span class="nf">st</span><span class="p">)</span><span class="w">       </span><span class="c1">-- from shakespeare</span>
+
+<span class="c1">-- | The length of a result set for a query.</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">ResultLength</span>
+<span class="w">  </span><span class="ow">=</span><span class="w"> </span><span class="kt">Approximate</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="c1">-- ^ An estimate from the PostgreSQL query planner</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">Precise</span><span class="w"> </span><span class="kt">Int</span><span class="w">     </span><span class="c1">-- ^ A precise result from running a real @COUNT(*)@ query</span>
+<span class="w">  </span><span class="kr">deriving</span><span class="w"> </span><span class="p">(</span><span class="kt">Read</span><span class="p">,</span><span class="w"> </span><span class="kt">Show</span><span class="p">)</span>
+
+<span class="nf">derivePersistField</span><span class="w"> </span><span class="s">&quot;ResultLength&quot;</span>
+
+<span class="c1">-- | Quickly return an estimate from the query planner.</span>
+<span class="c1">--</span>
+<span class="c1">-- This leans on the PostgreSQL query planner to come up with an /approximate/</span>
+<span class="c1">-- result length. If the @count_estimate@ function is not already defined in</span>
+<span class="c1">-- the database, this function will throw an exception.</span>
+<span class="c1">--</span>
+<span class="c1">-- To prevent SQL injection, the tag should be dynamically generated.</span>
+<span class="nf">getEstimate</span>
+<span class="w">  </span><span class="c1">-- | A randomly-generated alphabetical string.</span>
+<span class="w">  </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span>
+<span class="w">  </span><span class="c1">-- | The SQL query with placeholders, and a list of parameters.</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="kt">Text</span><span class="p">,</span><span class="w"> </span><span class="p">[</span><span class="kt">PersistValue</span><span class="p">])</span>
+<span class="w">  </span><span class="c1">-- | The 'ResultLength' here will always be an 'Approximate'.</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">DB</span><span class="w"> </span><span class="p">(</span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">ResultLength</span><span class="p">)</span>
+<span class="nf">getEstimate</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="p">(</span><span class="n">query</span><span class="p">,</span><span class="w"> </span><span class="n">params</span><span class="p">)</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="kr">let</span><span class="w"> </span><span class="n">resultLength</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="p">[</span><span class="kt">Single</span><span class="w"> </span><span class="kt">Int64</span><span class="p">]</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">ResultLength</span>
+<span class="w">      </span><span class="n">resultLength</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">fmap</span><span class="w"> </span><span class="p">(</span><span class="kt">Approximate</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">fromIntegral</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">unSingle</span><span class="p">)</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">listToMaybe</span>
+<span class="w">   </span><span class="kr">in</span><span class="w"> </span><span class="n">resultLength</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="n">rawSql</span><span class="w"> </span><span class="p">[</span><span class="n">st</span><span class="o">|</span>
+<span class="w">      </span><span class="kt">SELECT</span><span class="w"> </span><span class="n">count_estimate</span><span class="p">(</span><span class="o">$#</span><span class="p">{</span><span class="n">tag</span><span class="p">}</span><span class="o">$#</span><span class="p">{</span><span class="n">query</span><span class="p">}</span><span class="o">$#</span><span class="p">{</span><span class="n">tag</span><span class="p">}</span><span class="o">$</span><span class="p">);</span>
+<span class="w">      </span><span class="o">|</span><span class="p">]</span><span class="w"> </span><span class="n">params</span>
+</pre></div>
+
 <p>We define a new data type with two constructors to represent the idea that the
 length of a result set can either be <em>approximate</em> (if there are more than
 5,000 results), or <em>precise</em> by running a real <code>COUNT(*)</code> query.</p>
@@ -152,10 +158,12 @@ under the hood, so that’s why those are also derived.</p>
 used for the sake of legibility. It’s included in the scaffolding for any new
 <code>yesod-postgres</code> project. Its use necessitates a couple of language extensions,
 and it has the following definition.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE KindSignatures #-}</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE RankNTypes #-}</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">DB</span> a <span class="ot">=</span> <span class="kw">forall</span> (<span class="ot">m ::</span> <span class="op">*</span> <span class="ot">-&gt;</span> <span class="op">*</span>)<span class="op">.</span> (<span class="dt">MonadIO</span> m) <span class="ot">=&gt;</span> <span class="dt">ReaderT</span> <span class="dt">SqlBackend</span> m a</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="cm">{-# LANGUAGE KindSignatures #-}</span>
+<span class="cm">{-# LANGUAGE RankNTypes #-}</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="kt">DB</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">forall</span><span class="w"> </span><span class="p">(</span><span class="n">m</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="o">*</span><span class="p">)</span><span class="o">.</span><span class="w"> </span><span class="p">(</span><span class="kt">MonadIO</span><span class="w"> </span><span class="n">m</span><span class="p">)</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="kt">ReaderT</span><span class="w"> </span><span class="kt">SqlBackend</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="n">a</span>
+</pre></div>
+
 <p>Use of the <code>rawSql</code> function would ordinarily give us a list of single column
 values, which in a type signature would look like <code>[Single a]</code>. However, this
 isn’t the type I wish I had. I’m using a few functions to massage the value the
@@ -187,26 +195,34 @@ arbitrary query. For example, assume we have some persistent entity in our
 system called a <code>Thing</code> which has a field called <code>thingStatus</code>, and we want to
 select all of the things in our database where the <code>thingStatus</code> is either
 <code>Active</code> or <code>Pending</code>.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Get all our active and pending things…</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ot">getThings ::</span> <span class="dt">SqlQuery</span> (<span class="dt">SqlExpr</span> (<span class="dt">Entity</span> <span class="dt">Thing</span>))</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>getThings <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  thing <span class="ot">&lt;-</span> from <span class="op">$</span> table <span class="op">@</span><span class="dt">Thing</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  where_ <span class="op">$</span> thing<span class="op">^.</span><span class="dt">ThingStatus</span> <span class="ot">`in_`</span> valList [ <span class="dt">Active</span>, <span class="dt">Pending</span> ]</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> thing</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- Get all our active and pending things…</span>
+<span class="nf">getThings</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">SqlQuery</span><span class="w"> </span><span class="p">(</span><span class="kt">SqlExpr</span><span class="w"> </span><span class="p">(</span><span class="kt">Entity</span><span class="w"> </span><span class="kt">Thing</span><span class="p">))</span>
+<span class="nf">getThings</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">thing</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">table</span><span class="w"> </span><span class="o">@</span><span class="kt">Thing</span>
+<span class="w">  </span><span class="n">where_</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">thing</span><span class="o">^.</span><span class="kt">ThingStatus</span><span class="w"> </span><span class="p">`</span><span class="n">in_</span><span class="p">`</span><span class="w"> </span><span class="n">valList</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="kt">Active</span><span class="p">,</span><span class="w"> </span><span class="kt">Pending</span><span class="w"> </span><span class="p">]</span>
+<span class="w">  </span><span class="n">pure</span><span class="w"> </span><span class="n">thing</span>
+</pre></div>
+
 <p>To render this query, we should run <code>renderQuerySelect</code> with <code>getThings</code> as its
 argument in the database querying monad.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>runDB <span class="op">$</span> renderQuerySelect getThings</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">runDB</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">renderQuerySelect</span><span class="w"> </span><span class="n">getThings</span>
+</pre></div>
+
 <p>We can’t just stuff the result of this into the <code>getEstimate</code> function however.
 The tricky part here is that we are essentially having to write one SQL query
 <em>inside another SQL query!</em> Without being careful to escape the single quotes
 that were added by <code>rawSql</code>, we would end up with a query like this being sent
 to the database.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> count_estimate(<span class="st">'SELECT * FROM things WHERE status IN ('</span>Active<span class="st">', '</span>Pending<span class="st">')'</span>);</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">count_estimate</span><span class="p">(</span><span class="s1">'SELECT * FROM things WHERE status IN ('</span><span class="n">Active</span><span class="s1">', '</span><span class="n">Pending</span><span class="s1">')'</span><span class="p">);</span>
+</pre></div>
+
 <p>Of course, this fails as it’s a syntax error.</p>
 <p>Even the syntax highlighting on this page reveals that it is a syntax error.</p>
 <p>One approach might be to escape the single quotes, and try to generate a query
 like the following.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> count_estimate(<span class="st">'SELECT * FROM things WHERE status IN (</span><span class="ch">''</span><span class="st">Active</span><span class="ch">''</span><span class="st">, </span><span class="ch">''</span><span class="st">Pending</span><span class="ch">''</span><span class="st">)'</span>);</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="k">SELECT</span><span class="w"> </span><span class="n">count_estimate</span><span class="p">(</span><span class="s1">'SELECT * FROM things WHERE status IN (''Active'', ''Pending'')'</span><span class="p">);</span>
+</pre></div>
+
 <p>This works, but I think it’s error prone. You would need to escape the single
 quotes in each of the query parameters, and <em>also</em> escape the single quotes in
 the query itself. You would need to use unescaped literals, and then add the
@@ -216,12 +232,16 @@ escaping back in manually.</p>
 embedded like this instead (syntax highlighting disabled to avoid confusion).
 With this approach, we don’t need to worry about correctly escaping single
 quotes.</p>
-<pre><code>SELECT count_estimate($$SELECT * FROM things WHERE status IN ('Active', 'Pending')$$);</code></pre>
+<div class="highlight"><pre><span></span>SELECT count_estimate($$SELECT * FROM things WHERE status IN ('Active', 'Pending')$$);
+</pre></div>
+
 <p>This is easier to work with, but it’s still not a total solution. If a user
 found a way to send a <code>$$</code> sequence into your application, there would be a
 syntax error again, and possibly even a SQL injection vulnerability.</p>
 <p>A way to mitigate that threat is to add tags to the dollar quotes.</p>
-<pre><code>SELECT count_estimate($someTag$SELECT * FROM things WHERE status IN ('Active', 'Pending')$someTag$);</code></pre>
+<div class="highlight"><pre><span></span>SELECT count_estimate($someTag$SELECT * FROM things WHERE status IN ('Active', 'Pending')$someTag$);
+</pre></div>
+
 <p>The tags must match on both sides, and as far as I can tell (though I didn’t
 see this specified in the documentation), the tag should only contain
 alphabetical characters.</p>
@@ -232,33 +252,37 @@ run, and that random string can be used as the tag.</p>
 request handler. If the query planner thinks the result set will be greater
 than 5,000 rows then we don’t bother trying to precisely count the results and
 instead return the approximation. Otherwise, run the real <code>COUNT(*)</code> query.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getThingsR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>getThingsR <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- some handler code…</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Random string generation from the random-strings package</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>  tag <span class="ot">&lt;-</span> <span class="fu">pack</span> <span class="op">&lt;$&gt;</span> liftIO (randomWord (onlyAlpha randomASCII) <span class="dv">10</span>)</span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  resultLen <span class="ot">&lt;-</span> runDB <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    rendered <span class="ot">&lt;-</span> renderQuerySelect getThings</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    getEstimate tag rendered <span class="op">&gt;&gt;=</span> \<span class="kw">case</span></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">Just</span> (<span class="dt">Approximate</span> n)</span>
-<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span> n <span class="op">&gt;</span> <span class="dv">5000</span>  <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="op">$</span> <span class="dt">Approximate</span> n <span class="co">-- Return the estimate</span></span>
-<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">-&gt;</span> getThingsCount       <span class="co">-- Run an accurate @COUNT(*)@ query</span></span>
-<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>      _ <span class="ot">-&gt;</span> <span class="fu">pure</span> <span class="op">$</span> <span class="dt">Precise</span> <span class="dv">0</span>                 <span class="co">-- Should never happen…</span></span>
-<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- more handler code…</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">getThingsR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Html</span>
+<span class="nf">getThingsR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="c1">-- some handler code…</span>
+
+<span class="w">  </span><span class="c1">-- Random string generation from the random-strings package</span>
+<span class="w">  </span><span class="n">tag</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">pack</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="p">(</span><span class="n">randomWord</span><span class="w"> </span><span class="p">(</span><span class="n">onlyAlpha</span><span class="w"> </span><span class="n">randomASCII</span><span class="p">)</span><span class="w"> </span><span class="mi">10</span><span class="p">)</span>
+<span class="w">  </span><span class="n">resultLen</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">runDB</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="n">rendered</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">renderQuerySelect</span><span class="w"> </span><span class="n">getThings</span>
+<span class="w">    </span><span class="n">getEstimate</span><span class="w"> </span><span class="n">tag</span><span class="w"> </span><span class="n">rendered</span><span class="w"> </span><span class="o">&gt;&gt;=</span><span class="w"> </span><span class="nf">\</span><span class="kr">case</span>
+<span class="w">      </span><span class="kt">Just</span><span class="w"> </span><span class="p">(</span><span class="kt">Approximate</span><span class="w"> </span><span class="n">n</span><span class="p">)</span>
+<span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">5000</span><span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">Approximate</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="c1">-- Return the estimate</span>
+<span class="w">        </span><span class="o">|</span><span class="w"> </span><span class="n">otherwise</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">getThingsCount</span><span class="w">       </span><span class="c1">-- Run an accurate @COUNT(*)@ query</span>
+<span class="w">      </span><span class="kr">_</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">Precise</span><span class="w"> </span><span class="mi">0</span><span class="w">                 </span><span class="c1">-- Should never happen…</span>
+
+<span class="w">  </span><span class="c1">-- more handler code…</span>
+</pre></div>
+
 <p>Finally, when it comes to presenting the result length to the user, we’re able
 to implement a more informative UI owing to the fact that our figures are
 meaningfully tagged.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode hamlet"><code class="sourceCode hamlet"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">&lt;p.results-length&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">$</span><span class="er">case</span> <span class="er">resultLen</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">$</span><span class="er">of</span> <span class="er">Approximate</span> <span class="er">n</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      About <span class="kw">#{</span>format commas n<span class="kw">}</span> results</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">$</span><span class="er">of</span> <span class="er">Precise</span> <span class="er">n</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">$if</span> n <span class="op">==</span> <span class="dv">1</span></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>        1 result</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">$else</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">#{</span>format commas n<span class="kw">}</span> results</span></code></pre></div>
+<div class="highlight"><pre><span></span>&lt;p.results-length&gt;
+  $case resultLen
+    $of Approximate n
+      About #{format commas n} results
+    $of Precise n
+      $if n == 1
+        1 result
+      $else
+        #{format commas n} results
+</pre></div>
+
 <p>This approach has soothed my counting performance woes in <a href="https://newbusinessmonitor.co.uk/">my hobby
 business</a> and I’m quite pleased with the result. Further performance gains
 could likely be had from tuning the database configuration, a smarter use of

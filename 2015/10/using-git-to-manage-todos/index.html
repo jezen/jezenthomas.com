@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -66,18 +66,20 @@ unwieldy, and less useful.</p>
 <p>In order to coerce my colleagues (and myself) into taking better care of our
 heaving pile of <code>TODO</code> comments, I added a <em>post-commit hook</em> that runs <code>grep</code>
 across the directories we care about.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-e</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">grep</span> <span class="at">-InR</span> <span class="st">'TODO'</span> ./<span class="pp">*</span> <span class="dt">\</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">--exclude-dir</span><span class="op">=</span>node_modules <span class="dt">\</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">--exclude-dir</span><span class="op">=</span>public <span class="dt">\</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">--exclude-dir</span><span class="op">=</span>vendor <span class="dt">\</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">--exclude-dir</span><span class="op">=</span>compiled <span class="dt">\</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">--exclude-dir</span><span class="op">=</span>git-hooks</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span> 0</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="nb">set</span><span class="w"> </span>-e
+
+grep<span class="w"> </span>-InR<span class="w"> </span><span class="s1">'TODO'</span><span class="w"> </span>./*<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--exclude-dir<span class="o">=</span>node_modules<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--exclude-dir<span class="o">=</span>public<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--exclude-dir<span class="o">=</span>vendor<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--exclude-dir<span class="o">=</span>compiled<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--exclude-dir<span class="o">=</span>git-hooks
+
+<span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+</pre></div>
+
 <p>The output gives me the following bits of information:</p>
 <ul>
 <li>The file path</li>
@@ -96,48 +98,50 @@ will take a range of lines and a file path, both of which we find in our <code>g
 output. The approach then, is to iterate over our <code>grep</code> output, pull the file
 path and line number out of each search match, plug those into <code>git log</code> to find
 the author, and glue the pieces back together to build the output we need.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-e</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">main()</span> <span class="kw">{</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="cf">while</span> <span class="va">IFS</span><span class="op">=</span> <span class="bu">read</span> <span class="at">-r</span> <span class="va">todo</span><span class="kw">;</span> <span class="cf">do</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="bu">printf</span> <span class="st">&quot;%s\n&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">file_path</span><span class="va">)</span><span class="st">:</span><span class="va">$(</span><span class="ex">line_number</span><span class="va">)</span><span class="st"> </span><span class="va">$(</span><span class="ex">line_author</span><span class="va">)</span><span class="st"> </span><span class="va">$(</span><span class="ex">message</span><span class="va">)</span><span class="st">&quot;</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="cf">done</span> <span class="op">&lt;</span> <span class="op">&lt;(</span><span class="ex">todo_list</span><span class="op">)</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="fu">todo_list()</span> <span class="kw">{</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">grep</span> <span class="at">-InR</span> <span class="st">'TODO'</span> ./<span class="pp">*</span> <span class="dt">\</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="at">--exclude-dir</span><span class="op">=</span>node_modules <span class="dt">\</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="at">--exclude-dir</span><span class="op">=</span>public <span class="dt">\</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">--exclude-dir</span><span class="op">=</span>vendor <span class="dt">\</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">--exclude-dir</span><span class="op">=</span>compiled <span class="dt">\</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="at">--exclude-dir</span><span class="op">=</span>git-hooks</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="fu">line_author()</span> <span class="kw">{</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="va">LINE</span><span class="op">=</span><span class="va">$(</span><span class="ex">line_number</span> <span class="st">&quot;</span><span class="va">$todo</span><span class="st">&quot;</span><span class="va">)</span></span>
-<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="va">FILE</span><span class="op">=</span><span class="va">$(</span><span class="ex">file_path</span> <span class="st">&quot;</span><span class="va">$todo</span><span class="st">&quot;</span><span class="va">)</span></span>
-<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tput</span> setaf 6</span>
-<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;%s&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">git</span> log <span class="at">--pretty</span><span class="op">=</span>format:<span class="st">&quot;%cN&quot;</span> <span class="at">-s</span> <span class="at">-L</span> <span class="st">&quot;</span><span class="va">$LINE</span><span class="st">&quot;</span>,<span class="st">&quot;</span><span class="va">$LINE</span><span class="st">&quot;</span>:<span class="st">&quot;</span><span class="va">$FILE</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1<span class="va">)</span><span class="st">&quot;</span></span>
-<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tput</span> sgr0</span>
-<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a><span class="fu">file_path()</span> <span class="kw">{</span></span>
-<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;%s&quot;</span> <span class="st">&quot;</span><span class="va">$todo</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="st">':'</span> <span class="at">-f</span> 1</span>
-<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="fu">line_number()</span> <span class="kw">{</span></span>
-<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;%s&quot;</span> <span class="st">&quot;</span><span class="va">$todo</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="st">':'</span> <span class="at">-f</span> 2</span>
-<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a><span class="fu">message()</span> <span class="kw">{</span></span>
-<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;%s&quot;</span> <span class="st">&quot;</span><span class="va">$todo</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span><span class="st">':'</span> <span class="at">-f</span> 3 <span class="kw">|</span> <span class="fu">xargs</span></span>
-<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="ex">main</span></span>
-<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span> 0</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="nb">set</span><span class="w"> </span>-e
+
+main<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="k">while</span><span class="w"> </span><span class="nv">IFS</span><span class="o">=</span><span class="w"> </span><span class="nb">read</span><span class="w"> </span>-r<span class="w"> </span>todo<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s\n&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>file_path<span class="k">)</span><span class="s2">:</span><span class="k">$(</span>line_number<span class="k">)</span><span class="s2"> </span><span class="k">$(</span>line_author<span class="k">)</span><span class="s2"> </span><span class="k">$(</span>message<span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="k">done</span><span class="w"> </span>&lt;<span class="w"> </span>&lt;<span class="o">(</span>todo_list<span class="o">)</span>
+<span class="o">}</span>
+
+todo_list<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span>grep<span class="w"> </span>-InR<span class="w"> </span><span class="s1">'TODO'</span><span class="w"> </span>./*<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--exclude-dir<span class="o">=</span>node_modules<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--exclude-dir<span class="o">=</span>public<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--exclude-dir<span class="o">=</span>vendor<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--exclude-dir<span class="o">=</span>compiled<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>--exclude-dir<span class="o">=</span>git-hooks
+<span class="o">}</span>
+
+line_author<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nv">LINE</span><span class="o">=</span><span class="k">$(</span>line_number<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$todo</span><span class="s2">&quot;</span><span class="k">)</span>
+<span class="w">  </span><span class="nv">FILE</span><span class="o">=</span><span class="k">$(</span>file_path<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$todo</span><span class="s2">&quot;</span><span class="k">)</span>
+<span class="w">  </span>tput<span class="w"> </span>setaf<span class="w"> </span><span class="m">6</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>git<span class="w"> </span>log<span class="w"> </span>--pretty<span class="o">=</span>format:<span class="s2">&quot;%cN&quot;</span><span class="w"> </span>-s<span class="w"> </span>-L<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LINE</span><span class="s2">&quot;</span>,<span class="s2">&quot;</span><span class="nv">$LINE</span><span class="s2">&quot;</span>:<span class="s2">&quot;</span><span class="nv">$FILE</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="k">)</span><span class="s2">&quot;</span>
+<span class="w">  </span>tput<span class="w"> </span>sgr0
+<span class="o">}</span>
+
+file_path<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$todo</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">':'</span><span class="w"> </span>-f<span class="w"> </span><span class="m">1</span>
+<span class="o">}</span>
+
+line_number<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$todo</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">':'</span><span class="w"> </span>-f<span class="w"> </span><span class="m">2</span>
+<span class="o">}</span>
+
+message<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$todo</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="s1">':'</span><span class="w"> </span>-f<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs
+<span class="o">}</span>
+
+main
+
+<span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+</pre></div>
+
 <p>I think this approach is probably <em>good enough</em>. Allowing a list of TODO items
 to grow like weeds is a human problem that can’t exactly be solved elegantly
 with technology alone, but at least the problem is now far more visible to all

@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -132,32 +132,34 @@ our <code>Msg</code> type.</p>
 <h2 id="the-big-msg-type">The Big Msg Type</h2>
 <p>The naïve way to model the messages our application should support is with one
 big sum type, which might look something like this:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Page</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">PersonalInformationPage</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">LoanPurposePage</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">FinancialDetailsPage</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Msg</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- System-wide messages</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">NoOp</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetPage</span> <span class="dt">Page</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Personal information</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetFirstName</span> <span class="dt">String</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetLastName</span> <span class="dt">String</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetAddressLine1</span> <span class="dt">String</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more messages for the personal information page</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Purpose of the loan</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetPurchaseItemCategory</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetPurchaseItemEstimatedValue</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more messages for the loan purpose page</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Financial information</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetMonthlyIncomeBeforeTax</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetMonthlyRentPayment</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more messages about the applicant's financial details</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">type</span><span class="w"> </span><span class="kt">Page</span>
+<span class="w">  </span><span class="ow">=</span><span class="w"> </span><span class="kt">PersonalInformationPage</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">LoanPurposePage</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">FinancialDetailsPage</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="kt">Msg</span>
+<span class="w">  </span><span class="c1">-- System-wide messages</span>
+<span class="w">  </span><span class="ow">=</span><span class="w"> </span><span class="kt">NoOp</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetPage</span><span class="w"> </span><span class="kt">Page</span>
+<span class="w">  </span><span class="c1">-- etc…</span>
+
+<span class="w">  </span><span class="c1">-- Personal information</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetFirstName</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetLastName</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetAddressLine1</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="c1">-- …more messages for the personal information page</span>
+
+<span class="w">  </span><span class="c1">-- Purpose of the loan</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetPurchaseItemCategory</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetPurchaseItemEstimatedValue</span>
+<span class="w">  </span><span class="c1">-- …more messages for the loan purpose page</span>
+
+<span class="w">  </span><span class="c1">-- Financial information</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetMonthlyIncomeBeforeTax</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetMonthlyRentPayment</span>
+<span class="w">  </span><span class="c1">-- …more messages about the applicant's financial details</span>
+</pre></div>
+
 <p>This <em>does</em> work, but at some point it becomes cumbersome to support a large
 number of constructors. The value for “large” is of course determined by the
 individual programmer’s personal taste and/or pain threshold. To ease this
@@ -167,22 +169,24 @@ type <em>other</em> than the top-level <code>Msg</code> type.</p>
 <p><em>Don’t do that!</em></p>
 <p>The way to break these groups of constructors out is by first nesting them
 inside the <code>Msg</code> type, like this:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">PersonalInformationMsg</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">SetFirstName</span> <span class="dt">String</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetLastName</span> <span class="dt">String</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetAddressLine1</span> <span class="dt">String</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc..</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">LoanPurposeMsg</span> <span class="co">-- etc…</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">FinancialDetailsMsg</span> <span class="co">-- etc…</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Msg</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="ot">=</span> <span class="dt">NoOp</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">SetPage</span> <span class="dt">Page</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">PersonalInformationMsg</span> <span class="dt">PersonalInformationMsg</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">LoanPurposeMsg</span> <span class="dt">LoanPurposeMsg</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="dt">FinancialDetailsMsg</span> <span class="dt">FinancialDetailsMsg</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">type</span><span class="w"> </span><span class="kt">PersonalInformationMsg</span>
+<span class="w">  </span><span class="ow">=</span><span class="w"> </span><span class="kt">SetFirstName</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetLastName</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetAddressLine1</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="c1">-- etc..</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="kt">LoanPurposeMsg</span><span class="w"> </span><span class="c1">-- etc…</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="kt">FinancialDetailsMsg</span><span class="w"> </span><span class="c1">-- etc…</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="kt">Msg</span>
+<span class="w">  </span><span class="ow">=</span><span class="w"> </span><span class="kt">NoOp</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">SetPage</span><span class="w"> </span><span class="kt">Page</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">PersonalInformationMsg</span><span class="w"> </span><span class="kt">PersonalInformationMsg</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">LoanPurposeMsg</span><span class="w"> </span><span class="kt">LoanPurposeMsg</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">FinancialDetailsMsg</span><span class="w"> </span><span class="kt">FinancialDetailsMsg</span>
+</pre></div>
+
 <p>The new message types can live in the same file as the top-level <code>Msg</code> type.
 They can also be extracted to different files. That’s your choice.</p>
 <p>The next thing to tackle is our <code>update</code> function, since it needs to mirror our
@@ -194,30 +198,34 @@ page-specific <code>Cmd Msg</code> equivalent. This is typically where you see <
 sneaking in. These functions almost inevitably end up needing <em>something</em> from
 the top-level application-wide state, so you’ll often see some type signature
 like this:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>   <span class="op">:</span> <span class="dt">PersonalInformationMsg</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">Model</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> (<span class="dt">PersonalInformationModel</span>, <span class="dt">Cmd</span> <span class="dt">PersonalInformationMsg</span>)</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">updatePersonalInformation</span>
+<span class="w">   </span><span class="kt">:</span><span class="w"> </span><span class="kt">PersonalInformationMsg</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Model</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="kt">PersonalInformationModel</span><span class="p">,</span><span class="w"> </span><span class="kt">Cmd</span><span class="w"> </span><span class="kt">PersonalInformationMsg</span><span class="p">)</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="kt">Model</span><span class="p">,</span><span class="w"> </span><span class="kt">Cmd</span><span class="w"> </span><span class="kt">Msg</span><span class="p">)</span>
+</pre></div>
+
 <p>This is <em>way</em> too complex already, and this approach doesn’t even actually buy
 you anything.</p>
 <p>The far simpler way to do this is to have every nested <code>update</code> function take a
 page-specific message, the <em>entire</em> application state, and return the same type
 for that state along with the top-level <code>Msg</code> type, like this:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation <span class="op">:</span> <span class="dt">PersonalInformationMsg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetFirstName</span> a    <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetLastName</span> a     <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine1</span> a <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>update <span class="op">:</span> <span class="dt">Msg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>update msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">NoOp</span> <span class="ot">-&gt;</span> (model, Cmd.none)</span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetPage</span> page <span class="ot">-&gt;</span> ({ model <span class="op">|</span> page <span class="ot">=</span> page }, Cmd.none)</span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">PersonalInformationMsg</span> subMsg <span class="ot">-&gt;</span> updatePersonalInformation subMsg model</span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">LoanPurposeMsg</span> subMsg <span class="ot">-&gt;</span> updateLoanPurpose subMsg model</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">FinancialDetailsMsg</span> subMsg <span class="ot">-&gt;</span> updateFinancialDetails subMsg model</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">updatePersonalInformation</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">PersonalInformationMsg</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="kt">Model</span><span class="p">,</span><span class="w"> </span><span class="kt">Cmd</span><span class="w"> </span><span class="kt">Msg</span><span class="p">)</span>
+<span class="nf">updatePersonalInformation</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">case</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">  </span><span class="kt">SetFirstName</span><span class="w"> </span><span class="n">a</span><span class="w">    </span><span class="ow">-&gt;</span><span class="w"> </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="kt">SetLastName</span><span class="w"> </span><span class="n">a</span><span class="w">     </span><span class="ow">-&gt;</span><span class="w"> </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="kt">SetAddressLine1</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="c1">-- etc…</span>
+
+<span class="nf">update</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Msg</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="kt">Model</span><span class="p">,</span><span class="w"> </span><span class="kt">Cmd</span><span class="w"> </span><span class="kt">Msg</span><span class="p">)</span>
+<span class="nf">update</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">case</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">  </span><span class="kt">NoOp</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="kt">Cmd</span><span class="o">.</span><span class="n">none</span><span class="p">)</span>
+<span class="w">  </span><span class="kt">SetPage</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">({</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="kt">Cmd</span><span class="o">.</span><span class="n">none</span><span class="p">)</span>
+<span class="w">  </span><span class="kt">PersonalInformationMsg</span><span class="w"> </span><span class="n">subMsg</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">updatePersonalInformation</span><span class="w"> </span><span class="n">subMsg</span><span class="w"> </span><span class="n">model</span>
+<span class="w">  </span><span class="kt">LoanPurposeMsg</span><span class="w"> </span><span class="n">subMsg</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">updateLoanPurpose</span><span class="w"> </span><span class="n">subMsg</span><span class="w"> </span><span class="n">model</span>
+<span class="w">  </span><span class="kt">FinancialDetailsMsg</span><span class="w"> </span><span class="n">subMsg</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">updateFinancialDetails</span><span class="w"> </span><span class="n">subMsg</span><span class="w"> </span><span class="n">model</span>
+</pre></div>
+
 <p>No complicated type signatures. No juggling of message types. No <code>Cmd.map</code>. Easy.</p>
 <p>Of course the whole point of our <code>update</code> function is to advance the state of
 our model, and the structure of that model is also something that can swell and
@@ -226,93 +234,103 @@ become unwieldy, so that’s what we will dissect next.</p>
 <p>Near the inception of the project, all of our individual bits of state might
 exist at the top level of our <code>Model</code>, which is typically represented as a
 record. Perhaps something like this:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">Model</span> <span class="ot">=</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  { page <span class="op">:</span> <span class="dt">Page</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  , firstName <span class="op">:</span> <span class="dt">String</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  , lastName <span class="op">:</span> <span class="dt">String</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  , addressLine1 <span class="op">:</span> <span class="dt">String</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more personal information fields</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  , purchaseItemCategory <span class="op">:</span> <span class="dt">ItemCategory</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  , purchaseItemEstimatedValue <span class="op">:</span> <span class="dt">Money</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …more loan purpose fields…</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …and also financial details, and system-wide state, etc…</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">type</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Page</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">firstName</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">lastName</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">addressLine1</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="c1">-- …more personal information fields</span>
+
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">purchaseItemCategory</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">ItemCategory</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">purchaseItemEstimatedValue</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Money</span>
+<span class="w">  </span><span class="c1">-- …more loan purpose fields…</span>
+
+<span class="w">  </span><span class="c1">-- …and also financial details, and system-wide state, etc…</span>
+<span class="w">  </span><span class="p">}</span>
+</pre></div>
+
 <p>Like the parts of our project we’ve addressed previously, this also can turn
 into a bit of a mess as it grows. Both application-wide data and page-specific
 data are mixed in together which feels a bit haphazard. Fortunately, grouping
 and extracting these fields is typically rather intuitive. We can start by
 grouping page-specific parts of the state together, and then group further
 until it no longer <em>feels</em> messy.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">Address</span> <span class="ot">=</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  { line1 <span class="op">:</span> <span class="dt">String</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  , line2 <span class="op">:</span> <span class="dt">String</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  , city <span class="op">:</span> <span class="dt">String</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  , postcode <span class="op">:</span> <span class="dt">String</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">PersonalInformation</span> <span class="ot">=</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  { firstName <span class="op">:</span> <span class="dt">String</span></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  , lastName <span class="op">:</span> <span class="dt">String</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  , address <span class="op">:</span> <span class="dt">Address</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">LoanPurpose</span> <span class="ot">=</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  { purchaseItemCategory <span class="op">:</span> <span class="dt">ItemCategory</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>  , purchaseItemEstimatedValue <span class="op">:</span> <span class="dt">Money</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- …</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">FinancialDetails</span> <span class="ot">=</span> <span class="co">-- …</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> alias <span class="dt">Model</span> <span class="ot">=</span></span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  { page <span class="op">:</span> <span class="dt">Page</span></span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  , personalInformation <span class="op">:</span> <span class="dt">PersonalInformation</span></span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  , loanPurpose <span class="op">:</span> <span class="dt">LoanPurpose</span></span>
-<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  , financialDetails <span class="op">:</span> <span class="dt">FinancialDetails</span></span>
-<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">type</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="kt">Address</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">line1</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">line2</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">city</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">postcode</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="kt">PersonalInformation</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">firstName</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">lastName</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Address</span>
+<span class="w">  </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="kt">LoanPurpose</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">purchaseItemCategory</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">ItemCategory</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">purchaseItemEstimatedValue</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Money</span>
+<span class="w">  </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="kt">FinancialDetails</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+
+<span class="kr">type</span><span class="w"> </span><span class="n">alias</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">page</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Page</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">personalInformation</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">PersonalInformation</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">loanPurpose</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">LoanPurpose</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">financialDetails</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">FinancialDetails</span>
+<span class="w">  </span><span class="p">}</span>
+</pre></div>
+
 <p>The problem now however is that when we wish to update a deeply-nested field,
 we need to write all of the code to unwrap each level until we arrive at the
 depth we need. Illustrated another way, let’s say we want to update the first
 line of the applicant’s address.</p>
 <p>Retrieving the value of this field is no problem, as we can use Elm’s dot
 syntax to succinctly get us all the way there, like this:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>model<span class="op">.</span>personalInformation<span class="op">.</span>address<span class="op">.</span>line1</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">model</span><span class="o">.</span><span class="n">personalInformation</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">line1</span>
+</pre></div>
+
 <p>What we <em>can’t</em> do here however is <em>update</em> that field in a similar fashion,
 <em>i.e.</em>, Elm won’t allow us to write something like this:</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- This won't work</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>{ model<span class="op">.</span>personalInformation<span class="op">.</span>address <span class="op">|</span> line1 <span class="ot">=</span> newLine1 }</span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- This also won't work</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>{ model <span class="op">|</span> personalInformation<span class="op">.</span>address<span class="op">.</span>line1 <span class="ot">=</span> newLine1 }</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- This won't work</span>
+<span class="p">{</span><span class="w"> </span><span class="n">model</span><span class="o">.</span><span class="n">personalInformation</span><span class="o">.</span><span class="n">address</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">line1</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">newLine1</span><span class="w"> </span><span class="p">}</span>
+
+<span class="c1">-- This also won't work</span>
+<span class="p">{</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">personalInformation</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">line1</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">newLine1</span><span class="w"> </span><span class="p">}</span>
+</pre></div>
+
 <p>The naïve way to unwrap and subsequently update the field in this record is to
 write something like this:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation <span class="op">:</span> <span class="dt">PersonalInformationMsg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetFirstName</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetLastName</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine1</span> newLine1 <span class="ot">-&gt;</span></span>
-<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span></span>
-<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        personalInformation <span class="ot">=</span></span>
-<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>          model<span class="op">.</span>personalInformation</span>
-<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        address <span class="ot">=</span></span>
-<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>          personalInformation<span class="op">.</span>address</span>
-<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        newAddress <span class="ot">=</span></span>
-<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>          { address <span class="op">|</span> line1 <span class="ot">=</span> newLine1 }</span>
-<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        newPersonalInformation <span class="ot">=</span></span>
-<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>          { personalInformation <span class="op">|</span> address <span class="ot">=</span> newAddress }</span>
-<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>     <span class="kw">in</span></span>
-<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>        ({ model <span class="op">|</span> personalInformation <span class="ot">=</span> newPersonalInformation }, Cmd.none)</span>
-<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine2</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">updatePersonalInformation</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">PersonalInformationMsg</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="kt">Model</span><span class="p">,</span><span class="w"> </span><span class="kt">Cmd</span><span class="w"> </span><span class="kt">Msg</span><span class="p">)</span>
+<span class="nf">updatePersonalInformation</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">case</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">  </span><span class="kt">SetFirstName</span><span class="w"> </span><span class="kr">_</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="c1">-- …</span>
+
+<span class="w">  </span><span class="kt">SetLastName</span><span class="w"> </span><span class="kr">_</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="c1">-- …</span>
+
+<span class="w">  </span><span class="kt">SetAddressLine1</span><span class="w"> </span><span class="n">newLine1</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">    </span><span class="kr">let</span>
+<span class="w">        </span><span class="n">personalInformation</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">          </span><span class="n">model</span><span class="o">.</span><span class="n">personalInformation</span>
+
+<span class="w">        </span><span class="n">address</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">          </span><span class="n">personalInformation</span><span class="o">.</span><span class="n">address</span>
+
+<span class="w">        </span><span class="n">newAddress</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">line1</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">newLine1</span><span class="w"> </span><span class="p">}</span>
+
+<span class="w">        </span><span class="n">newPersonalInformation</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">          </span><span class="p">{</span><span class="w"> </span><span class="n">personalInformation</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">newAddress</span><span class="w"> </span><span class="p">}</span>
+<span class="w">     </span><span class="kr">in</span>
+<span class="w">        </span><span class="p">({</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">personalInformation</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">newPersonalInformation</span><span class="w"> </span><span class="p">},</span><span class="w"> </span><span class="kt">Cmd</span><span class="o">.</span><span class="n">none</span><span class="p">)</span>
+
+<span class="w">  </span><span class="kt">SetAddressLine2</span><span class="w"> </span><span class="kr">_</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="c1">-- …</span>
+</pre></div>
+
 <p>That’s 14 lines of code to update one single field. Not only is this single
 example somewhat confusing to follow, you also need to imagine how this update
 function will look when taking into account the five or so other fields <em>just
@@ -334,26 +352,28 @@ the three smaller lenses together.</p>
 <p>We can write these functions with a handy library called <a href="https://package.elm-lang.org/packages/arturopala/elm-monocle/latest/"><code>elm-monocle</code></a>
 (and of course other libraries are available), and they would look something
 like the following:</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Monocle.Compose</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Monocle.Lens</span> exposing (<span class="dt">Lens</span>)</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- lens A</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>personalDetailsL <span class="op">:</span> <span class="dt">Lens</span> <span class="dt">Model</span> <span class="dt">PersonalDetails</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>personalDetailsL <span class="ot">=</span> <span class="dt">Lens</span> <span class="op">.</span>personalDetails (\b a <span class="ot">-&gt;</span> { a <span class="op">|</span> personalDetails <span class="ot">=</span> b })</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- lens B</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>personalDetailsAddressL <span class="op">:</span> <span class="dt">Lens</span> <span class="dt">PersonalDetails</span> <span class="dt">Address</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>personalDetailsAddressL <span class="ot">=</span> <span class="dt">Lens</span> <span class="op">.</span>address (\b a <span class="ot">-&gt;</span> { a <span class="op">|</span> address <span class="ot">=</span> b })</span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- lens C</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>addressLine1L <span class="op">:</span> <span class="dt">Lens</span> <span class="dt">Address</span> <span class="dt">String</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>addressLine1L <span class="ot">=</span> <span class="dt">Lens</span> <span class="op">.</span>line1 (\b a <span class="ot">-&gt;</span> { a <span class="op">|</span> line1 <span class="ot">=</span> b })</span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- lens D</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>personalDetailsAddressLine1L <span class="op">:</span> <span class="dt">Lens</span> <span class="dt">Model</span> <span class="dt">String</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>personalDetailsAddressLine1L <span class="op">:</span> personalDetailsL</span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|&gt;</span> Monocle.Compose.lensWithLens personalDetailsAddressL</span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|&gt;</span> Monocle.Compose.lensWithLens addressLine1L</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">import</span><span class="w"> </span><span class="nn">Monocle.Compose</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Monocle.Lens</span><span class="w"> </span><span class="n">exposing</span><span class="w"> </span><span class="p">(</span><span class="kt">Lens</span><span class="p">)</span>
+
+<span class="c1">-- lens A</span>
+<span class="nf">personalDetailsL</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Lens</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="kt">PersonalDetails</span>
+<span class="nf">personalDetailsL</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Lens</span><span class="w"> </span><span class="o">.</span><span class="n">personalDetails</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="n">b</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">personalDetails</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="p">})</span>
+
+<span class="c1">-- lens B</span>
+<span class="nf">personalDetailsAddressL</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Lens</span><span class="w"> </span><span class="kt">PersonalDetails</span><span class="w"> </span><span class="kt">Address</span>
+<span class="nf">personalDetailsAddressL</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Lens</span><span class="w"> </span><span class="o">.</span><span class="n">address</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="n">b</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">address</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="p">})</span>
+
+<span class="c1">-- lens C</span>
+<span class="nf">addressLine1L</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Lens</span><span class="w"> </span><span class="kt">Address</span><span class="w"> </span><span class="kt">String</span>
+<span class="nf">addressLine1L</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Lens</span><span class="w"> </span><span class="o">.</span><span class="n">line1</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="n">b</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">line1</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="p">})</span>
+
+<span class="c1">-- lens D</span>
+<span class="nf">personalDetailsAddressLine1L</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Lens</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="kt">String</span>
+<span class="nf">personalDetailsAddressLine1L</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="n">personalDetailsL</span>
+<span class="w">  </span><span class="o">|&gt;</span><span class="w"> </span><span class="kt">Monocle</span><span class="o">.</span><span class="kt">Compose</span><span class="o">.</span><span class="n">lensWithLens</span><span class="w"> </span><span class="n">personalDetailsAddressL</span>
+<span class="w">  </span><span class="o">|&gt;</span><span class="w"> </span><span class="kt">Monocle</span><span class="o">.</span><span class="kt">Compose</span><span class="o">.</span><span class="n">lensWithLens</span><span class="w"> </span><span class="n">addressLine1L</span>
+</pre></div>
+
 <p>You can pretty much ignore the implementation of each of these lenses, as they
 are mostly just mechanical transformations between each level of our model.
 It’s better instead to read the type signatures which clearly show that the
@@ -369,31 +389,35 @@ this boilerplate in its own file somewhere and not clutter up the parts of the
 code where more interesting things happen. Once we have these lenses though,
 we’re able to drastically clean up our update functions.</p>
 <p>Instead of the mess we had earlier, we could have something like this:</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation <span class="op">:</span> <span class="dt">PersonalInformationMsg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>updatePersonalInformation msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetFirstName</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetLastName</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine1</span> newLine1 <span class="ot">-&gt;</span></span>
-<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    (personalDetailsAddressLine1L<span class="op">.</span>set newLine1 model, Cmd.none)</span>
-<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetAddressLine1</span> _ <span class="ot">-&gt;</span> <span class="co">-- …</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">updatePersonalInformation</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">PersonalInformationMsg</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="kt">Model</span><span class="p">,</span><span class="w"> </span><span class="kt">Cmd</span><span class="w"> </span><span class="kt">Msg</span><span class="p">)</span>
+<span class="nf">updatePersonalInformation</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">case</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">  </span><span class="kt">SetFirstName</span><span class="w"> </span><span class="kr">_</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="c1">-- …</span>
+
+<span class="w">  </span><span class="kt">SetLastName</span><span class="w"> </span><span class="kr">_</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="c1">-- …</span>
+
+<span class="w">  </span><span class="kt">SetAddressLine1</span><span class="w"> </span><span class="n">newLine1</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">    </span><span class="p">(</span><span class="n">personalDetailsAddressLine1L</span><span class="o">.</span><span class="n">set</span><span class="w"> </span><span class="n">newLine1</span><span class="w"> </span><span class="n">model</span><span class="p">,</span><span class="w"> </span><span class="kt">Cmd</span><span class="o">.</span><span class="n">none</span><span class="p">)</span>
+
+<span class="w">  </span><span class="kt">SetAddressLine1</span><span class="w"> </span><span class="kr">_</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="c1">-- …</span>
+</pre></div>
+
 <p>This is much more elegant, and the nature of this API means it works even more
 beautifully when updating several fields at once. You could write something
 like the following contrivance, for example:</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">flip</span> <span class="op">:</span> (a <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> c) <span class="ot">-&gt;</span> b <span class="ot">-&gt;</span> a <span class="ot">-&gt;</span> c</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">flip</span> f b a <span class="ot">=</span> f a b</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>updateExampleFields <span class="op">:</span> <span class="dt">ExampleMsg</span> <span class="ot">-&gt;</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> (<span class="dt">Model</span>, <span class="dt">Cmd</span> <span class="dt">Msg</span>)</span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>updateExampleFields msg model <span class="ot">=</span> <span class="kw">case</span> msg <span class="kw">of</span></span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">SetManyModelFields</span> foo bar baz spam eggs <span class="ot">-&gt;</span> model</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> nestedExampleFooL<span class="op">.</span>set foo</span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> nestedExampleBarL<span class="op">.</span>set bar</span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> nestedExampleBazL<span class="op">.</span>set baz</span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> montyPythonBreakfastSpamL<span class="op">.</span>set spam</span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> montyPythonBreakfastEggsL<span class="op">.</span>set eggs</span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">|&gt;</span> <span class="fu">flip</span> Tuple.pair Cmd.none</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">flip</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">c</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">c</span>
+<span class="nf">flip</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="n">b</span>
+
+<span class="nf">updateExampleFields</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">ExampleMsg</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="kt">Model</span><span class="p">,</span><span class="w"> </span><span class="kt">Cmd</span><span class="w"> </span><span class="kt">Msg</span><span class="p">)</span>
+<span class="nf">updateExampleFields</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">case</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">  </span><span class="kt">SetManyModelFields</span><span class="w"> </span><span class="n">foo</span><span class="w"> </span><span class="n">bar</span><span class="w"> </span><span class="n">baz</span><span class="w"> </span><span class="n">spam</span><span class="w"> </span><span class="n">eggs</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">model</span>
+<span class="w">    </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">nestedExampleFooL</span><span class="o">.</span><span class="n">set</span><span class="w"> </span><span class="n">foo</span>
+<span class="w">    </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">nestedExampleBarL</span><span class="o">.</span><span class="n">set</span><span class="w"> </span><span class="n">bar</span>
+<span class="w">    </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">nestedExampleBazL</span><span class="o">.</span><span class="n">set</span><span class="w"> </span><span class="n">baz</span>
+<span class="w">    </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">montyPythonBreakfastSpamL</span><span class="o">.</span><span class="n">set</span><span class="w"> </span><span class="n">spam</span>
+<span class="w">    </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">montyPythonBreakfastEggsL</span><span class="o">.</span><span class="n">set</span><span class="w"> </span><span class="n">eggs</span>
+<span class="w">    </span><span class="o">|&gt;</span><span class="w"> </span><span class="n">flip</span><span class="w"> </span><span class="kt">Tuple</span><span class="o">.</span><span class="n">pair</span><span class="w"> </span><span class="kt">Cmd</span><span class="o">.</span><span class="n">none</span>
+</pre></div>
+
 <p>Writing composable setter functions is possible without a lens library, but the
 code you end up writing will look so similar to idiomatic usage of elm-monocle
 anyway so I see no reason not to use the library and standardise on a
@@ -427,11 +451,13 @@ attack the last part of this puzzle which is rendering our model on the page.</p
 <p>In the same way that your nested model update functions should return a
 top-level <code>Msg</code> type rather than some page-specific message type, the view
 functions should <em>also</em> return the top-level <code>Msg</code> type.</p>
-<pre><code>-- Bad
+<div class="highlight"><pre><span></span>-- Bad
 personalDetailsView_ : Model -&gt; Html PersonalDetailsMsg
 
 -- Good
-personalDetailsView : Model -&gt; Html Msg</code></pre>
+personalDetailsView : Model -&gt; Html Msg
+</pre></div>
+
 <p>The question here then is: how do we send a page-specific message into the
 runtime if the view function has declared in its type signature that it returns
 a top-level <code>Msg</code> type in a <code>Html</code> context? This turns out to be quite simple.
@@ -439,13 +465,15 @@ We can just use function composition to join the different constructors
 together.</p>
 <p>If we consider a view function that renders an input for modifying the first
 line of the applicant’s address as before, we might write it like this:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>addressLine1Input <span class="op">:</span> <span class="dt">Model</span> <span class="ot">-&gt;</span> <span class="dt">Html</span> <span class="dt">Msg</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>addressLine1Input model <span class="ot">=</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  input</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    [ type_ <span class="st">&quot;text&quot;</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    , value model<span class="op">.</span>personalDetails<span class="op">.</span>address<span class="op">.</span>line1</span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    , onInput (<span class="dt">PersonalInformationMsg</span> <span class="op">&lt;&lt;</span> <span class="dt">SetAddressLine1</span>)</span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    ] []</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">addressLine1Input</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">Model</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Html</span><span class="w"> </span><span class="kt">Msg</span>
+<span class="nf">addressLine1Input</span><span class="w"> </span><span class="n">model</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="n">input</span>
+<span class="w">    </span><span class="p">[</span><span class="w"> </span><span class="n">type_</span><span class="w"> </span><span class="s">&quot;text&quot;</span>
+<span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="n">value</span><span class="w"> </span><span class="n">model</span><span class="o">.</span><span class="n">personalDetails</span><span class="o">.</span><span class="n">address</span><span class="o">.</span><span class="n">line1</span>
+<span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="n">onInput</span><span class="w"> </span><span class="p">(</span><span class="kt">PersonalInformationMsg</span><span class="w"> </span><span class="o">&lt;&lt;</span><span class="w"> </span><span class="kt">SetAddressLine1</span><span class="p">)</span>
+<span class="w">    </span><span class="p">]</span><span class="w"> </span><span class="kt">[]</span>
+</pre></div>
+
 <p>That’s all there is to it really. I am happily employing all of the techniques
 described above in a number of Elm projects, each of which span several
 thousand lines of code.</p>

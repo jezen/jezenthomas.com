@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -66,12 +66,14 @@ you can use the following Bash function to switch to a new MAC address.
 Sometimes the script reuses the previous address, so you may have to keep
 running <code>remac</code> until a new address is output. Add this to your <code>.bashrc</code> or
 perhaps an <code>.aliases</code> file that you source when you start your shell.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">function</span><span class="fu"> remac</span> <span class="kw">{</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sudo</span> /System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport <span class="at">-z</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sudo</span> ifconfig en0 ether <span class="va">$(</span><span class="ex">openssl</span> rand <span class="at">-hex</span> 6 <span class="kw">|</span> <span class="fu">sed</span> <span class="st">'s/\(..\)/\1:/g; s/.$//'</span><span class="va">)</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sudo</span> networksetup <span class="at">-detectnewhardware</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="va">$(</span><span class="ex">ifconfig</span> en0 <span class="kw">|</span> <span class="fu">grep</span> ether<span class="va">)</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>remac<span class="w"> </span><span class="o">{</span>
+<span class="w">  </span>sudo<span class="w"> </span>/System/Library/PrivateFrameworks/Apple80211.framework/Resources/airport<span class="w"> </span>-z
+<span class="w">  </span>sudo<span class="w"> </span>ifconfig<span class="w"> </span>en0<span class="w"> </span>ether<span class="w"> </span><span class="k">$(</span>openssl<span class="w"> </span>rand<span class="w"> </span>-hex<span class="w"> </span><span class="m">6</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">'s/\(..\)/\1:/g; s/.$//'</span><span class="k">)</span>
+<span class="w">  </span>sudo<span class="w"> </span>networksetup<span class="w"> </span>-detectnewhardware
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="k">$(</span>ifconfig<span class="w"> </span>en0<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>ether<span class="k">)</span>
+<span class="o">}</span>
+</pre></div>
+
 <p><em>N.B.:</em> You will have to reconnect to the public hotspot after changing your MAC
 address. This is because the <code>remac</code> function needs to restart your WLAN card in
 order for the new MAC address to take effect.</p>

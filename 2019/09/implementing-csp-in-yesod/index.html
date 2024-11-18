@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -82,15 +82,17 @@ you’re granting execution permission</li>
 </ul>
 <p>The first two constraints are trivial to solve — we can use the <code>uuid</code> and
 <code>base64-bytestring</code> libraries to produce our nonces.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">ClassyPrelude.Yesod</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.ByteString.Base64</span> <span class="kw">qualified</span> <span class="kw">as</span> <span class="dt">B64</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.UUID</span> (toASCIIBytes)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.UUID.V4</span> (nextRandom)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ot">generateRequestNonce ::</span> <span class="dt">MonadHandler</span> m <span class="ot">=&gt;</span> m <span class="dt">Text</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>generateRequestNonce <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  uuid <span class="ot">&lt;-</span> liftIO nextRandom</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> <span class="op">$</span> decodeUtf8 <span class="op">$</span> B64.encode <span class="op">$</span> toASCIIBytes uuid</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">import</span><span class="w"> </span><span class="nn">ClassyPrelude.Yesod</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.ByteString.Base64</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">B64</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.UUID</span><span class="w"> </span><span class="p">(</span><span class="nf">toASCIIBytes</span><span class="p">)</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.UUID.V4</span><span class="w"> </span><span class="p">(</span><span class="nf">nextRandom</span><span class="p">)</span>
+
+<span class="nf">generateRequestNonce</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">MonadHandler</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="kt">Text</span>
+<span class="nf">generateRequestNonce</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">uuid</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="n">nextRandom</span>
+<span class="w">  </span><span class="n">return</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">decodeUtf8</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">B64</span><span class="o">.</span><span class="n">encode</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">toASCIIBytes</span><span class="w"> </span><span class="n">uuid</span>
+</pre></div>
+
 <p>The <code>nextRandom</code> function generates our random value. The quality of the
 randomness of this value doesn’t really matter, so we <em>could</em> have used
 <code>randomIO</code> from the <code>System.Random</code> module here. The reason I decided against
@@ -108,35 +110,39 @@ to whitelist? Typically when writing an application in Yesod, you’d use the
 document. This won’t work though, because the nonce should be inserted into its
 own HTML attribute in that script tag. Luckily, Yesod provides us a way to
 generate a script tag with arbitrary additional attributes.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getHomeR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>getHomeR <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  nonce <span class="ot">&lt;-</span> generateRequestNonce</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  defaultLayout <span class="kw">do</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    addScriptAttrs (<span class="dt">StaticR</span> js_jquery_js) [(<span class="st">&quot;nonce&quot;</span>, nonce)]</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">$</span>(widgetFile <span class="st">&quot;home&quot;</span>)</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">getHomeR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Html</span>
+<span class="nf">getHomeR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">nonce</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">generateRequestNonce</span>
+<span class="w">  </span><span class="n">defaultLayout</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="n">addScriptAttrs</span><span class="w"> </span><span class="p">(</span><span class="kt">StaticR</span><span class="w"> </span><span class="n">js_jquery_js</span><span class="p">)</span><span class="w"> </span><span class="p">[(</span><span class="s">&quot;nonce&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">nonce</span><span class="p">)]</span>
+<span class="w">    </span><span class="o">$</span><span class="p">(</span><span class="n">widgetFile</span><span class="w"> </span><span class="s">&quot;home&quot;</span><span class="p">)</span>
+</pre></div>
+
 <p>This works, but the ergonomics aren’t great and it adds quite a lot of noise.
 Fortunately Haskell makes it easy to abstract away this kind of thing, so we
 can write our own small helper functions to clean this up. The same principle
 applies whether we’re adding scripts we host ourselves, or scripts hosted
 elsewhere.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">addScriptCSP ::</span> <span class="dt">MonadWidget</span> m <span class="ot">=&gt;</span> <span class="dt">Route</span> (<span class="dt">HandlerSite</span> m) <span class="ot">-&gt;</span> m ()</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>addScriptCSP route <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  nonce <span class="ot">&lt;-</span> generateRequestNonce</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  addScriptAttrs route [(<span class="st">&quot;nonce&quot;</span>, unCSPNonce nonce)]</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="ot">addScriptRemoteCSP ::</span> <span class="dt">MonadWidget</span> m <span class="ot">=&gt;</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> m ()</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>addScriptRemoteCSP uri <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  nonce <span class="ot">&lt;-</span> generateRequestNonce</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  addScriptRemoteAttrs uri [(<span class="st">&quot;nonce&quot;</span>, nonce)]</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="ot">addScriptEitherCSP ::</span> <span class="dt">MonadWidget</span> m <span class="ot">=&gt;</span> <span class="dt">Either</span> (<span class="dt">Route</span> (<span class="dt">HandlerSite</span> m)) <span class="dt">Text</span> <span class="ot">-&gt;</span> m ()</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>addScriptEitherCSP <span class="ot">=</span> <span class="fu">either</span> addScriptCSP addScriptRemoteCSP</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="ot">getHomeR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>getHomeR <span class="ot">=</span> defaultLayout <span class="kw">do</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>  addScriptCSP <span class="op">$</span> <span class="dt">StaticR</span> js_jquery_js</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  addScriptRemoteCSP <span class="st">&quot;https://cdn.ywxi.net/js/1.js&quot;</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">$</span>(widgetFile <span class="st">&quot;home&quot;</span>)</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">addScriptCSP</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">MonadWidget</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="kt">Route</span><span class="w"> </span><span class="p">(</span><span class="kt">HandlerSite</span><span class="w"> </span><span class="n">m</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">addScriptCSP</span><span class="w"> </span><span class="n">route</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">nonce</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">generateRequestNonce</span>
+<span class="w">  </span><span class="n">addScriptAttrs</span><span class="w"> </span><span class="n">route</span><span class="w"> </span><span class="p">[(</span><span class="s">&quot;nonce&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">unCSPNonce</span><span class="w"> </span><span class="n">nonce</span><span class="p">)]</span>
+
+<span class="nf">addScriptRemoteCSP</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">MonadWidget</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">addScriptRemoteCSP</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">nonce</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">generateRequestNonce</span>
+<span class="w">  </span><span class="n">addScriptRemoteAttrs</span><span class="w"> </span><span class="n">uri</span><span class="w"> </span><span class="p">[(</span><span class="s">&quot;nonce&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">nonce</span><span class="p">)]</span>
+
+<span class="nf">addScriptEitherCSP</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">MonadWidget</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="kt">Either</span><span class="w"> </span><span class="p">(</span><span class="kt">Route</span><span class="w"> </span><span class="p">(</span><span class="kt">HandlerSite</span><span class="w"> </span><span class="n">m</span><span class="p">))</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">addScriptEitherCSP</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">either</span><span class="w"> </span><span class="n">addScriptCSP</span><span class="w"> </span><span class="n">addScriptRemoteCSP</span>
+
+<span class="nf">getHomeR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Html</span>
+<span class="nf">getHomeR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">defaultLayout</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">addScriptCSP</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">StaticR</span><span class="w"> </span><span class="n">js_jquery_js</span>
+<span class="w">  </span><span class="n">addScriptRemoteCSP</span><span class="w"> </span><span class="s">&quot;https://cdn.ywxi.net/js/1.js&quot;</span>
+<span class="w">  </span><span class="o">$</span><span class="p">(</span><span class="n">widgetFile</span><span class="w"> </span><span class="s">&quot;home&quot;</span><span class="p">)</span>
+</pre></div>
+
 <p>This takes care of all the JavaScript libraries we wish to import, but there is
 one more crucial script tag left to cover. When we compose widgets together
 which contain some Julius (Shakespeare-flavoured JavaScript) code, Yesod joins
@@ -148,23 +154,27 @@ this behaviour. As of <a href="https://github.com/yesodweb/yesod/pull/1622"><cod
 method that allows us to add arbitrary attributes to that generated tag too. We
 can use this method together with the nonce generator function we wrote
 earlier.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span> <span class="kw">where</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  jsAttributesHandler <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    nonce <span class="ot">&lt;-</span> generateRequestNonce</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">return</span> [(<span class="st">&quot;nonce&quot;</span>, nonce)]</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- Here you would have your own implementations for</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- approot, yesodMiddleware, defaultLayout, etc.</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">instance</span><span class="w"> </span><span class="kt">Yesod</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="w">  </span><span class="n">jsAttributesHandler</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="n">nonce</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">generateRequestNonce</span>
+<span class="w">    </span><span class="n">return</span><span class="w"> </span><span class="p">[(</span><span class="s">&quot;nonce&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">nonce</span><span class="p">)]</span>
+
+<span class="w">  </span><span class="c1">-- Here you would have your own implementations for</span>
+<span class="w">  </span><span class="c1">-- approot, yesodMiddleware, defaultLayout, etc.</span>
+</pre></div>
+
 <p>Now that we have our nonce in all our HTML script tags, we also need to stuff
 it into the <code>script-src</code> directive of our CSP response header. We <em>could</em> use
 the <code>addHeader</code> function in every handler in our application, but that would be
 cumbersome to maintain and adds unnecessary noise. Instead, we can add this
 response header to <em>every</em> request from just one place using a middleware.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span> <span class="kw">where</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  yesodMiddleware <span class="ot">=</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    defaultYesodMiddleware <span class="op">.</span> addCSPMiddleware</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">instance</span><span class="w"> </span><span class="kt">Yesod</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="w">  </span><span class="n">yesodMiddleware</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">    </span><span class="n">defaultYesodMiddleware</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">addCSPMiddleware</span>
+</pre></div>
+
 <p>The middleware function that we want to write will need to know the value of
 the nonce we generated earlier in the request lifecycle. Usually when you want
 to store some state in the application memory, you’d add a new field to the
@@ -172,33 +182,35 @@ to store some state in the application memory, you’d add a new field to the
 value it holds from your handler functions. In our case however, we don’t
 actually want the value to exist outside the lifecycle of a single request so
 this is a great opportunity to take advantage of Yesod’s per-request caching.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">cspCommon ::</span> [<span class="dt">Text</span>]</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>cspCommon <span class="ot">=</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  [ <span class="st">&quot;img-src 'self' data:&quot;</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  , <span class="st">&quot;object-src 'none'&quot;</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  , <span class="st">&quot;form-action 'self'&quot;</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  , <span class="st">&quot;frame-ancestors 'none'&quot;</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  , <span class="st">&quot;base-uri 'self'&quot;</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  , <span class="st">&quot;report-uri /report-csp&quot;</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  ]</span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="ot">csp ::</span> <span class="dt">Maybe</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Text</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>csp mNonce <span class="ot">=</span></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  intercalate <span class="st">&quot;;&quot;</span> <span class="op">$</span> cspCommon <span class="op">&lt;&gt;</span> [<span class="fu">unwords</span> scriptSrc]</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span> mkNonce n <span class="ot">=</span> <span class="st">&quot;'nonce-&quot;</span> <span class="op">&lt;&gt;</span> n <span class="op">&lt;&gt;</span> <span class="st">&quot;'&quot;</span></span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        scriptSrc <span class="ot">=</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>          [ <span class="st">&quot;script-src&quot;</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>          , <span class="st">&quot;'self'&quot;</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>          , <span class="st">&quot;about:&quot;</span></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>          , <span class="st">&quot;'strict-dynamic'&quot;</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>          ] <span class="op">&lt;&gt;</span> <span class="fu">maybe</span> [] ((<span class="op">:</span>[]) <span class="op">.</span> mkNonce) mNonce</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="ot">addCSPMiddleware ::</span> (<span class="dt">HandlerFor</span> m) a <span class="ot">-&gt;</span> (<span class="dt">HandlerFor</span> m) a</span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>addCSPMiddleware handler <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>  res   <span class="ot">&lt;-</span> handler</span>
-<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>  nonce <span class="ot">&lt;-</span> cacheGet</span>
-<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  addHeader <span class="st">&quot;Content-Security-Policy&quot;</span> <span class="op">$</span> csp nonce</span>
-<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> res</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">cspCommon</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="p">[</span><span class="kt">Text</span><span class="p">]</span>
+<span class="nf">cspCommon</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="p">[</span><span class="w"> </span><span class="s">&quot;img-src 'self' data:&quot;</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;object-src 'none'&quot;</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;form-action 'self'&quot;</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;frame-ancestors 'none'&quot;</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;base-uri 'self'&quot;</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;report-uri /report-csp&quot;</span>
+<span class="w">  </span><span class="p">]</span>
+
+<span class="nf">csp</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Text</span>
+<span class="nf">csp</span><span class="w"> </span><span class="n">mNonce</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="n">intercalate</span><span class="w"> </span><span class="s">&quot;;&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">cspCommon</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="p">[</span><span class="n">unwords</span><span class="w"> </span><span class="n">scriptSrc</span><span class="p">]</span>
+<span class="w">  </span><span class="kr">where</span><span class="w"> </span><span class="n">mkNonce</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="s">&quot;'nonce-&quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="s">&quot;'&quot;</span>
+<span class="w">        </span><span class="n">scriptSrc</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">          </span><span class="p">[</span><span class="w"> </span><span class="s">&quot;script-src&quot;</span>
+<span class="w">          </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;'self'&quot;</span>
+<span class="w">          </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;about:&quot;</span>
+<span class="w">          </span><span class="p">,</span><span class="w"> </span><span class="s">&quot;'strict-dynamic'&quot;</span>
+<span class="w">          </span><span class="p">]</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">maybe</span><span class="w"> </span><span class="kt">[]</span><span class="w"> </span><span class="p">((</span><span class="kt">:[]</span><span class="p">)</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">mkNonce</span><span class="p">)</span><span class="w"> </span><span class="n">mNonce</span>
+
+<span class="nf">addCSPMiddleware</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="p">(</span><span class="kt">HandlerFor</span><span class="w"> </span><span class="n">m</span><span class="p">)</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">(</span><span class="kt">HandlerFor</span><span class="w"> </span><span class="n">m</span><span class="p">)</span><span class="w"> </span><span class="n">a</span>
+<span class="nf">addCSPMiddleware</span><span class="w"> </span><span class="n">handler</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">res</span><span class="w">   </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">handler</span>
+<span class="w">  </span><span class="n">nonce</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">cacheGet</span>
+<span class="w">  </span><span class="n">addHeader</span><span class="w"> </span><span class="s">&quot;Content-Security-Policy&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">csp</span><span class="w"> </span><span class="n">nonce</span>
+<span class="w">  </span><span class="n">return</span><span class="w"> </span><span class="n">res</span>
+</pre></div>
+
 <p>How this works is rather clever. You might be curious about the <code>cacheGet</code>
 function. How does it know exactly what to fetch from the cache? We didn’t even
 tell it which key to use for the lookup! Well, the per-request cache stores
@@ -209,8 +221,10 @@ function which expects a <code>Maybe Text</code> argument.</p>
 <em>one</em> value for any given type. If we wanted to cache some other <code>Text</code> value,
 we’d be stuck. The way around this is to wrap our <code>Text</code> value with a
 <code>newtype</code>.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">CSPNonce</span> <span class="ot">=</span> <span class="dt">CSPNonce</span> {<span class="ot"> unCSPNonce ::</span> <span class="dt">Text</span> }</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> (<span class="dt">Eq</span>, <span class="dt">Ord</span>)</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">newtype</span><span class="w"> </span><span class="kt">CSPNonce</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">CSPNonce</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">unCSPNonce</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="kr">deriving</span><span class="w"> </span><span class="p">(</span><span class="kt">Eq</span><span class="p">,</span><span class="w"> </span><span class="kt">Ord</span><span class="p">)</span>
+</pre></div>
+
 <p>Making this change necessitates we also change the functions we wrote earlier.
 Our generator will not only have to create a value of the correct type, but it
 will also need to add that value to the per-request cache. Since this function
@@ -219,19 +233,21 @@ make it idempotent by having it first check the cache, and using the <code>CSPNo
 value if it already exists. Again, type inference is working here (notice we
 specified the type in the function’s type signature) to magically select the
 correct cache key.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ot">generateRequestNonce ::</span> <span class="dt">MonadHandler</span> m <span class="ot">=&gt;</span> m <span class="dt">CSPNonce</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>generateRequestNonce <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  mNonce <span class="ot">&lt;-</span> cacheGet</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">case</span> mNonce <span class="kw">of</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Just</span> nonce <span class="ot">-&gt;</span> <span class="fu">return</span> nonce</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">Nothing</span> <span class="ot">-&gt;</span> <span class="kw">do</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>      uuid <span class="ot">&lt;-</span> liftIO nextRandom</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">let</span> nonce <span class="ot">=</span> mkNonce uuid</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>      cacheSet nonce</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>      <span class="fu">return</span> nonce</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>    mkNonce <span class="ot">=</span></span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">CSPNonce</span> <span class="op">.</span> decodeUtf8 <span class="op">.</span> B64.encode <span class="op">.</span> toASCIIBytes</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">generateRequestNonce</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">MonadHandler</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="kt">CSPNonce</span>
+<span class="nf">generateRequestNonce</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">mNonce</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">cacheGet</span>
+<span class="w">  </span><span class="kr">case</span><span class="w"> </span><span class="n">mNonce</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">    </span><span class="kt">Just</span><span class="w"> </span><span class="n">nonce</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">return</span><span class="w"> </span><span class="n">nonce</span>
+<span class="w">    </span><span class="kt">Nothing</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">      </span><span class="n">uuid</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="n">nextRandom</span>
+<span class="w">      </span><span class="kr">let</span><span class="w"> </span><span class="n">nonce</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">mkNonce</span><span class="w"> </span><span class="n">uuid</span>
+<span class="w">      </span><span class="n">cacheSet</span><span class="w"> </span><span class="n">nonce</span>
+<span class="w">      </span><span class="n">return</span><span class="w"> </span><span class="n">nonce</span>
+<span class="w">  </span><span class="kr">where</span>
+<span class="w">    </span><span class="n">mkNonce</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">      </span><span class="kt">CSPNonce</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">decodeUtf8</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="kt">B64</span><span class="o">.</span><span class="n">encode</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">toASCIIBytes</span>
+</pre></div>
+
 <p>I won’t show the final implementations of the other functions, because it’s
 mostly a case changing <code>Text</code> to <code>CSPNonce</code> and unwrapping that newtype in a
 couple of places. If you’re following along at home, you can just let the

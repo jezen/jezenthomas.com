@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -57,10 +57,12 @@
     <p>When I started using Vim, one of the first custom mappings I added to my
 <code>.vimrc</code> was moving to the beginning of the line with <code>H</code> and moving to the end
 of the line with <code>L</code>.</p>
-<pre class="vim"><code>&quot; Jump to beginning of line
-noremap H 0
-&quot; Jump to end of line
-noremap L $</code></pre>
+<div class="highlight"><pre><span></span><span class="c">&quot; Jump to beginning of line</span>
+<span class="nb">noremap</span> H <span class="m">0</span>
+<span class="c">&quot; Jump to end of line</span>
+<span class="nb">noremap</span> L $
+</pre></div>
+
 <p>This mapping may be slightly awkward because it’s rare you want to move to the
 first column of the current line, and in most cases you actually would rather
 move the cursor to the first non-whitespace character of the line.</p>
@@ -70,17 +72,19 @@ ability to move to the first column of the line. To remedy this, I wrote a
 short function that moves the cursor to the first non-whitespace character of
 the current line, or moves the cursor to the first column if it was already on
 the first non-whitespace character.</p>
-<pre class="vim"><code>&quot; Jump to first character or column
-noremap &lt;silent&gt; H :call FirstCharOrFirstCol()&lt;cr&gt;
+<div class="highlight"><pre><span></span><span class="c">&quot; Jump to first character or column</span>
+<span class="nb">noremap</span> <span class="p">&lt;</span><span class="k">silent</span><span class="p">&gt;</span> H :<span class="k">call</span> FirstCharOrFirstCol<span class="p">()&lt;</span><span class="k">cr</span><span class="p">&gt;</span>
 
-function! FirstCharOrFirstCol()
-  let current_col = virtcol('.')
+<span class="k">function</span><span class="p">!</span> FirstCharOrFirstCol<span class="p">()</span>
+  <span class="k">let</span> current_col <span class="p">=</span> virtcol<span class="p">(</span><span class="s1">'.'</span><span class="p">)</span>
   normal ^
-  let first_char = virtcol('.')
-  if current_col &lt;= first_char
-    normal 0
-  endif
-endfunction</code></pre>
+  <span class="k">let</span> first_char <span class="p">=</span> virtcol<span class="p">(</span><span class="s1">'.'</span><span class="p">)</span>
+  <span class="k">if</span> current_col <span class="p">&lt;=</span> first_char
+    normal <span class="m">0</span>
+  <span class="k">endif</span>
+<span class="k">endfunction</span>
+</pre></div>
+
 <p>The function above works by first checking the column that the cursor is
 currently on and storing it in <code>current_col</code>. We then move the cursor to the
 first non-whitespace character and check the column again. If the current

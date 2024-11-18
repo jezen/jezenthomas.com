@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -246,18 +246,22 @@ the shape evolving through many interesting patterns.</p>
 <p>The key to doing this in a reasonable way is to use pre-processors like Haml
 and Sass to generate the markup and styles with some simple loops.</p>
 <p>The Haml code generates an unordered list with 90 list items inside.</p>
-<pre class="haml"><code>%ul
-  -(1..90).each do
-    %li</code></pre>
+<div class="highlight"><pre><span></span><span class="nt">%ul</span>
+<span class="w">  </span><span class="p">-(</span><span class="mi">1</span><span class="o">..</span><span class="mi">90</span><span class="p">)</span><span class="o">.</span><span class="n">each</span><span class="w"> </span><span class="k">do</span>
+<span class="w">    </span><span class="nt">%li</span>
+</pre></div>
+
 <p>The Sass code uses an only slightly more complicated loop with some variable substitution and basic arithmetic to displace each list item by a regular interval.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sass"><code class="sourceCode sass"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">@for</span> <span class="va">$i</span> from <span class="dv">1</span> through <span class="dv">90</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  li<span class="in">:nth-child(#{$i})</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">transform</span>: <span class="fu">rotate(</span><span class="va">$i</span><span class="op">*</span><span class="dv">4</span><span class="op">+</span>deg<span class="fu">)</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">animation</span>: rot-<span class="op">#{</span><span class="va">$i</span><span class="op">}</span> <span class="dv">3000</span><span class="dt">s</span> <span class="dv">infinite</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="im">@keyframes</span> rot-<span class="op">#{</span><span class="va">$i</span><span class="op">}</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    100%</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">transform</span>: <span class="fu">rotate(</span><span class="va">$i</span><span class="op">*</span><span class="dv">360</span><span class="dt">deg</span><span class="fu">)</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="k">@for</span><span class="w"> </span><span class="nv">$i</span><span class="w"> </span><span class="ow">from</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="ow">through</span><span class="w"> </span><span class="mi">90</span>
+<span class="w">  </span><span class="nt">li</span><span class="nd">:nth-child</span><span class="o">(</span><span class="nn">#</span><span class="err">{$</span><span class="nt">i</span><span class="err">}</span><span class="o">)</span>
+<span class="w">    </span><span class="na">transform</span><span class="o">:</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span><span class="nv">$i</span><span class="o">*</span><span class="mi">4</span><span class="o">+</span><span class="n">deg</span><span class="p">)</span>
+<span class="w">    </span><span class="na">animation</span><span class="o">:</span><span class="w"> </span><span class="n">rot-</span><span class="si">#{</span><span class="nv">$i</span><span class="si">}</span><span class="w"> </span><span class="mi">3000</span><span class="kt">s</span><span class="w"> </span><span class="n">infinite</span>
+
+<span class="w">  </span><span class="k">@keyframes</span><span class="w"> </span><span class="nt">rot-</span><span class="nn">#</span><span class="err">{$</span><span class="nt">i</span><span class="err">}</span>
+<span class="w">    </span><span class="nt">100</span><span class="err">%</span>
+<span class="w">      </span><span class="na">transform</span><span class="o">:</span><span class="w"> </span><span class="nf">rotate</span><span class="p">(</span><span class="nv">$i</span><span class="o">*</span><span class="mi">360</span><span class="kt">deg</span><span class="p">)</span>
+</pre></div>
+
 
   </article>
 </div>

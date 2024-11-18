@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -62,22 +62,24 @@ solutions for old IE versions.</p>
 <p>Earlier in my career I figured out that IE7 can be tricked into mimicking the
 behaviour of the <code>:before</code> and <code>:after</code> CSS pseudo-elements. You think
 CSS-in-JS is bad? Check this out:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode css"><code class="sourceCode css"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">.thing</span> {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="op">*</span>zoom<span class="in">:</span> expression<span class="in">(</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    this<span class="fu">.runtimeStyle.zoom</span> = '1'<span class="op">,</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    this<span class="fu">.insertBefore</span><span class="in">(</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>      document<span class="fu">.createElement</span><span class="in">(</span>'i'<span class="in">)</span><span class="op">,</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>      this<span class="fu">.firstChild</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="in">)</span><span class="fu">.className</span> = 'ie-before'</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="in">)</span>;</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="fu">.thing</span> <span class="fu">.ie-before</span> {</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="op">*</span>zoom<span class="in">:</span> expression<span class="in">(</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    this<span class="fu">.runtimeStyle.zoom</span> = '1'<span class="op">,</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    this<span class="fu">.innerHTML</span> = '<span class="op">|</span>'</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="in">)</span>;</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="p">.</span><span class="nc">thing</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="err">*</span><span class="n">zoom</span><span class="p">:</span><span class="w"> </span><span class="nf">expression</span><span class="p">(</span>
+<span class="w">    </span><span class="n">this</span><span class="err">.</span><span class="n">runtimeStyle</span><span class="err">.</span><span class="n">zoom</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="s1">'1'</span><span class="p">,</span>
+<span class="w">    </span><span class="n">this</span><span class="err">.</span><span class="nf">insertBefore</span><span class="p">(</span>
+<span class="w">      </span><span class="n">document</span><span class="err">.</span><span class="nf">createElement</span><span class="p">(</span><span class="s1">'i'</span><span class="p">),</span>
+<span class="w">      </span><span class="n">this</span><span class="err">.</span><span class="n">firstChild</span>
+<span class="w">      </span><span class="p">)</span><span class="err">.</span><span class="n">className</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="s1">'ie-before'</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="p">.</span><span class="nc">thing</span><span class="w"> </span><span class="p">.</span><span class="nc">ie-before</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="err">*</span><span class="n">zoom</span><span class="p">:</span><span class="w"> </span><span class="nf">expression</span><span class="p">(</span>
+<span class="w">    </span><span class="n">this</span><span class="err">.</span><span class="n">runtimeStyle</span><span class="err">.</span><span class="n">zoom</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="s1">'1'</span><span class="p">,</span>
+<span class="w">    </span><span class="n">this</span><span class="err">.</span><span class="n">innerHTML</span><span class="w"> </span><span class="err">=</span><span class="w"> </span><span class="s1">'|'</span>
+<span class="w">    </span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
 <p>I don’t remember why <em>zoom</em> was relevant, but I do remember why the declaration
 was prefixed with an asterisk. Any rule prefixed with an asterisk was ignored
 as invalid by any browser other than IE7. This was a browser bug that many

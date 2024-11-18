@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -75,27 +75,33 @@ in your system. Your <code>User</code> model will be persisted in the <code>user
 <code>User</code> has a <code>name</code> field, which will be persisted in a column with a <code>VARCHAR</code>
 (or <code>TEXT</code>) type.</p>
 <p>So you define your persistent model this way:</p>
-<pre><code>User
+<div class="highlight"><pre><span></span>User
   name Text
   dateOfBirth Day
   email Text
   UniqueEmail email
-  -- etc…</code></pre>
+  -- etc…
+</pre></div>
+
 <p>The problem of course is that the <a href="https://en.wikibooks.org/wiki/A-level_Computing/AQA/Paper_2/Fundamentals_of_functional_programming/Basics_of_functional_programming">domain</a> for the <code>name</code> field (and also
 the email field) is much larger than we want. Even taking into account
 <a href="https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/">falsehoods programmers believe about names</a>, a name is not just <em>any</em> text
 value. We need to enforce some rules. We need to reduce our problem space. We
 need to <em>make it smaller</em>.</p>
 <p>For example, we wouldn’t want a user with an empty string for a name:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  { name <span class="ot">=</span> <span class="st">&quot;&quot;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  , dateOfBirth <span class="ot">=</span> <span class="co">-- …</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kt">User</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">dateOfBirth</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="c1">-- etc…</span>
+</pre></div>
+
 <p>We also wouldn’t want <em>this</em> monstrosity<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  { name <span class="ot">=</span> <span class="st">&quot;V̥̝̣̤͇̮̣̦ͮͬ̇͌̕͟l̲̩̠̬͆ͪ͒͌̿ͧ̅͊͘a̷̙̾́̐͌̀ͥ̂̅͝ḓͤͣ̅͂̂ͩ̆͡ò̲̙͙̗̳̻̠̀l̥̮͈̫̻̤̞̿͛ͧ̄͒͋̅̂ͩ͘f̸̮̩̫̺̾͊̌̌ͫ̀͟ͅ ̥ͪ͋͞P̟̻̝͕̩͎̞ͭ̾ͧ͗̆̉u̶͍̱̭͎̓͋̓͂͗ͧͯ͡ͅͅt̸̯̜̟̥̋ͬͦ͂͆͘͟l̯͉͉̤ͣe̱̟̮̖̋ͦ̌͒͂͆ͪ͌͘r͚͛̒͗̔͊̚͘&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  , dateOfBirth <span class="ot">=</span> <span class="co">-- …</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kt">User</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="s">&quot;V̥̝̣̤͇̮̣̦ͮͬ̇͌̕͟l̲̩̠̬͆ͪ͒͌̿ͧ̅͊͘a̷̙̾́̐͌̀ͥ̂̅͝ḓͤͣ̅͂̂ͩ̆͡ò̲̙͙̗̳̻̠̀l̥̮͈̫̻̤̞̿͛ͧ̄͒͋̅̂ͩ͘f̸̮̩̫̺̾͊̌̌ͫ̀͟ͅ ̥ͪ͋͞P̟̻̝͕̩͎̞ͭ̾ͧ͗̆̉u̶͍̱̭͎̓͋̓͂͗ͧͯ͡ͅͅt̸̯̜̟̥̋ͬͦ͂͆͘͟l̯͉͉̤ͣe̱̟̮̖̋ͦ̌͒͂͆ͪ͌͘r͚͛̒͗̔͊̚͘&quot;</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">dateOfBirth</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="c1">-- etc…</span>
+</pre></div>
+
 <p>It’s all very well telling ourselves that this wouldn’t happen to us because we
 are running a comprehensive validation function when processing the form submission
 that ingests this data, but the reality is that in a non-trivial business your
@@ -105,32 +111,34 @@ are facts of life.</p>
 <code>Text</code> is a code smell. When we see it, it’s telling us that we should <em>make
 our types smaller</em>. That is to say, more specific.</p>
 <p>Perhaps what we want instead is something like this:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[st|</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  -- Our User type with more specific types in its fields</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  User</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    name Username -- This type is smaller!</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    dateOfBirth Day</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    email Email</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    UniqueEmail email</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    -- etc…</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>|]</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Introduce a Username type which wraps a text value</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- Keep this in a different module, and be sure not to expose the constructor!</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Username</span>  <span class="ot">=</span> <span class="dt">Username</span> {<span class="ot"> unUsername ::</span> <span class="dt">Text</span> }</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- The &quot;smart constructor&quot; which enforces validation rules</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- Only expose this one!</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ot">mkUsername ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Username</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>mkUsername t</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> t <span class="op">==</span> <span class="st">&quot;&quot;</span> <span class="ot">=</span> <span class="dt">Nothing</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> failsSomeOtherValidationRule t <span class="ot">=</span> <span class="dt">Nothing</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Username</span> t)</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">-- Teach our program to marshal values over the system boundary</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">PersistField</span> <span class="dt">Username</span> <span class="kw">where</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  toPersistValue <span class="ot">=</span> <span class="co">-- unwrap value</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  fromPersistValue <span class="ot">=</span> <span class="co">-- parse value into narrower type</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">st</span><span class="o">|</span>
+<span class="w">  </span><span class="c1">-- Our User type with more specific types in its fields</span>
+<span class="w">  </span><span class="kt">User</span>
+<span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="kt">Username</span><span class="w"> </span><span class="c1">-- This type is smaller!</span>
+<span class="w">    </span><span class="n">dateOfBirth</span><span class="w"> </span><span class="kt">Day</span>
+<span class="w">    </span><span class="n">email</span><span class="w"> </span><span class="kt">Email</span>
+<span class="w">    </span><span class="kt">UniqueEmail</span><span class="w"> </span><span class="n">email</span>
+<span class="w">    </span><span class="c1">-- etc…</span>
+<span class="o">|</span><span class="p">]</span>
+
+<span class="c1">-- Introduce a Username type which wraps a text value</span>
+<span class="c1">-- Keep this in a different module, and be sure not to expose the constructor!</span>
+<span class="kr">newtype</span><span class="w"> </span><span class="kt">Username</span><span class="w">  </span><span class="ow">=</span><span class="w"> </span><span class="kt">Username</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">unUsername</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="p">}</span>
+
+<span class="c1">-- The &quot;smart constructor&quot; which enforces validation rules</span>
+<span class="c1">-- Only expose this one!</span>
+<span class="nf">mkUsername</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">Username</span>
+<span class="nf">mkUsername</span><span class="w"> </span><span class="n">t</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Nothing</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">failsSomeOtherValidationRule</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Nothing</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">otherwise</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Just</span><span class="w"> </span><span class="p">(</span><span class="kt">Username</span><span class="w"> </span><span class="n">t</span><span class="p">)</span>
+
+<span class="c1">-- Teach our program to marshal values over the system boundary</span>
+<span class="kr">instance</span><span class="w"> </span><span class="kt">PersistField</span><span class="w"> </span><span class="kt">Username</span><span class="w"> </span><span class="kr">where</span>
+<span class="w">  </span><span class="n">toPersistValue</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- unwrap value</span>
+<span class="w">  </span><span class="n">fromPersistValue</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- parse value into narrower type</span>
+</pre></div>
+
 <p>It may seem more expensive to use a more specific type because you then need to
 take the time to teach your program how to marshal values across that
 application/database boundary, but I think this one-time cost is cheaper than

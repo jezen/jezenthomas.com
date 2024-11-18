@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -73,11 +73,13 @@ abstraction:</p>
 </ol>
 <p>A typical ‘Hello, World!’ example of using a test framework like
 <a href="https://github.com/pivotal/jasmine">Jasmine</a> will look something like this:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">'Hello World'</span><span class="op">,</span> <span class="kw">function</span>() {</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">'should return hello world'</span><span class="op">,</span> <span class="kw">function</span>() {</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(<span class="fu">helloWorld</span>())<span class="op">.</span><span class="fu">toEqual</span>(<span class="st">'Hello World'</span>)<span class="op">;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nx">describe</span><span class="p">(</span><span class="s1">'Hello World'</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="nx">it</span><span class="p">(</span><span class="s1">'should return hello world'</span><span class="p">,</span><span class="w"> </span><span class="kd">function</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nx">expect</span><span class="p">(</span><span class="nx">helloWorld</span><span class="p">()).</span><span class="nx">toEqual</span><span class="p">(</span><span class="s1">'Hello World'</span><span class="p">);</span>
+<span class="w">  </span><span class="p">});</span>
+<span class="p">});</span>
+</pre></div>
+
 <p>What does any of that mean? From the outset, these five lines are confounding.
 In the first line, we say we are describing a ‘Hello World’. What is a ‘Hello
 World’? It doesn’t even sound like a noun! In this case, the fact that the

@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -71,8 +71,10 @@ because the tools we have are often powerful enough on their own. Vim is
 certainly powerful enough by default to perform substitutions across an entire
 project, with or without confirmation.</p>
 <p>Here’s the method I’m using:</p>
-<pre class="vim"><code>:args `ack -l '\bClass\b' --ignore-dir=compiled`
-:argdo %s/\&lt;Class\&gt;/MooTools.Class/gc | update</code></pre>
+<div class="highlight"><pre><span></span><span class="p">:</span>args `ack <span class="p">-</span><span class="k">l</span> <span class="s1">'\bClass\b'</span> <span class="p">--</span>ignore<span class="p">-</span><span class="k">dir</span><span class="p">=</span>compiled`
+<span class="p">:</span><span class="k">argdo</span> %s<span class="sr">/\&lt;Class\&gt;/</span>MooTools.Class/gc <span class="p">|</span> <span class="k">update</span>
+</pre></div>
+
 <p>The first line populates Vim’s argument list with the result of the external
 <code>ack</code> command. I test out my <code>ack</code> directly in the shell before using it in Vim
 so I know I’m roughly getting the list of files I want. The <code>-l</code> flag in <code>ack</code>

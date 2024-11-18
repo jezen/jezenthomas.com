@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -63,15 +63,19 @@ a codebase. Here’s how I handle whitespace with my weapon of choice, Vim.</p>
 displays invisible characters, and the second defines which symbols should be
 used to represent the different kinds of invisible characters. I mostly borrowed
 the second line from Steve Losh’s <a href="https://bitbucket.org/sjl/dotfiles/src/603bb1ae9da27c6e08ab115df1cb5d8f6a1442c3/vim/vimrc?at=default">vimrc</a>.</p>
-<pre><code>set list
-set lcs=tab:▸\ ,extends:❯,precedes:❮,nbsp:.,trail:·,eol:¬</code></pre>
+<div class="highlight"><pre><span></span>set list
+set lcs=tab:▸\ ,extends:❯,precedes:❮,nbsp:.,trail:·,eol:¬
+</pre></div>
+
 <h2 id="cleaning-trailing-whitespace">Cleaning trailing whitespace</h2>
 <p>This is another gem I found in Steve Losh’s vimrc. I don’t care to learn exactly
 how it works just yet. At the moment, I have it mapped to <code>&lt;leader&gt;w</code>, but it
 might be a good idea to automatically run the command anytime you write to a
 file. I think it really depends on how you feel this will affect your version
 control workflow.</p>
-<pre><code>nnoremap &lt;leader&gt;w mz:%s/\s\+$//&lt;cr&gt;:let @/=''&lt;cr&gt;`z</code></pre>
+<div class="highlight"><pre><span></span>nnoremap &lt;leader&gt;w mz:%s/\s\+$//&lt;cr&gt;:let @/=''&lt;cr&gt;`z
+</pre></div>
+
 <h2 id="normalising-blank-lines">Normalising blank lines</h2>
 <p>Unless you’re drawing ASCII art, I don’t think there’s ever a good reason to
 have contiguous blank lines. Any group of rules or logic in a codebase should be
@@ -82,7 +86,9 @@ the disorder. Neither of those are any fun.</p>
 external Unix command and read the results of the command back into the buffer,
 replacing the original text. If you pipe a file to <code>cat -s</code>, it gives it back to
 you with the blank lines normalised. To do this straight from Vim:</p>
-<pre><code>:%!cat -s</code></pre>
+<div class="highlight"><pre><span></span>:%!cat -s
+</pre></div>
+
 <p>The percent symbol references the entire buffer (which means filters also work
 with ranges), and the bang tells Vim to drop to the shell.</p>
 

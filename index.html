@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -170,12 +170,14 @@ regarding some perplexing GHCi output.</p>
 at this for the past few minutes. Isn’t it saying one thing is not in scope
 and then immediately suggesting that very same thing as a replacement?</p>
 </blockquote>
-<pre><code>ghci&gt; :t API.Handler.V20201001.Types.tscaExcluded
+<div class="highlight"><pre><span></span>ghci&gt; :t API.Handler.V20201001.Types.tscaExcluded
 
 &lt;interactive&gt;:1:1-40: error:
     Not in scope: 'API.Handler.V20201001.Types.tscaExcluded'
     Perhaps you meant one of these:
-      'API.Handler.V20201001.Types.tsсaExcluded' (imported from API.Handler.V20201001.Types),</code></pre>
+      'API.Handler.V20201001.Types.tsсaExcluded' (imported from API.Handler.V20201001.Types),
+</pre></div>
+
 <p>Can you spot the error?</p>
 <p>The problem could have been related to some surprising behaviour in GHCi when
 references are held to old values after their names are shadowed. Or perhaps it

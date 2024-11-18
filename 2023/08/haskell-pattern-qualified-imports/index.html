@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -69,10 +69,12 @@ function that may be in scope.</p>
 <p>✔ <code>Email.parse</code> is easy to read.</p>
 <p>✔ <code>Email.parse</code> makes it clear what kind of thing we’re parsing.</p>
 <p>✔ <code>Email.parse</code> makes it clear where that function is defined.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Acme.Email</span> <span class="kw">qualified</span> <span class="kw">as</span> <span class="dt">Email</span> <span class="co">-- exports `parse`, not `parseEmail`</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="fu">print</span> <span class="op">$</span> Email.parse <span class="st">&quot;foo@bar.com&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">import</span><span class="w"> </span><span class="nn">Acme.Email</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="c1">-- exports `parse`, not `parseEmail`</span>
+
+<span class="nf">main</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">main</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">print</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">Email</span><span class="o">.</span><span class="n">parse</span><span class="w"> </span><span class="s">&quot;foo@bar.com&quot;</span>
+</pre></div>
+
 <p>The module describes the context we’re in. Sometimes we need to make
 that context clearer, and sometimes the context is already clear enough.</p>
 

@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -58,7 +58,7 @@
 translated strings for the Vaamo web app and the legacy database annotations
 for Oddjob are two examples. The format is always basically the same; chunks of
 related text together, separated by blank lines:</p>
-<pre class="text"><code># messages.de
+<div class="highlight"><pre><span></span># messages.de
 
 auth.login.failed=Bitte überprüfe Deine Eingaben.
 auth.login.forgotPassword=Passwort vergessen?
@@ -66,14 +66,18 @@ auth.login.title=Anmeldung
 
 error.iban.invalidChecksum=Die Prüfziffer ist leider nicht korrekt
 error.max=Der Wert muss kleiner als {0} sein
-error.min=Der Wert muss größer als {0} sein</code></pre>
+error.min=Der Wert muss größer als {0} sein
+</pre></div>
+
 <p>Imagine instead of three lines per paragraph, it’s a hundred. I don’t want to
 see every single line; it’s too much noise. What I want to see is a high-level
 overview of the file so I have a chance at navigating through it. I want each
 paragraph to fold into its top line. I keep forgetting how to do this in vim,
 so I’m writing it here for future reference.</p>
-<pre class="text"><code>:set fde=getline(v:lnum)=~'^\\s*$'&amp;&amp;getline(v:lnum+1)=~'\\S'?'&lt;1':1
-:set fdm=expr</code></pre>
+<div class="highlight"><pre><span></span>:set fde=getline(v:lnum)=~'^\\s*$'&amp;&amp;getline(v:lnum+1)=~'\\S'?'&lt;1':1
+:set fdm=expr
+</pre></div>
+
 <p>This first line sets the fold expression to one which handles paragraphs. The
 second line tells Vim to use the expression method for folding. There are a
 couple more fold expressions to be found in <code>:help fold-expr</code>. If I still find

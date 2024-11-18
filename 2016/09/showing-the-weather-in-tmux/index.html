@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -75,16 +75,20 @@ minute which is plenty for our needs — we won’t be making requests more than
 once per second.</p>
 <p>Running the following command gives us a collection of values about our
 geographical data, separated by commas:</p>
-<pre><code>curl --silent http://ip-api.com/csv
-success,Poland,PL,PM,&quot;Pomeranian Voivodeship&quot;,Gdańsk,80-009,54.3608,18.6583,Europe/Warsaw,&quot;Neostrada Plus&quot;,&quot;Neostrada Plus&quot;,&lt;redacted&gt;,&lt;redacted&gt;</code></pre>
+<div class="highlight"><pre><span></span>curl --silent http://ip-api.com/csv
+success,Poland,PL,PM,&quot;Pomeranian Voivodeship&quot;,Gdańsk,80-009,54.3608,18.6583,Europe/Warsaw,&quot;Neostrada Plus&quot;,&quot;Neostrada Plus&quot;,&lt;redacted&gt;,&lt;redacted&gt;
+</pre></div>
+
 <p>Using the <code>cut</code> command, we can split the comma-separated values on those
 commas, and the <code>-f</code> flag allows us to choose which field we’re interested in.
 For my script, I’m pulling fields six, eight, and nine to grab the city,
 latitude, and longitude values respectively.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">LOCATION</span><span class="op">=</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">--silent</span> http://ip-api.com/csv<span class="va">)</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="va">CITY</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$LOCATION</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 6<span class="va">)</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="va">LAT</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$LOCATION</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 8<span class="va">)</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="va">LON</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$LOCATION</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 9<span class="va">)</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nv">LOCATION</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>--silent<span class="w"> </span>http://ip-api.com/csv<span class="k">)</span>
+<span class="nv">CITY</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LOCATION</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span>,<span class="w"> </span>-f<span class="w"> </span><span class="m">6</span><span class="k">)</span>
+<span class="nv">LAT</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LOCATION</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span>,<span class="w"> </span>-f<span class="w"> </span><span class="m">8</span><span class="k">)</span>
+<span class="nv">LON</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LOCATION</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span>,<span class="w"> </span>-f<span class="w"> </span><span class="m">9</span><span class="k">)</span>
+</pre></div>
+
 <p>You’ll notice I’m being careful to wrap each of those <code>$LOCATION</code> variables in
 double-quotes to prevent word-splitting. If you start writing more Bash scripts
 (and you should), this should become a habit.</p>
@@ -105,14 +109,16 @@ Parsing this JSON string is too hairy a task for any native UNIX tools, but you
 can use your favourite package manager to install a JSON parser called <em>jq</em>.
 Accessing fields with <em>jq</em> is syntactically the same as looking up array indexes
 and object properties in JavaScript.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="va">WEATHER</span><span class="op">=</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">--silent</span> http://api.openweathermap.org/data/2.5/weather\?lat=<span class="st">&quot;</span><span class="va">$LAT</span><span class="st">&quot;</span><span class="dt">\&amp;</span>lon=<span class="st">&quot;</span><span class="va">$LON</span><span class="st">&quot;</span><span class="dt">\&amp;</span>APPID=<span class="st">&quot;</span><span class="va">$API_KEY</span><span class="st">&quot;</span><span class="dt">\&amp;</span>units=metric<span class="va">)</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="va">CATEGORY</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$WEATHER</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="ex">jq</span> .weather<span class="pp">[</span><span class="ss">0</span><span class="pp">]</span>.id<span class="va">)</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="va">TEMP</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$WEATHER</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="ex">jq</span> .main.temp <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> . <span class="at">-f</span> 1<span class="va">)</span><span class="st">°C&quot;</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="va">WIND_SPEED</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$WEATHER</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="ex">jq</span> .wind.speed <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{print int($1+0.5)}'</span><span class="va">)</span><span class="st">ms&quot;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="va">ICON</span><span class="op">=</span><span class="va">$(</span><span class="ex">weather_icon</span> <span class="st">&quot;</span><span class="va">$CATEGORY</span><span class="st">&quot;</span><span class="va">)</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">printf</span> <span class="st">&quot;%s&quot;</span> <span class="st">&quot;</span><span class="va">$CITY</span><span class="st">:</span><span class="va">$ICON</span><span class="st"> </span><span class="va">$TEMP</span><span class="st">, </span><span class="va">$WIND_SPEED</span><span class="st">&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nv">WEATHER</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>--silent<span class="w"> </span>http://api.openweathermap.org/data/2.5/weather<span class="se">\?</span><span class="nv">lat</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$LAT</span><span class="s2">&quot;</span><span class="se">\&amp;</span><span class="nv">lon</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$LON</span><span class="s2">&quot;</span><span class="se">\&amp;</span><span class="nv">APPID</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$API_KEY</span><span class="s2">&quot;</span><span class="se">\&amp;</span><span class="nv">units</span><span class="o">=</span>metric<span class="k">)</span>
+
+<span class="nv">CATEGORY</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WEATHER</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.weather<span class="o">[</span><span class="m">0</span><span class="o">]</span>.id<span class="k">)</span>
+<span class="nv">TEMP</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WEATHER</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.main.temp<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span><span class="m">1</span><span class="k">)</span><span class="s2">°C&quot;</span>
+<span class="nv">WIND_SPEED</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WEATHER</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.wind.speed<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print int($1+0.5)}'</span><span class="k">)</span><span class="s2">ms&quot;</span>
+<span class="nv">ICON</span><span class="o">=</span><span class="k">$(</span>weather_icon<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$CATEGORY</span><span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$CITY</span><span class="s2">:</span><span class="nv">$ICON</span><span class="s2"> </span><span class="nv">$TEMP</span><span class="s2">, </span><span class="nv">$WIND_SPEED</span><span class="s2">&quot;</span>
+</pre></div>
+
 <p>I only care about whole numbers for temperature and wind speed, so I’m using
 <code>cut</code> and <code>awk</code> to truncate and round those values respectively. I truncate the
 temperature instead of rounding it because I am originally from London, which
@@ -125,9 +131,11 @@ the data in metric units. You can switch that to imperial if you’re so incline
 <code>~/.bin/weather</code> — and then run a <code>chmod u+x ~/.bin/weather</code> to make the script
 executable. The weather script can now be called from your Tmux configuration.</p>
 <p>When I open up my <code>~/.tmux.conf</code> file, I have these lines:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-g</span> status-right-length 50</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-g</span> status-right <span class="st">'#[fg=green][#[default]#($HOME/.bin/weather)#[fg=green]] #[fg=green][#[fg=blue]%Y-%m-%d #[fg=white]%H:%M#[default]#[fg=green]] #[fg=green][#($HOME/.bin/battery)#[fg=green]]'</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-g</span> status-interval 1</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nb">set</span><span class="w"> </span>-g<span class="w"> </span>status-right-length<span class="w"> </span><span class="m">50</span>
+<span class="nb">set</span><span class="w"> </span>-g<span class="w"> </span>status-right<span class="w"> </span><span class="s1">'#[fg=green][#[default]#($HOME/.bin/weather)#[fg=green]] #[fg=green][#[fg=blue]%Y-%m-%d #[fg=white]%H:%M#[default]#[fg=green]] #[fg=green][#($HOME/.bin/battery)#[fg=green]]'</span>
+<span class="nb">set</span><span class="w"> </span>-g<span class="w"> </span>status-interval<span class="w"> </span><span class="m">1</span>
+</pre></div>
+
 <p>The first line sets the available length for the right-side of my status bar.
 I’m not sure what the default length is, but it isn’t long enough to display
 everything I want without truncating. The second line is my literal status line.
@@ -137,63 +145,65 @@ update my status line every second, which is important for telling accurate
 time.</p>
 <p>And that’s all there is to it! For completeness, here’s the entire <code>weather</code>
 script:</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Weather</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># =======</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co"># By Jezen Thomas &lt;jezen@jezenthomas.com&gt;</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="co"># This script sends a couple of requests over the network to retrieve</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="co"># approximate location data, and the current weather for that location. This is</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># useful if for example you want to display the current weather in your tmux</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co"># status bar.</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="co"># There are three things you will need to do before using this script.</span></span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Install jq with your package manager of choice (homebrew, apt-get, etc.)</span></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Sign up for a free account with OpenWeatherMap to grab your API key</span></span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Add your OpenWeatherMap API key where it says API_KEY</span></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="co"># OPENWEATHERMAP API KEY (place yours here)</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="va">API_KEY</span><span class="op">=</span><span class="st">&quot;&lt;redacted&gt;&quot;</span></span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-e</span></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Not all icons for weather symbols have been added yet. If the weather</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="co"># category is not matched in this case statement, the command output will</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a><span class="co"># include the category ID. You can add the appropriate emoji as you go along.</span></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="co">#</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a><span class="co"># Weather data reference: http://openweathermap.org/weather-conditions</span></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="fu">weather_icon()</span> <span class="kw">{</span></span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>  <span class="cf">case</span> <span class="va">$1</span> <span class="kw">in</span></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>    <span class="ss">500</span><span class="kw">)</span> <span class="bu">echo</span> 🌦</span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>    <span class="ss">800</span><span class="kw">)</span> <span class="bu">echo</span> ☀️</span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>    <span class="ss">801</span><span class="kw">)</span> <span class="bu">echo</span> 🌤</span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>    <span class="ss">803</span><span class="kw">)</span> <span class="bu">echo</span> ⛅️</span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>    <span class="ss">804</span><span class="kw">)</span> <span class="bu">echo</span> ☁️</span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>      <span class="cf">;;</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>    <span class="pp">*</span><span class="kw">)</span> <span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>  <span class="cf">esac</span></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="va">LOCATION</span><span class="op">=</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">--silent</span> http://ip-api.com/csv<span class="va">)</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a><span class="va">CITY</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$LOCATION</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 6<span class="va">)</span></span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="va">LAT</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$LOCATION</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 8<span class="va">)</span></span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="va">LON</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$LOCATION</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> , <span class="at">-f</span> 9<span class="va">)</span></span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="va">WEATHER</span><span class="op">=</span><span class="va">$(</span><span class="ex">curl</span> <span class="at">--silent</span> http://api.openweathermap.org/data/2.5/weather\?lat=<span class="st">&quot;</span><span class="va">$LAT</span><span class="st">&quot;</span><span class="dt">\&amp;</span>lon=<span class="st">&quot;</span><span class="va">$LON</span><span class="st">&quot;</span><span class="dt">\&amp;</span>APPID=<span class="st">&quot;</span><span class="va">$API_KEY</span><span class="st">&quot;</span><span class="dt">\&amp;</span>units=metric<span class="va">)</span></span>
-<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a><span class="va">CATEGORY</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$WEATHER</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="ex">jq</span> .weather<span class="pp">[</span><span class="ss">0</span><span class="pp">]</span>.id<span class="va">)</span></span>
-<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a><span class="va">TEMP</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$WEATHER</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="ex">jq</span> .main.temp <span class="kw">|</span> <span class="fu">cut</span> <span class="at">-d</span> . <span class="at">-f</span> 1<span class="va">)</span><span class="st">°C&quot;</span></span>
-<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a><span class="va">WIND_SPEED</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">&quot;</span><span class="va">$WEATHER</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="ex">jq</span> .wind.speed <span class="kw">|</span> <span class="fu">awk</span> <span class="st">'{print int($1+0.5)}'</span><span class="va">)</span><span class="st">ms&quot;</span></span>
-<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="va">ICON</span><span class="op">=</span><span class="va">$(</span><span class="ex">weather_icon</span> <span class="st">&quot;</span><span class="va">$CATEGORY</span><span class="st">&quot;</span><span class="va">)</span></span>
-<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a><span class="bu">printf</span> <span class="st">&quot;%s&quot;</span> <span class="st">&quot;</span><span class="va">$CITY</span><span class="st">:</span><span class="va">$ICON</span><span class="st"> </span><span class="va">$TEMP</span><span class="st">, </span><span class="va">$WIND_SPEED</span><span class="st">&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<span class="c1">#</span>
+<span class="c1"># Weather</span>
+<span class="c1"># =======</span>
+<span class="c1">#</span>
+<span class="c1"># By Jezen Thomas &lt;jezen@jezenthomas.com&gt;</span>
+<span class="c1">#</span>
+<span class="c1"># This script sends a couple of requests over the network to retrieve</span>
+<span class="c1"># approximate location data, and the current weather for that location. This is</span>
+<span class="c1"># useful if for example you want to display the current weather in your tmux</span>
+<span class="c1"># status bar.</span>
+
+<span class="c1"># There are three things you will need to do before using this script.</span>
+<span class="c1">#</span>
+<span class="c1"># 1. Install jq with your package manager of choice (homebrew, apt-get, etc.)</span>
+<span class="c1"># 2. Sign up for a free account with OpenWeatherMap to grab your API key</span>
+<span class="c1"># 3. Add your OpenWeatherMap API key where it says API_KEY</span>
+
+<span class="c1"># OPENWEATHERMAP API KEY (place yours here)</span>
+<span class="nv">API_KEY</span><span class="o">=</span><span class="s2">&quot;&lt;redacted&gt;&quot;</span>
+
+<span class="nb">set</span><span class="w"> </span>-e
+
+<span class="c1"># Not all icons for weather symbols have been added yet. If the weather</span>
+<span class="c1"># category is not matched in this case statement, the command output will</span>
+<span class="c1"># include the category ID. You can add the appropriate emoji as you go along.</span>
+<span class="c1">#</span>
+<span class="c1"># Weather data reference: http://openweathermap.org/weather-conditions</span>
+weather_icon<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span><span class="k">case</span><span class="w"> </span><span class="nv">$1</span><span class="w"> </span><span class="k">in</span>
+<span class="w">    </span><span class="m">500</span><span class="o">)</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>🌦
+<span class="w">      </span><span class="p">;;</span>
+<span class="w">    </span><span class="m">800</span><span class="o">)</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>☀️
+<span class="w">      </span><span class="p">;;</span>
+<span class="w">    </span><span class="m">801</span><span class="o">)</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>🌤
+<span class="w">      </span><span class="p">;;</span>
+<span class="w">    </span><span class="m">803</span><span class="o">)</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>⛅️
+<span class="w">      </span><span class="p">;;</span>
+<span class="w">    </span><span class="m">804</span><span class="o">)</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span>☁️
+<span class="w">      </span><span class="p">;;</span>
+<span class="w">    </span>*<span class="o">)</span><span class="w"> </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+<span class="w">  </span><span class="k">esac</span>
+<span class="o">}</span>
+
+<span class="nv">LOCATION</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>--silent<span class="w"> </span>http://ip-api.com/csv<span class="k">)</span>
+<span class="nv">CITY</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LOCATION</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span>,<span class="w"> </span>-f<span class="w"> </span><span class="m">6</span><span class="k">)</span>
+<span class="nv">LAT</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LOCATION</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span>,<span class="w"> </span>-f<span class="w"> </span><span class="m">8</span><span class="k">)</span>
+<span class="nv">LON</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$LOCATION</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span>,<span class="w"> </span>-f<span class="w"> </span><span class="m">9</span><span class="k">)</span>
+
+<span class="nv">WEATHER</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>--silent<span class="w"> </span>http://api.openweathermap.org/data/2.5/weather<span class="se">\?</span><span class="nv">lat</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$LAT</span><span class="s2">&quot;</span><span class="se">\&amp;</span><span class="nv">lon</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$LON</span><span class="s2">&quot;</span><span class="se">\&amp;</span><span class="nv">APPID</span><span class="o">=</span><span class="s2">&quot;</span><span class="nv">$API_KEY</span><span class="s2">&quot;</span><span class="se">\&amp;</span><span class="nv">units</span><span class="o">=</span>metric<span class="k">)</span>
+
+<span class="nv">CATEGORY</span><span class="o">=</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WEATHER</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.weather<span class="o">[</span><span class="m">0</span><span class="o">]</span>.id<span class="k">)</span>
+<span class="nv">TEMP</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WEATHER</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.main.temp<span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d<span class="w"> </span>.<span class="w"> </span>-f<span class="w"> </span><span class="m">1</span><span class="k">)</span><span class="s2">°C&quot;</span>
+<span class="nv">WIND_SPEED</span><span class="o">=</span><span class="s2">&quot;</span><span class="k">$(</span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$WEATHER</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.wind.speed<span class="w"> </span><span class="p">|</span><span class="w"> </span>awk<span class="w"> </span><span class="s1">'{print int($1+0.5)}'</span><span class="k">)</span><span class="s2">ms&quot;</span>
+<span class="nv">ICON</span><span class="o">=</span><span class="k">$(</span>weather_icon<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$CATEGORY</span><span class="s2">&quot;</span><span class="k">)</span>
+
+<span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$CITY</span><span class="s2">:</span><span class="nv">$ICON</span><span class="s2"> </span><span class="nv">$TEMP</span><span class="s2">, </span><span class="nv">$WIND_SPEED</span><span class="s2">&quot;</span>
+</pre></div>
+
 <p><em>n.b.</em> I realise I could just stand on my balcony to see what the weather is like,
 but what kind of nerd would I be if I didn’t script it somehow?!</p>
 

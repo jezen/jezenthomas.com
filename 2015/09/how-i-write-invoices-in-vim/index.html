@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -66,12 +66,14 @@ set-it-and-forget-it experience.</p>
 <p>All of my invoices are kept in the same directory on my system, and I keep a
 special <code>.vimrc</code> file in that same directory which contains a few rules that
 provide a sane invoice editing experience. Here’s that very small file:</p>
-<pre class="vim"><code>set tw=80
-set bg=light
-set nolist
-set nofoldenable
-set nonumber
-set norelativenumber</code></pre>
+<div class="highlight"><pre><span></span><span class="k">set</span> <span class="nb">tw</span><span class="p">=</span><span class="m">80</span>
+<span class="k">set</span> <span class="nb">bg</span><span class="p">=</span><span class="nb">light</span>
+<span class="k">set</span> <span class="nb">nolist</span>
+<span class="k">set</span> <span class="nb">nofoldenable</span>
+<span class="k">set</span> <span class="nb">nonumber</span>
+<span class="k">set</span> <span class="nb">norelativenumber</span>
+</pre></div>
+
 <p>The first rule sets the text width, essentially saying I want the right-edge of
 my document to fall after the 80th column. This stops me from drawing a table
 that wraps across lines and destroys the formatting. The second rule is
@@ -82,15 +84,19 @@ following couple of rules to my global <code>~/.vimrc</code>. It’s important t
 second rule, otherwise anytime you work on a project with other people they
 could add some malicious code to a directory-specific <code>.vimrc</code> and your machine
 would run it as soon as you open Vim from that directory.</p>
-<pre class="vim"><code>set exrc &quot; Enable use of directory-specific .vimrc
-set secure &quot; Only run autocommands owned by me</code></pre>
+<div class="highlight"><pre><span></span><span class="k">set</span> <span class="nb">exrc</span> <span class="c">&quot; Enable use of directory-specific .vimrc</span>
+<span class="k">set</span> <span class="nb">secure</span> <span class="c">&quot; Only run autocommands owned by me</span>
+</pre></div>
+
 <p>Now we come to actually writing the invoice. It’s fairly standard that an
 invoice begins with the name and address of your own company, followed by the
 name and address of the recipient. The name and address of your own company are
 usually right-aligned, and Vim handles this with the <code>right</code> Ex command. If you
 do a line-wise visual selection over your address details, hit <code>:</code>, and then
 type <code>right</code> and hit enter, your text is right-aligned. The command looks like:</p>
-<pre class="vim"><code>:'&lt;,'&gt;right</code></pre>
+<div class="highlight"><pre><span></span><span class="p">:</span><span class="s1">'&lt;,'</span><span class="p">&gt;</span><span class="k">right</span>
+</pre></div>
+
 <p>The next part of the invoice contains the table of line items that you’re
 invoicing for. I drew the table by copying and pasting a bunch of unicode
 box-drawing characters. There are probably tools for doing this automatically,
@@ -101,9 +107,11 @@ fancy characters (digraphs) by issuing the <code>:dig</code> command. If you scr
 slightly, you’ll notice the three characters I use are <code>hh</code>, <code>vv</code>, and <code>vh</code>.
 Hitting <code>&lt;C-k&gt;</code> from insert mode followed by the digraph combination gives us
 the characters we’re looking for.</p>
-<pre><code> DESCRIPTION         │ UNIT PRICE │ QUANTITY │   AMOUNT
+<div class="highlight"><pre><span></span> DESCRIPTION         │ UNIT PRICE │ QUANTITY │   AMOUNT
 ─────────────────────┼────────────┼──────────┼──────────
- Line of code        │      120 € │       7  │    840 €</code></pre>
+ Line of code        │      120 € │       7  │    840 €
+</pre></div>
+
 <p><em>n.b. I don’t actually charge per line of code.</em></p>
 <p>I’m too lazy to do the above multiplication in my head, so instead of reaching
 for a calculator and finding the product of 120 and 7, I use Vim’s expression

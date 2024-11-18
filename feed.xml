@@ -126,12 +126,14 @@ regarding some perplexing GHCi output.</p>
 at this for the past few minutes. Isn’t it saying one thing is not in scope
 and then immediately suggesting that very same thing as a replacement?</p>
 </blockquote>
-<pre><code>ghci&gt; :t API.Handler.V20201001.Types.tscaExcluded
+<div class="highlight"><pre><span></span>ghci&gt; :t API.Handler.V20201001.Types.tscaExcluded
 
 &lt;interactive&gt;:1:1-40: error:
     Not in scope: &#39;API.Handler.V20201001.Types.tscaExcluded&#39;
     Perhaps you meant one of these:
-      &#39;API.Handler.V20201001.Types.tsсaExcluded&#39; (imported from API.Handler.V20201001.Types),</code></pre>
+      &#39;API.Handler.V20201001.Types.tsсaExcluded&#39; (imported from API.Handler.V20201001.Types),
+</pre></div>
+
 <p>Can you spot the error?</p>
 <p>The problem could have been related to some surprising behaviour in GHCi when
 references are held to old values after their names are shadowed. Or perhaps it
@@ -187,46 +189,50 @@ credit card, or even just to generate some random number.</p>
 and then respond to the user’s request by reporting whether the randomly
 generated number is even or odd.</p>
 <p>We might write code which looks like this.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes #-}</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell #-}</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TypeFamilies #-}</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Application</span> <span class="kw">where</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">System.Random</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Yesod</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">App</span> <span class="ot">=</span> <span class="dt">App</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mkYesod <span class="st">&quot;App&quot;</span> [parseRoutes|</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>/random RandomR GET</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>|]</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ot">getRandomR ::</span> <span class="dt">Handler</span> <span class="dt">Value</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>getRandomR <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> liftIO randomNumber</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  returnJson <span class="op">$</span> isEven n</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ot">    randomNumber ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    randomNumber <span class="ot">=</span> randomRIO (<span class="dv">1</span>, <span class="dv">100</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ot">    isEven ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    isEven n <span class="ot">=</span> <span class="kw">if</span> <span class="fu">even</span> n <span class="kw">then</span> <span class="st">&quot;even&quot;</span> <span class="kw">else</span> <span class="st">&quot;odd&quot;</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> warp <span class="dv">3000</span> <span class="dt">App</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="cm">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="cm">{-# LANGUAGE QuasiQuotes #-}</span>
+<span class="cm">{-# LANGUAGE TemplateHaskell #-}</span>
+<span class="cm">{-# LANGUAGE TypeFamilies #-}</span>
+
+<span class="kr">module</span><span class="w"> </span><span class="nn">Application</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="kr">import</span><span class="w"> </span><span class="nn">System.Random</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Yesod</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">App</span>
+
+<span class="nf">mkYesod</span><span class="w"> </span><span class="s">&quot;App&quot;</span><span class="w"> </span><span class="p">[</span><span class="n">parseRoutes</span><span class="o">|</span>
+<span class="o">/</span><span class="n">random</span><span class="w"> </span><span class="kt">RandomR</span><span class="w"> </span><span class="kt">GET</span>
+<span class="o">|</span><span class="p">]</span>
+
+<span class="kr">instance</span><span class="w"> </span><span class="kt">Yesod</span><span class="w"> </span><span class="kt">App</span>
+
+<span class="nf">getRandomR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Value</span>
+<span class="nf">getRandomR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">n</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="n">randomNumber</span>
+<span class="w">  </span><span class="n">returnJson</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">isEven</span><span class="w"> </span><span class="n">n</span>
+<span class="w">  </span><span class="kr">where</span>
+<span class="w">    </span><span class="n">randomNumber</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="kt">Int</span>
+<span class="w">    </span><span class="n">randomNumber</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">randomRIO</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">isEven</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">    </span><span class="n">isEven</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span><span class="n">even</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="kr">then</span><span class="w"> </span><span class="s">&quot;even&quot;</span><span class="w"> </span><span class="kr">else</span><span class="w"> </span><span class="s">&quot;odd&quot;</span>
+
+<span class="nf">main</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">main</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">warp</span><span class="w"> </span><span class="mi">3000</span><span class="w"> </span><span class="kt">App</span>
+</pre></div>
+
 <p>This is a complete Yesod application. We can run this locally and it will be
 listening for requests on port 3000. When we send requests there, we can see
 our application dutifully responding with whether or not the randomly generated
 number was even or odd.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl http://localhost:3000/random</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;even&quot;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl http://localhost:3000/random</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;odd&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>curl<span class="w"> </span>http://localhost:3000/random
+<span class="s2">&quot;even&quot;</span>
+
+$<span class="w"> </span>curl<span class="w"> </span>http://localhost:3000/random
+<span class="s2">&quot;odd&quot;</span>
+</pre></div>
+
 <p>This is all well and good, but how do we write an automated test for this? We
 can’t control the randomness of our pseudo-random number generator. Similarly,
 if instead of generating a random number this were an HTTP request to attempt
@@ -239,51 +245,59 @@ version that we <em>can</em> control.</p>
 <p>One simple approach for this is with <em>dependency injection</em>.</p>
 <p>Instead of defining our <code>randomNumber</code> function alongside our request handler,
 we can declare it as part of our application’s foundational data type.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">App</span> <span class="ot">=</span> <span class="dt">App</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> appRandomNumber ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">data</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">App</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">appRandomNumber</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="kt">Int</span>
+<span class="w">  </span><span class="p">}</span>
+</pre></div>
+
 <p>When we initialise our application, we construct our <code>App</code> value with the real
 implementation of our function.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> warp <span class="dv">3000</span> <span class="op">$</span> <span class="dt">App</span> randomNumber</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    randomNumber <span class="ot">=</span> <span class="co">-- real implementation</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">main</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">main</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">warp</span><span class="w"> </span><span class="mi">3000</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="n">randomNumber</span>
+<span class="w">  </span><span class="kr">where</span>
+<span class="w">    </span><span class="n">randomNumber</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- real implementation</span>
+</pre></div>
+
 <p>Since our <code>randomNumber</code> function is no longer defined alongside our request
 handler, we’ll now need to ask for that function from within the handler
 instead.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getRandomR ::</span> <span class="dt">Handler</span> <span class="dt">Value</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>getRandomR <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> liftIO <span class="op">=&lt;&lt;</span> getsYesod appRandomNumber</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  returnJson <span class="op">$</span> isEven n</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ot">    isEven ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    isEven n <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">getRandomR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Value</span>
+<span class="nf">getRandomR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">n</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="o">=&lt;&lt;</span><span class="w"> </span><span class="n">getsYesod</span><span class="w"> </span><span class="n">appRandomNumber</span>
+<span class="w">  </span><span class="n">returnJson</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">isEven</span><span class="w"> </span><span class="n">n</span>
+<span class="w">  </span><span class="kr">where</span>
+<span class="w">    </span><span class="n">isEven</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">    </span><span class="n">isEven</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+</pre></div>
+
 <p>This behaves exactly as it did before, but now we’re able to swap out our
 <code>randomNumber</code> function for a fake version in an automated test with
 <code>testModifySite</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">withApp ::</span> <span class="dt">SpecWith</span> (<span class="dt">TestApp</span> <span class="dt">App</span>) <span class="ot">-&gt;</span> <span class="dt">Spec</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>withApp <span class="ot">=</span> before <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">App</span> randomNumber, <span class="fu">id</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ot">stub ::</span> <span class="dt">YesodDispatch</span> a <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">YesodExample</span> a ()</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>stub f <span class="ot">=</span> testModifySite (\app <span class="ot">-&gt;</span> <span class="fu">pure</span> (f app, <span class="fu">id</span>))</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ot">spec ::</span> <span class="dt">Spec</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>spec <span class="ot">=</span> withApp <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  describe <span class="st">&quot;GET /random&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;works with even numbers&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      stub (\a <span class="ot">-&gt;</span> a { appRandomNumber <span class="ot">=</span> <span class="fu">pure</span> <span class="dv">66</span> })</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      get <span class="dt">RandomR</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      statusIs <span class="dv">200</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      bodyEquals <span class="st">&quot;\&quot;even\&quot;&quot;</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;works with odd numbers&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      stub (\a <span class="ot">-&gt;</span> a { appRandomNumber <span class="ot">=</span> <span class="fu">pure</span> <span class="dv">17</span> })</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      get <span class="dt">RandomR</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      statusIs <span class="dv">200</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      bodyEquals <span class="st">&quot;\&quot;odd\&quot;&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">withApp</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">SpecWith</span><span class="w"> </span><span class="p">(</span><span class="kt">TestApp</span><span class="w"> </span><span class="kt">App</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Spec</span>
+<span class="nf">withApp</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="kt">App</span><span class="w"> </span><span class="n">randomNumber</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">)</span>
+
+<span class="nf">stub</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">YesodDispatch</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">YesodExample</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">stub</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">testModifySite</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="n">app</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">))</span>
+
+<span class="nf">spec</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Spec</span>
+<span class="nf">spec</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">withApp</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+
+<span class="w">  </span><span class="n">describe</span><span class="w"> </span><span class="s">&quot;GET /random&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+
+<span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="s">&quot;works with even numbers&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">      </span><span class="n">stub</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">appRandomNumber</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="mi">66</span><span class="w"> </span><span class="p">})</span>
+<span class="w">      </span><span class="n">get</span><span class="w"> </span><span class="kt">RandomR</span>
+<span class="w">      </span><span class="n">statusIs</span><span class="w"> </span><span class="mi">200</span>
+<span class="w">      </span><span class="n">bodyEquals</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">even</span><span class="se">\&quot;</span><span class="s">&quot;</span>
+
+<span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="s">&quot;works with odd numbers&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">      </span><span class="n">stub</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">appRandomNumber</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="mi">17</span><span class="w"> </span><span class="p">})</span>
+<span class="w">      </span><span class="n">get</span><span class="w"> </span><span class="kt">RandomR</span>
+<span class="w">      </span><span class="n">statusIs</span><span class="w"> </span><span class="mi">200</span>
+<span class="w">      </span><span class="n">bodyEquals</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">odd</span><span class="se">\&quot;</span><span class="s">&quot;</span>
+</pre></div>
+
 <p>Of course, the usual warnings apply. There are problems that come along with
 stubbing out functions — if your stub doesn’t accurately reflect what that
 function <em>actually</em> does, then your test is only giving you false confidence.</p>
@@ -314,10 +328,12 @@ function that may be in scope.</p>
 <p>✔ <code>Email.parse</code> is easy to read.</p>
 <p>✔ <code>Email.parse</code> makes it clear what kind of thing we’re parsing.</p>
 <p>✔ <code>Email.parse</code> makes it clear where that function is defined.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Acme.Email</span> <span class="kw">qualified</span> <span class="kw">as</span> <span class="dt">Email</span> <span class="co">-- exports `parse`, not `parseEmail`</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="fu">print</span> <span class="op">$</span> Email.parse <span class="st">&quot;foo@bar.com&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">import</span><span class="w"> </span><span class="nn">Acme.Email</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="c1">-- exports `parse`, not `parseEmail`</span>
+
+<span class="nf">main</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">main</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">print</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">Email</span><span class="o">.</span><span class="n">parse</span><span class="w"> </span><span class="s">&quot;foo@bar.com&quot;</span>
+</pre></div>
+
 <p>The module describes the context we’re in. Sometimes we need to make
 that context clearer, and sometimes the context is already clear enough.</p>
 ]]></description>
@@ -333,18 +349,20 @@ that context clearer, and sometimes the context is already clear enough.</p>
 them from values outside your system boundary, <em>i.e.</em>, those submitted by a
 user through a web form.</p>
 <p>It’s easy enough to use a <code>textField</code> for each field in our login form.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Assume this type synonym exists for all examples in this article</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">Form</span> x <span class="ot">=</span> <span class="dt">Html</span> <span class="ot">-&gt;</span> <span class="dt">MForm</span> (<span class="dt">HandlerFor</span> <span class="dt">App</span>) (<span class="dt">FormResult</span> x, <span class="dt">Widget</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- A login form with a single field</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">LoginForm</span> <span class="ot">=</span> <span class="dt">LoginForm</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> loginFormEmail ::</span> <span class="dt">Text</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="ot">loginForm ::</span> <span class="dt">Form</span> <span class="dt">LoginForm</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>loginForm extra <span class="ot">=</span>  <span class="kw">do</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>  email <span class="ot">&lt;-</span> mreq textField <span class="st">&quot;&quot;</span> <span class="dt">Nothing</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">LoginForm</span> <span class="op">&lt;$&gt;</span> <span class="fu">fst</span> email, <span class="op">$</span>(widgetFile <span class="st">&quot;login&quot;</span>))</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- Assume this type synonym exists for all examples in this article</span>
+<span class="kr">type</span><span class="w"> </span><span class="kt">Form</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Html</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">MForm</span><span class="w"> </span><span class="p">(</span><span class="kt">HandlerFor</span><span class="w"> </span><span class="kt">App</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">FormResult</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">Widget</span><span class="p">)</span>
+
+<span class="c1">-- A login form with a single field</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">LoginForm</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">LoginForm</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">loginFormEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="nf">loginForm</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Form</span><span class="w"> </span><span class="kt">LoginForm</span>
+<span class="nf">loginForm</span><span class="w"> </span><span class="n">extra</span><span class="w"> </span><span class="ow">=</span><span class="w">  </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">mreq</span><span class="w"> </span><span class="n">textField</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="kt">Nothing</span>
+<span class="w">  </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="kt">LoginForm</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="n">fst</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="n">widgetFile</span><span class="w"> </span><span class="s">&quot;login&quot;</span><span class="p">))</span>
+</pre></div>
+
 <p>No surprises here.</p>
 <h2 id="with-newtypes">With Newtypes</h2>
 <p>What if our types aren’t exactly <code>Text</code> values, but are some kind of
@@ -355,36 +373,40 @@ newtype which wraps the underlying text value?</p>
 <p>Fortunately, Yesod’s <a href="https://hackage.haskell.org/package/yesod-form">form library</a> provides <a href="https://hackage.haskell.org/package/yesod-form-1.7.4/docs/Yesod-Form-Functions.html#v:convertField"><code>convertField</code></a> to handle
 this case. You apply this function to a couple of functions for converting to
 and from your newtype, and a form field you wish to wrap.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Email</span> <span class="ot">=</span> <span class="dt">Email</span> {<span class="ot"> unEmail ::</span> <span class="dt">Text</span> }</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">LoginForm</span> <span class="ot">=</span> <span class="dt">LoginForm</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> loginFormEmail ::</span> <span class="dt">Email</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ot">loginForm ::</span> <span class="dt">Form</span> <span class="dt">LoginForm</span></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>loginForm extra <span class="ot">=</span>  <span class="kw">do</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  email <span class="ot">&lt;-</span> mreq (convertField <span class="dt">Email</span> unEmail textField) <span class="st">&quot;&quot;</span> <span class="dt">Nothing</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">LoginForm</span> <span class="op">&lt;$&gt;</span> <span class="fu">fst</span> email, <span class="op">$</span>(widgetFile <span class="st">&quot;login&quot;</span>))</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">newtype</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">unEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="p">}</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="kt">LoginForm</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">LoginForm</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">loginFormEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="nf">loginForm</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Form</span><span class="w"> </span><span class="kt">LoginForm</span>
+<span class="nf">loginForm</span><span class="w"> </span><span class="n">extra</span><span class="w"> </span><span class="ow">=</span><span class="w">  </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">mreq</span><span class="w"> </span><span class="p">(</span><span class="n">convertField</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="n">unEmail</span><span class="w"> </span><span class="n">textField</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="kt">Nothing</span>
+<span class="w">  </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="kt">LoginForm</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="n">fst</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="n">widgetFile</span><span class="w"> </span><span class="s">&quot;login&quot;</span><span class="p">))</span>
+</pre></div>
+
 <h2 id="with-smart-constructors">With Smart Constructors</h2>
 <p>Newtype wrappers are better than working directly with primitive types, but by
 themselves they don’t provide a great deal of type safety because the wrapped
 data isn’t any more constrained than when it’s unwrapped.</p>
 <p>To solve that, we would reach for a <a href="https://kowainik.github.io/posts/haskell-mini-patterns#smart-constructor">smart constructor</a>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Explicitly exclude the value constructor</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Email</span> (<span class="dt">Email</span>, unEmail, email) <span class="kw">where</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">-- The newtype wrapper without a record field</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Email</span> <span class="ot">=</span> <span class="dt">Email</span> <span class="dt">Text</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- Unwrap the newtype</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="ot">unEmail ::</span> <span class="dt">Email</span> <span class="ot">-&gt;</span> <span class="dt">Text</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>unEmail (<span class="dt">Email</span> email) <span class="ot">=</span> email</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- The smart constructor</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="ot">email ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Email</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>email t</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="st">&quot;@&quot;</span> <span class="ot">`isInfixOf`</span> t <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Email</span> t)</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dt">Nothing</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- Explicitly exclude the value constructor</span>
+<span class="kr">module</span><span class="w"> </span><span class="nn">Email</span><span class="w"> </span><span class="p">(</span><span class="kt">Email</span><span class="p">,</span><span class="w"> </span><span class="nf">unEmail</span><span class="p">,</span><span class="w"> </span><span class="nf">email</span><span class="p">)</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="c1">-- The newtype wrapper without a record field</span>
+<span class="kr">newtype</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="kt">Text</span>
+
+<span class="c1">-- Unwrap the newtype</span>
+<span class="nf">unEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Text</span>
+<span class="nf">unEmail</span><span class="w"> </span><span class="p">(</span><span class="kt">Email</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">email</span>
+
+<span class="c1">-- The smart constructor</span>
+<span class="nf">email</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">Email</span>
+<span class="nf">email</span><span class="w"> </span><span class="n">t</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;@&quot;</span><span class="w"> </span><span class="p">`</span><span class="n">isInfixOf</span><span class="p">`</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Just</span><span class="w"> </span><span class="p">(</span><span class="kt">Email</span><span class="w"> </span><span class="n">t</span><span class="p">)</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">otherwise</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Nothing</span>
+</pre></div>
+
 <p>What if we’re using the smart constructor pattern and our newtypes can’t be
 naïvely constructed? We can’t use <code>convertField</code> because the types won’t line
 up.</p>
@@ -395,21 +417,23 @@ instead of having to define validation rules in two places.</p>
 <p>This function wants to ultimately produce an <code>Either msg b</code> but our smart
 constructor only produces a <code>Maybe b</code>. We can use the <a href="https://hackage.haskell.org/package/errors-2.3.0/docs/Control-Error-Util.html#v:note"><code>note</code></a> function to
 promote it and provide a friendly error message.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> <span class="kw">where</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Email</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">LoginForm</span> <span class="ot">=</span> <span class="dt">LoginForm</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> loginFormEmail ::</span> <span class="dt">Email</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="ot">loginForm ::</span> <span class="dt">Form</span> <span class="dt">LoginForm</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>loginForm extra <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  email <span class="ot">&lt;-</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> msg <span class="ot">=</span> asText <span class="st">&quot;Invalid email&quot;</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        checkEmail <span class="ot">=</span> <span class="fu">pure</span> <span class="op">.</span> note msg <span class="op">.</span> email</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>     <span class="kw">in</span> mreq (checkMMap checkEmail unEmail textField) <span class="st">&quot;&quot;</span> <span class="dt">Nothing</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">LoginForm</span> <span class="op">&lt;$&gt;</span> <span class="fu">fst</span> email, <span class="op">$</span>(widgetFile <span class="st">&quot;login&quot;</span>))</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">module</span><span class="w"> </span><span class="nn">Main</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="kr">import</span><span class="w"> </span><span class="nn">Email</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="kt">LoginForm</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">LoginForm</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">loginFormEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="nf">loginForm</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Form</span><span class="w"> </span><span class="kt">LoginForm</span>
+<span class="nf">loginForm</span><span class="w"> </span><span class="n">extra</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="ow">&lt;-</span>
+<span class="w">    </span><span class="kr">let</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">asText</span><span class="w"> </span><span class="s">&quot;Invalid email&quot;</span>
+<span class="w">        </span><span class="n">checkEmail</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">note</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">email</span>
+<span class="w">     </span><span class="kr">in</span><span class="w"> </span><span class="n">mreq</span><span class="w"> </span><span class="p">(</span><span class="n">checkMMap</span><span class="w"> </span><span class="n">checkEmail</span><span class="w"> </span><span class="n">unEmail</span><span class="w"> </span><span class="n">textField</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="kt">Nothing</span>
+<span class="w">  </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="kt">LoginForm</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="n">fst</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="n">widgetFile</span><span class="w"> </span><span class="s">&quot;login&quot;</span><span class="p">))</span>
+</pre></div>
+
 <p>Since <code>checkMMap</code> runs in the <code>Handler</code> monad, you can also run IO actions or
 database transactions as part of the validation step. For example, you could
 query the database and check that the email address you’re trying to log in
@@ -430,9 +454,11 @@ manage parsing/validation together at the web form level.</p>
     <title>Derived Instances Can Break Smart Constructors, Too</title>
     <link>https://jezenthomas.com/2023/06/derived-instances-can-break-smart-constructors/</link>
     <description><![CDATA[<p>You know that <em>primitive obsession</em> is an anti-pattern.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Bad, because it&#39;s &quot;stringly typed&quot;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">validPassword ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>validPassword password <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- Bad, because it&#39;s &quot;stringly typed&quot;</span>
+<span class="nf">validPassword</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Bool</span>
+<span class="nf">validPassword</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+</pre></div>
+
 <p>We’re using a <code>Text</code> value to represent a user’s password. This is bad because
 there are so many possible <code>Text</code> values which would not be valid passwords.</p>
 <p>For example, <code>"letmein"</code> is too short to be a valid password.</p>
@@ -441,37 +467,41 @@ system. This saves you from having to program defensively throughout your
 codebase.</p>
 <p>To this end, you introduce a new type which wraps a text value and models the
 concept of a password.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> {<span class="ot"> unPassword ::</span> <span class="dt">Text</span> }</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ot">validPassword ::</span> <span class="dt">Password</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>validPassword password <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">newtype</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">unPassword</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="p">}</span>
+
+<span class="nf">validPassword</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Bool</span>
+<span class="nf">validPassword</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+</pre></div>
+
 <p>This is better, but it’s still pretty weak. We’ve introduced a different name
 in the type signature so it’s harder to confuse this value for some other
 text value. The problem is that you can construct a <code>Password</code> value from
 literally <em>any</em> text value. This leads to invalid values floating through your
 system.</p>
 <p>We can fix that by writing a <a href="https://kowainik.github.io/posts/haskell-mini-patterns#smart-constructor">smart constructor</a>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Careful what we export from this module. Hide that constructor.</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Model.Password</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Password</span>    <span class="co">-- abstract, hiding the constructor</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  , unPassword  <span class="co">-- unwrap a password</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  , password    <span class="co">-- only way to build a password</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="kw">where</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- Our type wraps a Text value. No record field here!</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> <span class="dt">Text</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Unwrap a &#39;Password&#39;</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="ot">unPassword ::</span> <span class="dt">Password</span> <span class="ot">-&gt;</span> <span class="dt">Text</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>unPassword (<span class="dt">Password</span> p) <span class="ot">=</span> p</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- Try to construct a &#39;Password&#39;</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ot">password ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Password</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>password t</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">length</span> t <span class="op">&lt;</span> <span class="dv">8</span>    <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;Password is too short&quot;</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">length</span> t <span class="op">&gt;</span> <span class="dv">64</span>   <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;Password is too long&quot;</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> t <span class="op">==</span> <span class="st">&quot;password&quot;</span> <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;Password is too predictable&quot;</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span>       <span class="ot">=</span> <span class="dt">Right</span> (<span class="dt">Password</span> t)</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- Careful what we export from this module. Hide that constructor.</span>
+<span class="kr">module</span><span class="w"> </span><span class="nn">Model.Password</span>
+<span class="w">  </span><span class="p">(</span><span class="w"> </span><span class="kt">Password</span><span class="w">    </span><span class="c1">-- abstract, hiding the constructor</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nf">unPassword</span><span class="w">  </span><span class="c1">-- unwrap a password</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nf">password</span><span class="w">    </span><span class="c1">-- only way to build a password</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="c1">-- Our type wraps a Text value. No record field here!</span>
+<span class="kr">newtype</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="kt">Text</span>
+
+<span class="c1">-- Unwrap a &#39;Password&#39;</span>
+<span class="nf">unPassword</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Text</span>
+<span class="nf">unPassword</span><span class="w"> </span><span class="p">(</span><span class="kt">Password</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">p</span>
+
+<span class="c1">-- Try to construct a &#39;Password&#39;</span>
+<span class="nf">password</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Either</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="kt">Password</span>
+<span class="nf">password</span><span class="w"> </span><span class="n">t</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">8</span><span class="w">    </span><span class="ow">=</span><span class="w"> </span><span class="kt">Left</span><span class="w"> </span><span class="s">&quot;Password is too short&quot;</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">64</span><span class="w">   </span><span class="ow">=</span><span class="w"> </span><span class="kt">Left</span><span class="w"> </span><span class="s">&quot;Password is too long&quot;</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Left</span><span class="w"> </span><span class="s">&quot;Password is too predictable&quot;</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">otherwise</span><span class="w">       </span><span class="ow">=</span><span class="w"> </span><span class="kt">Right</span><span class="w"> </span><span class="p">(</span><span class="kt">Password</span><span class="w"> </span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+
 <p>This module uses explicit exports, because it’s important that the value
 constructor for <code>Password</code> remains internal to this module. The only way the we
 can construct a <code>Password</code> value outside of this module is by applying the
@@ -496,10 +526,12 @@ tempting to ask the compiler to <em>derive</em> the <code>FromJSON</code> instan
 <code>GeneralizedNewtypeDeriving</code> language extension. It’s less code to write and
 maintain, and in many cases you will indeed want a typeclass instance that is
 the same as the instance of the underlying type.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> <span class="dt">Text</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> <span class="dt">FromJSON</span> <span class="co">-- here&#39;s your problem</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="cm">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span>
+
+<span class="kr">newtype</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="kt">Text</span>
+<span class="w">  </span><span class="kr">deriving</span><span class="w"> </span><span class="kt">FromJSON</span><span class="w"> </span><span class="c1">-- here&#39;s your problem</span>
+</pre></div>
+
 <p>When you’re using smart constructors however, this will lead to invalid data
 flowing through your system because like record fields, this is also a way to
 circumvent the validation performed by the smart constructor.</p>
@@ -507,18 +539,20 @@ circumvent the validation performed by the smart constructor.</p>
 module exports here. Typeclass instances in Haskell are always exported and
 imported between modules!</p>
 <p>Fixing this is simple — just manually write the instance.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE LambdaCase #-}</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> <span class="dt">Text</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Password</span> <span class="kw">where</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  parseJSON <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> p) <span class="ot">-&gt;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> password p <span class="kw">of</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Left</span> err <span class="ot">-&gt;</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>          <span class="fu">fail</span> <span class="op">$</span> <span class="st">&quot;Could not parse Password: &quot;</span> <span class="op">&lt;&gt;</span> unpack p <span class="op">&lt;&gt;</span> <span class="st">&quot;; &quot;</span> <span class="op">&lt;&gt;</span> err <span class="op">&lt;&gt;</span> <span class="st">&quot;.&quot;</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Right</span> pass&#39; <span class="ot">-&gt;</span> <span class="fu">pure</span> pass&#39;</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Could not parse Password - was not a String&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="cm">{-# LANGUAGE LambdaCase #-}</span>
+
+<span class="kr">newtype</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="kt">Text</span>
+
+<span class="kr">instance</span><span class="w"> </span><span class="kt">FromJSON</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="kr">where</span>
+<span class="w">  </span><span class="n">parseJSON</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="nf">\</span><span class="kr">case</span>
+<span class="w">    </span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">      </span><span class="kr">case</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">        </span><span class="kt">Left</span><span class="w"> </span><span class="n">err</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">          </span><span class="n">fail</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="s">&quot;Could not parse Password: &quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">unpack</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="s">&quot;; &quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">err</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="s">&quot;.&quot;</span>
+<span class="w">        </span><span class="kt">Right</span><span class="w"> </span><span class="n">pass&#39;</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="n">pass&#39;</span>
+<span class="w">    </span><span class="kr">_</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">fail</span><span class="w"> </span><span class="s">&quot;Could not parse Password - was not a String&quot;</span>
+</pre></div>
+
 <p>Despite these two pitfalls, smart constructors are a good return on investment.
 Just be sure you don’t accidentally introduce ways to circumvent the protection
 that they provide.</p>
@@ -606,27 +640,33 @@ in your system. Your <code>User</code> model will be persisted in the <code>user
 <code>User</code> has a <code>name</code> field, which will be persisted in a column with a <code>VARCHAR</code>
 (or <code>TEXT</code>) type.</p>
 <p>So you define your persistent model this way:</p>
-<pre><code>User
+<div class="highlight"><pre><span></span>User
   name Text
   dateOfBirth Day
   email Text
   UniqueEmail email
-  -- etc…</code></pre>
+  -- etc…
+</pre></div>
+
 <p>The problem of course is that the <a href="https://en.wikibooks.org/wiki/A-level_Computing/AQA/Paper_2/Fundamentals_of_functional_programming/Basics_of_functional_programming">domain</a> for the <code>name</code> field (and also
 the email field) is much larger than we want. Even taking into account
 <a href="https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/">falsehoods programmers believe about names</a>, a name is not just <em>any</em> text
 value. We need to enforce some rules. We need to reduce our problem space. We
 need to <em>make it smaller</em>.</p>
 <p>For example, we wouldn’t want a user with an empty string for a name:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  { name <span class="ot">=</span> <span class="st">&quot;&quot;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  , dateOfBirth <span class="ot">=</span> <span class="co">-- …</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kt">User</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">dateOfBirth</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="c1">-- etc…</span>
+</pre></div>
+
 <p>We also wouldn’t want <em>this</em> monstrosity<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="dt">User</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  { name <span class="ot">=</span> <span class="st">&quot;V̥̝̣̤͇̮̣̦ͮͬ̇͌̕͟l̲̩̠̬͆ͪ͒͌̿ͧ̅͊͘a̷̙̾́̐͌̀ͥ̂̅͝ḓͤͣ̅͂̂ͩ̆͡ò̲̙͙̗̳̻̠̀l̥̮͈̫̻̤̞̿͛ͧ̄͒͋̅̂ͩ͘f̸̮̩̫̺̾͊̌̌ͫ̀͟ͅ ̥ͪ͋͞P̟̻̝͕̩͎̞ͭ̾ͧ͗̆̉u̶͍̱̭͎̓͋̓͂͗ͧͯ͡ͅͅt̸̯̜̟̥̋ͬͦ͂͆͘͟l̯͉͉̤ͣe̱̟̮̖̋ͦ̌͒͂͆ͪ͌͘r͚͛̒͗̔͊̚͘&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  , dateOfBirth <span class="ot">=</span> <span class="co">-- …</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- etc…</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kt">User</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="s">&quot;V̥̝̣̤͇̮̣̦ͮͬ̇͌̕͟l̲̩̠̬͆ͪ͒͌̿ͧ̅͊͘a̷̙̾́̐͌̀ͥ̂̅͝ḓͤͣ̅͂̂ͩ̆͡ò̲̙͙̗̳̻̠̀l̥̮͈̫̻̤̞̿͛ͧ̄͒͋̅̂ͩ͘f̸̮̩̫̺̾͊̌̌ͫ̀͟ͅ ̥ͪ͋͞P̟̻̝͕̩͎̞ͭ̾ͧ͗̆̉u̶͍̱̭͎̓͋̓͂͗ͧͯ͡ͅͅt̸̯̜̟̥̋ͬͦ͂͆͘͟l̯͉͉̤ͣe̱̟̮̖̋ͦ̌͒͂͆ͪ͌͘r͚͛̒͗̔͊̚͘&quot;</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">dateOfBirth</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="c1">-- etc…</span>
+</pre></div>
+
 <p>It’s all very well telling ourselves that this wouldn’t happen to us because we
 are running a comprehensive validation function when processing the form submission
 that ingests this data, but the reality is that in a non-trivial business your
@@ -636,32 +676,34 @@ are facts of life.</p>
 <code>Text</code> is a code smell. When we see it, it’s telling us that we should <em>make
 our types smaller</em>. That is to say, more specific.</p>
 <p>Perhaps what we want instead is something like this:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[st|</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  -- Our User type with more specific types in its fields</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  User</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    name Username -- This type is smaller!</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    dateOfBirth Day</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    email Email</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    UniqueEmail email</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    -- etc…</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>|]</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Introduce a Username type which wraps a text value</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="co">-- Keep this in a different module, and be sure not to expose the constructor!</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Username</span>  <span class="ot">=</span> <span class="dt">Username</span> {<span class="ot"> unUsername ::</span> <span class="dt">Text</span> }</span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- The &quot;smart constructor&quot; which enforces validation rules</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="co">-- Only expose this one!</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="ot">mkUsername ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Username</span></span>
-<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>mkUsername t</span>
-<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> t <span class="op">==</span> <span class="st">&quot;&quot;</span> <span class="ot">=</span> <span class="dt">Nothing</span></span>
-<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> failsSomeOtherValidationRule t <span class="ot">=</span> <span class="dt">Nothing</span></span>
-<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span> <span class="ot">=</span> <span class="dt">Just</span> (<span class="dt">Username</span> t)</span>
-<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="co">-- Teach our program to marshal values over the system boundary</span></span>
-<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">PersistField</span> <span class="dt">Username</span> <span class="kw">where</span></span>
-<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>  toPersistValue <span class="ot">=</span> <span class="co">-- unwrap value</span></span>
-<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>  fromPersistValue <span class="ot">=</span> <span class="co">-- parse value into narrower type</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">st</span><span class="o">|</span>
+<span class="w">  </span><span class="c1">-- Our User type with more specific types in its fields</span>
+<span class="w">  </span><span class="kt">User</span>
+<span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="kt">Username</span><span class="w"> </span><span class="c1">-- This type is smaller!</span>
+<span class="w">    </span><span class="n">dateOfBirth</span><span class="w"> </span><span class="kt">Day</span>
+<span class="w">    </span><span class="n">email</span><span class="w"> </span><span class="kt">Email</span>
+<span class="w">    </span><span class="kt">UniqueEmail</span><span class="w"> </span><span class="n">email</span>
+<span class="w">    </span><span class="c1">-- etc…</span>
+<span class="o">|</span><span class="p">]</span>
+
+<span class="c1">-- Introduce a Username type which wraps a text value</span>
+<span class="c1">-- Keep this in a different module, and be sure not to expose the constructor!</span>
+<span class="kr">newtype</span><span class="w"> </span><span class="kt">Username</span><span class="w">  </span><span class="ow">=</span><span class="w"> </span><span class="kt">Username</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">unUsername</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="p">}</span>
+
+<span class="c1">-- The &quot;smart constructor&quot; which enforces validation rules</span>
+<span class="c1">-- Only expose this one!</span>
+<span class="nf">mkUsername</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">Username</span>
+<span class="nf">mkUsername</span><span class="w"> </span><span class="n">t</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Nothing</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">failsSomeOtherValidationRule</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Nothing</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">otherwise</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Just</span><span class="w"> </span><span class="p">(</span><span class="kt">Username</span><span class="w"> </span><span class="n">t</span><span class="p">)</span>
+
+<span class="c1">-- Teach our program to marshal values over the system boundary</span>
+<span class="kr">instance</span><span class="w"> </span><span class="kt">PersistField</span><span class="w"> </span><span class="kt">Username</span><span class="w"> </span><span class="kr">where</span>
+<span class="w">  </span><span class="n">toPersistValue</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- unwrap value</span>
+<span class="w">  </span><span class="n">fromPersistValue</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- parse value into narrower type</span>
+</pre></div>
+
 <p>It may seem more expensive to use a more specific type because you then need to
 take the time to teach your program how to marshal values across that
 application/database boundary, but I think this one-time cost is cheaper than
@@ -711,14 +753,18 @@ the past — again for the sake of expediency — I have persisted values in the
 database with exactly the same representation as Haskell would use when
 printing that value to the screen. This means I would see the skeletons of
 <code>newtype</code> wrappers in the database, <em>e.g.</em>,</p>
-<pre><code>db=# select customer_id from subscriptions;
+<div class="highlight"><pre><span></span>db=# select customer_id from subscriptions;
                   customer_id
 --------------------------------------------------
  CustomerKey {unCustomerKey = cus_Buc4bl7hPFJfcC}
  CustomerKey {unCustomerKey = Cus_LO80QORn3LnNPV}
- CustomerKey {unCustomerKey = Cus_GoRq02qsQbd3st}</code></pre>
+ CustomerKey {unCustomerKey = Cus_GoRq02qsQbd3st}
+</pre></div>
+
 <p>The serialisation for this type is generated by the following Template Haskell:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>derivePersistField <span class="st">&quot;CustomerId&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">derivePersistField</span><span class="w"> </span><span class="s">&quot;CustomerId&quot;</span>
+</pre></div>
+
 <p>This is enticing because the amount of code is small, but as before, the data
 is now harder to work with and the signal to noise ratio is worse.</p>
 <p>Writing the persistence instances by hand to wrap and unwrap the inner values

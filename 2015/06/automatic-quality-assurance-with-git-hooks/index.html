@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -80,16 +80,18 @@ including in the commit. If there are no changes staged for the commit, the
 script exits early without stashing anything. Don’t worry about the <code>highlight</code>
 function for now; it’s just a wrapped version of <code>printf</code> with some colour, and
 you’ll see it later.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="fu">git</span> diff <span class="at">--quiet</span> <span class="at">--cached</span> HEAD<span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="ex">highlight</span> <span class="st">&quot;No changes to test; exiting&quot;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">exit</span> 0</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">git</span> status <span class="at">-s</span> <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span><span class="va">)</span><span class="st">&quot;</span> <span class="ot">!=</span> 0 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  <span class="ex">highlight</span> <span class="st">&quot;Stashing unstaged changes&quot;</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash save <span class="at">--keep-index</span> <span class="at">--include-untracked</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="k">if</span><span class="w"> </span>git<span class="w"> </span>diff<span class="w"> </span>--quiet<span class="w"> </span>--cached<span class="w"> </span>HEAD<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span>highlight<span class="w"> </span><span class="s2">&quot;No changes to test; exiting&quot;</span>
+<span class="w">  </span><span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+<span class="k">fi</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>git<span class="w"> </span>status<span class="w"> </span>-s<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span>highlight<span class="w"> </span><span class="s2">&quot;Stashing unstaged changes&quot;</span>
+<span class="k">fi</span>
+
+git<span class="w"> </span>stash<span class="w"> </span>save<span class="w"> </span>--keep-index<span class="w"> </span>--include-untracked
+</pre></div>
+
 <h2 id="quality-control">Quality Control</h2>
 <p>For a git-hook to succeed, the script should exit with an error code of <code>0</code>.
 After each check I add the exit code of that check to a counter, and exit the
@@ -105,96 +107,104 @@ equivalents for whichever tech stack you’re using. I’m using the
 <a href="https://github.com/presidentbeef/brakeman">brakeman gem</a> to protect me from creating obvious security
 vulnerabilities, and I think every project ought to have something like this
 running regularly.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="bu">declare</span> <span class="at">-i</span> <span class="va">ERRORS</span><span class="op">=</span>0</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">trap</span> pop_stash EXIT</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">highlight</span> <span class="st">&quot;Checking for style/syntax errors&quot;</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">rubocop</span> <span class="at">--rails</span> <span class="at">--fail-fast</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="va">ERRORS</span><span class="op">+=</span><span class="va">$?</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="ex">highlight</span> <span class="st">&quot;Checking for security vulnerabilities&quot;</span></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ex">brakeman</span> <span class="at">-q</span> <span class="at">-z</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="va">ERRORS</span><span class="op">+=</span><span class="va">$?</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="ex">highlight</span> <span class="st">&quot;Running RSpec tests&quot;</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="ex">rspec</span> <span class="at">--fail-fast</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="va">ERRORS</span><span class="op">+=</span><span class="va">$?</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="ex">highlight</span> <span class="st">&quot;Running Cucumber tests&quot;</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="ex">cucumber</span> <span class="at">--format</span> progress</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="va">ERRORS</span><span class="op">+=</span><span class="va">$?</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span> <span class="va">$ERRORS</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nb">declare</span><span class="w"> </span>-i<span class="w"> </span><span class="nv">ERRORS</span><span class="o">=</span><span class="m">0</span>
+<span class="nb">trap</span><span class="w"> </span>pop_stash<span class="w"> </span>EXIT
+
+highlight<span class="w"> </span><span class="s2">&quot;Checking for style/syntax errors&quot;</span>
+rubocop<span class="w"> </span>--rails<span class="w"> </span>--fail-fast
+<span class="nv">ERRORS</span><span class="o">+=</span><span class="nv">$?</span>
+
+highlight<span class="w"> </span><span class="s2">&quot;Checking for security vulnerabilities&quot;</span>
+brakeman<span class="w"> </span>-q<span class="w"> </span>-z
+<span class="nv">ERRORS</span><span class="o">+=</span><span class="nv">$?</span>
+
+highlight<span class="w"> </span><span class="s2">&quot;Running RSpec tests&quot;</span>
+rspec<span class="w"> </span>--fail-fast
+<span class="nv">ERRORS</span><span class="o">+=</span><span class="nv">$?</span>
+
+highlight<span class="w"> </span><span class="s2">&quot;Running Cucumber tests&quot;</span>
+cucumber<span class="w"> </span>--format<span class="w"> </span>progress
+<span class="nv">ERRORS</span><span class="o">+=</span><span class="nv">$?</span>
+
+<span class="nb">exit</span><span class="w"> </span><span class="nv">$ERRORS</span>
+</pre></div>
+
 <h2 id="automatic-application-versioning">Automatic Application Versioning</h2>
 <p>I like the idea of seeing my application version printed somewhere in my app. If
 all of my quality control checks pass, I write a datestamp to a file in my
 application. I went with a datestamp instead of major/minor numbers or a commit
 hash because it’s the simplest thing that works, and also it <a href="http://blog.codinghorror.com/whats-in-a-version-number-anyway/">makes the most
 sense</a>. I use Git to then add the bumped version to the staging area.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span> +%Y%m%d%H%M <span class="op">&gt;</span> config/version</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add config/version</span></code></pre></div>
+<div class="highlight"><pre><span></span>date<span class="w"> </span>+%Y%m%d%H%M<span class="w"> </span>&gt;<span class="w"> </span>config/version
+git<span class="w"> </span>add<span class="w"> </span>config/version
+</pre></div>
+
 <p>If you want to use this version number in your Rails app, you can add the
 following in <code>config/application.rb</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="cf">module</span> <span class="dt">MyApp</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">class</span> <span class="dt">Application</span> <span class="kw">&lt;</span> <span class="dt">Rails</span><span class="kw">::</span><span class="dt">Application</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    config<span class="at">.version</span> <span class="kw">=</span> <span class="dt">File</span><span class="at">.read</span>(<span class="st">&quot;config/version&quot;</span>)</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">end</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">end</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="k">module</span><span class="w"> </span><span class="nn">MyApp</span>
+<span class="w">  </span><span class="k">class</span><span class="w"> </span><span class="nc">Application</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="no">Rails</span><span class="o">::</span><span class="no">Application</span>
+<span class="w">    </span><span class="n">config</span><span class="o">.</span><span class="n">version</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="no">File</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="s2">&quot;config/version&quot;</span><span class="p">)</span>
+<span class="w">  </span><span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+
 <h2 id="the-whole-script">The Whole Script</h2>
 <p>I was jumping around the script before so I could explain its components in
 finer detail, but this is an imperative script so the order in which each line
 is executed is important. Here’s the complete script for you to <del>copy and
 paste</del> reference.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-e</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="fu">highlight()</span> <span class="kw">{</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tput</span> setaf 6</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;%s\n&quot;</span> <span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tput</span> sgr0</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="fu">pop_stash()</span> <span class="kw">{</span></span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="ex">highlight</span> <span class="st">&quot;Reapplying unstaged changes&quot;</span></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">git</span> stash pop</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="bu">declare</span> <span class="at">-i</span> <span class="va">ERRORS</span><span class="op">=</span>0</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="fu">git</span> diff <span class="at">--quiet</span> <span class="at">--cached</span> HEAD<span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>  <span class="ex">highlight</span> <span class="st">&quot;No changes to test; exiting&quot;</span></span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>  <span class="bu">exit</span> 0</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="bu">[</span> <span class="st">&quot;</span><span class="va">$(</span><span class="fu">git</span> status <span class="at">-s</span> <span class="kw">|</span> <span class="fu">wc</span> <span class="at">-l</span><span class="va">)</span><span class="st">&quot;</span> <span class="ot">!=</span> 0 <span class="bu">]</span><span class="kw">;</span> <span class="cf">then</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>  <span class="ex">highlight</span> <span class="st">&quot;Stashing unstaged changes&quot;</span></span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> stash save <span class="at">--keep-index</span> <span class="at">--include-untracked</span></span>
-<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a><span class="bu">trap</span> pop_stash EXIT</span>
-<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="ex">highlight</span> <span class="st">&quot;Checking for style/syntax errors&quot;</span></span>
-<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a><span class="ex">rubocop</span> <span class="at">--rails</span> <span class="at">--fail-fast</span></span>
-<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a><span class="va">ERRORS</span><span class="op">+=</span><span class="va">$?</span></span>
-<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a><span class="ex">highlight</span> <span class="st">&quot;Checking for security vulnerabilities&quot;</span></span>
-<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a><span class="ex">brakeman</span> <span class="at">-q</span> <span class="at">-z</span></span>
-<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a><span class="va">ERRORS</span><span class="op">+=</span><span class="va">$?</span></span>
-<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a><span class="ex">highlight</span> <span class="st">&quot;Running RSpec tests&quot;</span></span>
-<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a><span class="ex">rspec</span> <span class="at">--fail-fast</span></span>
-<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a><span class="va">ERRORS</span><span class="op">+=</span><span class="va">$?</span></span>
-<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a><span class="ex">highlight</span> <span class="st">&quot;Running Cucumber tests&quot;</span></span>
-<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a><span class="ex">cucumber</span> <span class="at">--format</span> progress</span>
-<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a><span class="va">ERRORS</span><span class="op">+=</span><span class="va">$?</span></span>
-<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a><span class="fu">date</span> +%Y%m%d%H%M <span class="op">&gt;</span> config/version</span>
-<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a><span class="fu">git</span> add config/version</span>
-<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span> <span class="va">$ERRORS</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="nb">set</span><span class="w"> </span>-e
+
+highlight<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span>tput<span class="w"> </span>setaf<span class="w"> </span><span class="m">6</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s\n&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$1</span><span class="s2">&quot;</span>
+<span class="w">  </span>tput<span class="w"> </span>sgr0
+<span class="o">}</span>
+
+pop_stash<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span>highlight<span class="w"> </span><span class="s2">&quot;Reapplying unstaged changes&quot;</span>
+<span class="w">  </span>git<span class="w"> </span>stash<span class="w"> </span>pop
+<span class="o">}</span>
+
+<span class="nb">declare</span><span class="w"> </span>-i<span class="w"> </span><span class="nv">ERRORS</span><span class="o">=</span><span class="m">0</span>
+
+<span class="k">if</span><span class="w"> </span>git<span class="w"> </span>diff<span class="w"> </span>--quiet<span class="w"> </span>--cached<span class="w"> </span>HEAD<span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span>highlight<span class="w"> </span><span class="s2">&quot;No changes to test; exiting&quot;</span>
+<span class="w">  </span><span class="nb">exit</span><span class="w"> </span><span class="m">0</span>
+<span class="k">fi</span>
+
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>git<span class="w"> </span>status<span class="w"> </span>-s<span class="w"> </span><span class="p">|</span><span class="w"> </span>wc<span class="w"> </span>-l<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span>highlight<span class="w"> </span><span class="s2">&quot;Stashing unstaged changes&quot;</span>
+<span class="k">fi</span>
+
+git<span class="w"> </span>stash<span class="w"> </span>save<span class="w"> </span>--keep-index<span class="w"> </span>--include-untracked
+
+<span class="nb">trap</span><span class="w"> </span>pop_stash<span class="w"> </span>EXIT
+
+highlight<span class="w"> </span><span class="s2">&quot;Checking for style/syntax errors&quot;</span>
+rubocop<span class="w"> </span>--rails<span class="w"> </span>--fail-fast
+<span class="nv">ERRORS</span><span class="o">+=</span><span class="nv">$?</span>
+
+highlight<span class="w"> </span><span class="s2">&quot;Checking for security vulnerabilities&quot;</span>
+brakeman<span class="w"> </span>-q<span class="w"> </span>-z
+<span class="nv">ERRORS</span><span class="o">+=</span><span class="nv">$?</span>
+
+highlight<span class="w"> </span><span class="s2">&quot;Running RSpec tests&quot;</span>
+rspec<span class="w"> </span>--fail-fast
+<span class="nv">ERRORS</span><span class="o">+=</span><span class="nv">$?</span>
+
+highlight<span class="w"> </span><span class="s2">&quot;Running Cucumber tests&quot;</span>
+cucumber<span class="w"> </span>--format<span class="w"> </span>progress
+<span class="nv">ERRORS</span><span class="o">+=</span><span class="nv">$?</span>
+
+date<span class="w"> </span>+%Y%m%d%H%M<span class="w"> </span>&gt;<span class="w"> </span>config/version
+git<span class="w"> </span>add<span class="w"> </span>config/version
+
+<span class="nb">exit</span><span class="w"> </span><span class="nv">$ERRORS</span>
+</pre></div>
+
 
   </article>
 </div>

@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -76,23 +76,29 @@ Vim with <a href="http://www.shellcheck.net/" title="Official ShellCheck site">S
 automatically detects problems with shell scripts and commands.</p>
 <p>The first step is to install ShellCheck. If you’re running OSX like me, you can
 pull down a ready-to-go ShellCheck with <a href="http://brew.sh/" title="Official Homebrew site">Homebrew</a>.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ex">brew</span> update <span class="kw">&amp;&amp;</span> <span class="ex">brew</span> install shellcheck</span></code></pre></div>
+<div class="highlight"><pre><span></span>brew<span class="w"> </span>update<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>brew<span class="w"> </span>install<span class="w"> </span>shellcheck
+</pre></div>
+
 <p>The next step is to teach Vim to use ShellCheck as an external compiler. We can
 set this with <code>makeprg</code>. We’ll also want to ask ShellCheck to use gcc-style
 output, as Vim understands this by default. This could be added under an
 <code>autocmd</code> in your <code>.vimrc</code>, but instead I’m going to use Vim’s filetype plugin
 to store this configuration in its own file.</p>
-<pre class="vim"><code>&quot; ~/.vim/ftplugin/sh.vim
-set makeprg=shellcheck\ -f\ gcc\ %
-au BufWritePost * :silent make | redraw!</code></pre>
+<div class="highlight"><pre><span></span><span class="c">&quot; ~/.vim/ftplugin/sh.vim</span>
+<span class="k">set</span> <span class="nb">makeprg</span><span class="p">=</span>shellcheck\ <span class="p">-</span><span class="k">f</span>\ gcc\ %
+<span class="k">au</span> <span class="nb">BufWritePost</span> * :<span class="k">silent</span> <span class="k">make</span> <span class="p">|</span> <span class="k">redraw</span><span class="p">!</span>
+</pre></div>
+
 <p>The second line of that snippet runs the <code>:make</code> command every time Vim writes
 to the shell script. We need to do the silent/redraw dance to suppress the “Hit
 ENTER to continue” prompt.</p>
 <p>Finally, I’d prefer Vim to automatically open the quickfix window if ShellCheck
 found any problems with my shell script, so I add the following couple of lines
 to my <code>~/.vimrc</code>.</p>
-<pre class="vim"><code>au QuickFixCmdPost [^l]* nested cwindow
-au QuickFixCmdPost    l* nested lwindow</code></pre>
+<div class="highlight"><pre><span></span><span class="k">au</span> <span class="nb">QuickFixCmdPost</span> [^<span class="k">l</span>]* nested <span class="k">cwindow</span>
+<span class="k">au</span> <span class="nb">QuickFixCmdPost</span>    <span class="k">l</span>* nested <span class="k">lwindow</span>
+</pre></div>
+
 <p>Now, whenever I write to a shell script, Vim gives me immediate feedback so I
 can catch problems early. It’s worth noting also that ShellCheck reads in the
 shebang so you’ll receive information specific to the shell you choose.</p>

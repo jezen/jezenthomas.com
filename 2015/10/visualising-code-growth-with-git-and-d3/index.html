@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -70,31 +70,33 @@ the numbers when they’re plainly printed on the screen.</p>
 <p>The best way to see patterns in numbers is to plot them on a graph, so I
 extended the script from the screencast to not only show the number of lines of
 code, but also the date and time each commit was made.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Based on 'Statistics Over Git Repositories' from Gary Bernhardt's 'Destroy</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># All Software' screencast series</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">set</span> <span class="at">-e</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">revisions()</span> <span class="kw">{</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">git</span> rev-list <span class="at">--reverse</span> HEAD</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="fu">commit_date()</span> <span class="kw">{</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">git</span> show <span class="at">--format</span><span class="op">=</span><span class="st">&quot;%cD&quot;</span> <span class="st">&quot;</span><span class="va">$rev</span><span class="st">&quot;</span> <span class="kw">|</span> <span class="fu">head</span> <span class="at">-n</span> 1</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">number_of_lines()</span> <span class="kw">{</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">git</span> ls-tree <span class="at">-r</span> <span class="st">&quot;</span><span class="va">$rev</span><span class="st">&quot;</span> <span class="kw">|</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">awk</span> <span class="st">'{print $3}'</span> <span class="kw">|</span></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xargs</span> git show <span class="kw">|</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">wc</span> <span class="at">-l</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> rev <span class="kw">in</span> <span class="va">$(</span><span class="ex">revisions</span><span class="va">)</span><span class="kw">;</span> <span class="cf">do</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>  <span class="bu">printf</span> <span class="st">&quot;%s\t%s\n&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">number_of_lines</span> <span class="kw">|</span> <span class="fu">xargs</span><span class="va">)</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$(</span><span class="ex">commit_date</span><span class="va">)</span><span class="st">&quot;</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="cf">done</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+
+<span class="c1"># Based on 'Statistics Over Git Repositories' from Gary Bernhardt's 'Destroy</span>
+<span class="c1"># All Software' screencast series</span>
+
+<span class="nb">set</span><span class="w"> </span>-e
+
+revisions<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span>git<span class="w"> </span>rev-list<span class="w"> </span>--reverse<span class="w"> </span>HEAD
+<span class="o">}</span>
+
+commit_date<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span>git<span class="w"> </span>show<span class="w"> </span>--format<span class="o">=</span><span class="s2">&quot;%cD&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="nv">$rev</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span>
+<span class="o">}</span>
+
+number_of_lines<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+<span class="w">  </span>git<span class="w"> </span>ls-tree<span class="w"> </span>-r<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$rev</span><span class="s2">&quot;</span><span class="w"> </span><span class="p">|</span>
+<span class="w">  </span>awk<span class="w"> </span><span class="s1">'{print $3}'</span><span class="w"> </span><span class="p">|</span>
+<span class="w">  </span>xargs<span class="w"> </span>git<span class="w"> </span>show<span class="w"> </span><span class="p">|</span>
+<span class="w">  </span>wc<span class="w"> </span>-l
+<span class="o">}</span>
+
+<span class="k">for</span><span class="w"> </span>rev<span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="k">$(</span>revisions<span class="k">)</span><span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span><span class="nb">printf</span><span class="w"> </span><span class="s2">&quot;%s\t%s\n&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>number_of_lines<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="k">)</span><span class="s2">&quot;</span><span class="w"> </span><span class="s2">&quot;</span><span class="k">$(</span>commit_date<span class="k">)</span><span class="s2">&quot;</span>
+<span class="k">done</span>
+</pre></div>
+
 <p>The bash script above outputs a set of tab-separated values; one row per commit.
 The idea would be to run the script from inside a Git repository and redirect
 the output to some file.</p>

@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -62,19 +62,21 @@ called Block Element Modifier (BEM).</p>
 selectors low, and avoiding naming collisions. It does this by imposing a
 naming convention which programmers should rigidly adhere to.</p>
 <p>Applied BEM looks something like this:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">header</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;header&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">img</span><span class="ot"> class</span><span class="op">=</span><span class="st">&quot;header__logo header__logo--success&quot;</span><span class="ot"> src</span><span class="op">=</span><span class="st">&quot;/slava_ukraini.jpg&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">header</span><span class="dt">&gt;</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="dt">&gt;</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.header</span> {</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">background</span><span class="ch">:</span> <span class="fu">linear-gradient(</span><span class="dv">-180</span><span class="dt">deg</span><span class="op">,</span> <span class="cn">royalblue</span> <span class="dv">50</span><span class="dt">%</span><span class="op">,</span> <span class="cn">yellow</span> <span class="dv">50</span><span class="dt">%</span><span class="fu">)</span><span class="op">;</span></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">.header__logo--success</span> {</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">position</span><span class="ch">:</span> <span class="dv">absolute</span><span class="op">;</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>  }</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">header</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">img</span> <span class="na">class</span><span class="o">=</span><span class="s">&quot;header__logo header__logo--success&quot;</span> <span class="na">src</span><span class="o">=</span><span class="s">&quot;/slava_ukraini.jpg&quot;</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">.</span><span class="nc">header</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="nb">linear-gradient</span><span class="p">(</span><span class="mi">-180</span><span class="kt">deg</span><span class="p">,</span><span class="w"> </span><span class="kc">royalblue</span><span class="w"> </span><span class="mi">50</span><span class="kt">%</span><span class="p">,</span><span class="w"> </span><span class="kc">yellow</span><span class="w"> </span><span class="mi">50</span><span class="kt">%</span><span class="p">);</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="w">  </span><span class="p">.</span><span class="nc">header__logo--success</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="k">position</span><span class="p">:</span><span class="w"> </span><span class="kc">absolute</span><span class="p">;</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+</pre></div>
+
 <p>The <em>block</em> in this case is <code>header</code>. We delimit the block and the <em>element</em>
 with a couple of underscores, and appending two hyphens and some string denotes
 a modifier.</p>
@@ -96,19 +98,21 @@ The technique is facilitated by Yesod which is the Haskell web framework that
 we use, but there’s no reason why this technique couldn’t be recreated in other
 frameworks.</p>
 <p>Approaching the previous <code>header</code> component in Yesod would look like this<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">header ::</span> <span class="dt">Widget</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>header <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  theId <span class="ot">&lt;-</span> newIdent</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  [whamlet|</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;header </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;img </span><span class="er">class=&quot;logo</span><span class="kw"> </span><span class="er">success&quot;</span><span class="kw"> </span><span class="er">src=&quot;/slava_ukraini</span><span class="st">.jpg</span><span class="er">&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  |]</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  toWidget [cassius|</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    ##{theId}</span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>      background: linear-gradient(-180deg, royalblue 50%, yellow 50%)</span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>      .logo.success</span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        position: absolute</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  |]</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">header</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Widget</span>
+<span class="nf">header</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">theId</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">newIdent</span>
+<span class="w">  </span><span class="p">[</span><span class="n">whamlet</span><span class="o">|</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">header</span><span class="w"> </span><span class="n">id</span><span class="ow">=</span><span class="s">&quot;#{theId}&quot;</span><span class="o">&gt;</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="n">img</span><span class="w"> </span><span class="kr">class</span><span class="ow">=</span><span class="s">&quot;logo success&quot;</span><span class="w"> </span><span class="n">src</span><span class="ow">=</span><span class="s">&quot;/slava_ukraini.jpg&quot;</span><span class="o">&gt;</span>
+<span class="w">  </span><span class="o">|</span><span class="p">]</span>
+<span class="w">  </span><span class="n">toWidget</span><span class="w"> </span><span class="p">[</span><span class="n">cassius</span><span class="o">|</span>
+<span class="w">    </span><span class="o">##</span><span class="p">{</span><span class="n">theId</span><span class="p">}</span>
+<span class="w">      </span><span class="n">background</span><span class="kt">:</span><span class="w"> </span><span class="n">linear</span><span class="o">-</span><span class="n">gradient</span><span class="p">(</span><span class="o">-</span><span class="mi">180</span><span class="n">deg</span><span class="p">,</span><span class="w"> </span><span class="n">royalblue</span><span class="w"> </span><span class="mi">50</span><span class="o">%</span><span class="p">,</span><span class="w"> </span><span class="n">yellow</span><span class="w"> </span><span class="mi">50</span><span class="o">%</span><span class="p">)</span>
+<span class="w">      </span><span class="o">.</span><span class="n">logo</span><span class="o">.</span><span class="n">success</span>
+<span class="w">        </span><span class="n">position</span><span class="kt">:</span><span class="w"> </span><span class="n">absolute</span>
+<span class="w">  </span><span class="o">|</span><span class="p">]</span>
+</pre></div>
+
 <p>The interesting part here is the use of <code>newIdent</code>. This is a monadic action
 which will bind <code>theId</code> to an identifier which is guaranteed to not collide
 with any other identifiers on the page which are generated the same way.</p>
@@ -118,53 +122,57 @@ to serve to the user, every run of the <code>newIdent</code> action asks the sta
 current count. The count is then incremented and stored back in the state, and
 the new count is used to generate a unique identifier.</p>
 <p>Composing a couple of widgets together illustrates this effect.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">myWebPage ::</span> <span class="dt">Widget</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>myWebPage <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  theId <span class="ot">&lt;-</span> newIdent</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  [whamlet|</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">&lt;div </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>      <span class="kw">^{</span>header<span class="kw">}</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">^{</span>footer<span class="kw">}</span></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  |]</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  toWidget [cassius|</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    ##{theId}</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      margin: auto</span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  |]</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ot">  header ::</span> <span class="dt">Widget</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>  header <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    theId <span class="ot">&lt;-</span> newIdent</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    [whamlet|</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;header </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span>Some header text…</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    |]</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    toWidget [cassius|</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      ##{theId}</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        background: royalblue</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    |]</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="ot">  footer ::</span> <span class="dt">Widget</span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>  footer <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    theId <span class="ot">&lt;-</span> newIdent</span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    [whamlet|</span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>      <span class="kw">&lt;footer </span><span class="er">id=&quot;#{theId}&quot;</span><span class="kw">&gt;</span>&amp;copy; Copyright Acme Inc. 2022</span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    |]</span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    toWidget [cassius|</span>
-<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>      ##{theId}</span>
-<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>        background: yellow</span>
-<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    |]</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">myWebPage</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Widget</span>
+<span class="nf">myWebPage</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">theId</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">newIdent</span>
+<span class="w">  </span><span class="p">[</span><span class="n">whamlet</span><span class="o">|</span>
+<span class="w">    </span><span class="o">&lt;</span><span class="n">div</span><span class="w"> </span><span class="n">id</span><span class="ow">=</span><span class="s">&quot;#{theId}&quot;</span><span class="o">&gt;</span>
+<span class="w">      </span><span class="o">^</span><span class="p">{</span><span class="n">header</span><span class="p">}</span>
+<span class="w">      </span><span class="o">^</span><span class="p">{</span><span class="n">footer</span><span class="p">}</span>
+<span class="w">  </span><span class="o">|</span><span class="p">]</span>
+<span class="w">  </span><span class="n">toWidget</span><span class="w"> </span><span class="p">[</span><span class="n">cassius</span><span class="o">|</span>
+<span class="w">    </span><span class="o">##</span><span class="p">{</span><span class="n">theId</span><span class="p">}</span>
+<span class="w">      </span><span class="n">margin</span><span class="kt">:</span><span class="w"> </span><span class="n">auto</span>
+<span class="w">  </span><span class="o">|</span><span class="p">]</span>
+
+<span class="w">  </span><span class="kr">where</span>
+
+<span class="w">  </span><span class="n">header</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Widget</span>
+<span class="w">  </span><span class="n">header</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="n">theId</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">newIdent</span>
+<span class="w">    </span><span class="p">[</span><span class="n">whamlet</span><span class="o">|</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="n">header</span><span class="w"> </span><span class="n">id</span><span class="ow">=</span><span class="s">&quot;#{theId}&quot;</span><span class="o">&gt;</span><span class="kt">Some</span><span class="w"> </span><span class="n">header</span><span class="w"> </span><span class="n">text</span><span class="err">…</span>
+<span class="w">    </span><span class="o">|</span><span class="p">]</span>
+<span class="w">    </span><span class="n">toWidget</span><span class="w"> </span><span class="p">[</span><span class="n">cassius</span><span class="o">|</span>
+<span class="w">      </span><span class="o">##</span><span class="p">{</span><span class="n">theId</span><span class="p">}</span>
+<span class="w">        </span><span class="n">background</span><span class="kt">:</span><span class="w"> </span><span class="n">royalblue</span>
+<span class="w">    </span><span class="o">|</span><span class="p">]</span>
+
+<span class="w">  </span><span class="n">footer</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Widget</span>
+<span class="w">  </span><span class="n">footer</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="n">theId</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">newIdent</span>
+<span class="w">    </span><span class="p">[</span><span class="n">whamlet</span><span class="o">|</span>
+<span class="w">      </span><span class="o">&lt;</span><span class="n">footer</span><span class="w"> </span><span class="n">id</span><span class="ow">=</span><span class="s">&quot;#{theId}&quot;</span><span class="o">&gt;&amp;</span><span class="n">copy</span><span class="p">;</span><span class="w"> </span><span class="kt">Copyright</span><span class="w"> </span><span class="kt">Acme</span><span class="w"> </span><span class="kt">Inc</span><span class="o">.</span><span class="w"> </span><span class="mi">2022</span>
+<span class="w">    </span><span class="o">|</span><span class="p">]</span>
+<span class="w">    </span><span class="n">toWidget</span><span class="w"> </span><span class="p">[</span><span class="n">cassius</span><span class="o">|</span>
+<span class="w">      </span><span class="o">##</span><span class="p">{</span><span class="n">theId</span><span class="p">}</span>
+<span class="w">        </span><span class="n">background</span><span class="kt">:</span><span class="w"> </span><span class="n">yellow</span>
+<span class="w">    </span><span class="o">|</span><span class="p">]</span>
+</pre></div>
+
 <p>This Haskell code generates markup and styles which look like this:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode html"><code class="sourceCode html"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">div</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;hident3&quot;</span><span class="dt">&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">header</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;hident1&quot;</span><span class="dt">&gt;</span>Some header text…<span class="dt">&lt;/</span><span class="kw">header</span><span class="dt">&gt;</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&lt;</span><span class="kw">footer</span><span class="ot"> id</span><span class="op">=</span><span class="st">&quot;hident2&quot;</span><span class="dt">&gt;</span><span class="dv">&amp;copy;</span> Copyright Acme Inc. 2022<span class="dt">&lt;/</span><span class="kw">footer</span><span class="dt">&gt;</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">div</span><span class="dt">&gt;</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;</span><span class="kw">style</span><span class="dt">&gt;</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident1</span> { <span class="kw">background</span><span class="ch">:</span> <span class="cn">royalblue</span><span class="op">;</span> }</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident2</span> { <span class="kw">background</span><span class="ch">:</span> <span class="cn">yellow</span><span class="op">;</span> }</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="pp">#hident3</span> { <span class="kw">margin</span><span class="ch">:</span> <span class="bu">auto</span><span class="op">;</span> }</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="dt">&lt;/</span><span class="kw">style</span><span class="dt">&gt;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;hident3&quot;</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">header</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;hident1&quot;</span><span class="p">&gt;</span>Some header text…<span class="p">&lt;/</span><span class="nt">header</span><span class="p">&gt;</span>
+  <span class="p">&lt;</span><span class="nt">footer</span> <span class="na">id</span><span class="o">=</span><span class="s">&quot;hident2&quot;</span><span class="p">&gt;</span><span class="ni">&amp;copy;</span> Copyright Acme Inc. 2022<span class="p">&lt;/</span><span class="nt">footer</span><span class="p">&gt;</span>
+<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+
+<span class="p">&lt;</span><span class="nt">style</span><span class="p">&gt;</span>
+<span class="w">  </span><span class="p">#</span><span class="nn">hident1</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">royalblue</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">#</span><span class="nn">hident2</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">background</span><span class="p">:</span><span class="w"> </span><span class="kc">yellow</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="w">  </span><span class="p">#</span><span class="nn">hident3</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="k">margin</span><span class="p">:</span><span class="w"> </span><span class="kc">auto</span><span class="p">;</span><span class="w"> </span><span class="p">}</span>
+<span class="p">&lt;/</span><span class="nt">style</span><span class="p">&gt;</span>
+</pre></div>
+
 <p>So, correct use of the framework ensures our IDs are unique even when they’re
 all composed together, and the compiler ensures we don’t mistype the names that
 bind the HTML elements with their associated CSS and JavaScript. The compiler

@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -107,24 +107,26 @@ designed in such a way that most operations don’t rely on state. If anything
 fails, you can normally just rerun the command.</p>
 <p>Run the following commands in succession, taking care to change <code>~/.zshrc</code> to
 reflect the “run commands” file of your shell if necessary.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install Nix (about 30 seconds)</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ex">curl</span> https://nixos.org/nix/install <span class="kw">|</span> <span class="fu">sh</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Load Nix profile on login</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Change this file to reflect the shell you use</span></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">&quot;\n. </span><span class="va">$HOME</span><span class="st">/.nix-profile/etc/profile.d/nix.sh&quot;</span> <span class="kw">|</span> <span class="fu">tee</span> <span class="at">-a</span> ~/.zshrc</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Reload the shell</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="bu">exec</span> <span class="va">$SHELL</span> <span class="at">-l</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># I'm not sure why this is needed, but if you don't do it then Nix complains</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># that the packages can't be found</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="ex">nix-channel</span> <span class="at">--update</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Install ghc, cabal2nix and cabal-install (about 10 minutes)</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="ex">nix-env</span> <span class="at">-iA</span> nixpkgs.haskellPackages.cabal2nix <span class="dt">\</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>            nixpkgs.haskellPackages.cabal-install <span class="dt">\</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>            nixpkgs.haskellPackages.ghc</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1"># Install Nix (about 30 seconds)</span>
+curl<span class="w"> </span>https://nixos.org/nix/install<span class="w"> </span><span class="p">|</span><span class="w"> </span>sh
+
+<span class="c1"># Load Nix profile on login</span>
+<span class="c1"># Change this file to reflect the shell you use</span>
+<span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;\n. </span><span class="nv">$HOME</span><span class="s2">/.nix-profile/etc/profile.d/nix.sh&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>tee<span class="w"> </span>-a<span class="w"> </span>~/.zshrc
+
+<span class="c1"># Reload the shell</span>
+<span class="nb">exec</span><span class="w"> </span><span class="nv">$SHELL</span><span class="w"> </span>-l
+
+<span class="c1"># I'm not sure why this is needed, but if you don't do it then Nix complains</span>
+<span class="c1"># that the packages can't be found</span>
+nix-channel<span class="w"> </span>--update
+
+<span class="c1"># Install ghc, cabal2nix and cabal-install (about 10 minutes)</span>
+nix-env<span class="w"> </span>-iA<span class="w"> </span>nixpkgs.haskellPackages.cabal2nix<span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>nixpkgs.haskellPackages.cabal-install<span class="w"> </span><span class="se">\</span>
+<span class="w">            </span>nixpkgs.haskellPackages.ghc
+</pre></div>
+
 <h2 id="project-setup">Project Setup</h2>
 <p>I’ll run through setting up an example application, first by describing the
 directory structure, and then by listing the commands needed to get from zero to
@@ -135,10 +137,12 @@ directory structure, and then by listing the commands needed to get from zero to
 another <code>festhest</code> directory; the thinking being that the configuration files
 necessary for deployment to AWS live in the top-level directory, and everything
 to do with your Haskell application lives in the <code>festhest/festhest</code> directory.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">festhest</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">└──</span> festhest</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="ex">├──</span> dist</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="ex">└──</span> src</span></code></pre></div>
+<div class="highlight"><pre><span></span>festhest
+└──<span class="w"> </span>festhest
+<span class="w">    </span>├──<span class="w"> </span>dist
+<span class="w">    </span>└──<span class="w"> </span>src
+</pre></div>
+
 <p>You don’t need to manually create the <code>dist</code> or <code>src</code> directories; Cabal will
 handle that for us in the next step.</p>
 <h3 id="a-simple-haskell-application">A Simple Haskell Application</h3>
@@ -155,80 +159,92 @@ multiple-choice questions are as follows:</p>
 <li>What base language is the package written in: Haskell2010</li>
 <li>Source directory: src</li>
 </ul>
-<div class="sourceCode" id="cb3"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mkdir</span> <span class="at">-p</span> festhest/festhest</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> <span class="va">$_</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal</span> init</span></code></pre></div>
+<div class="highlight"><pre><span></span>mkdir<span class="w"> </span>-p<span class="w"> </span>festhest/festhest
+<span class="nb">cd</span><span class="w"> </span><span class="nv">$_</span>
+cabal<span class="w"> </span>init
+</pre></div>
+
 <p>Now we can write our first Haskell source file.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- | ~/festhest/festhest/src/Main.hs</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> (</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  main</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>) <span class="kw">where</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">print</span> <span class="st">&quot;Hello, Haskell!&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- | ~/festhest/festhest/src/Main.hs</span>
+<span class="kr">module</span><span class="w"> </span><span class="nn">Main</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="nf">main</span>
+<span class="p">)</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="nf">main</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">print</span><span class="w"> </span><span class="s">&quot;Hello, Haskell!&quot;</span>
+</pre></div>
+
 <p>Back in the shell, we try compiling our Haskell code with Cabal. We can access
 Cabal through the Nix shell, but first we need to create a configuration file
 for the Nix shell, and then start the shell.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal2nix</span> <span class="at">--shell</span> . <span class="op">&gt;</span> shell.nix</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nix-shell</span></span></code></pre></div>
+<div class="highlight"><pre><span></span>cabal2nix<span class="w"> </span>--shell<span class="w"> </span>.<span class="w"> </span>&gt;<span class="w"> </span>shell.nix
+nix-shell
+</pre></div>
+
 <p>Now that we’ve dropped into the Nix shell, we can use Cabal to first configure
 and then run our application’s compilation. Cabal will download and install some
 dependencies; on my machine this takes around 30 seconds.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal</span> configure</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal</span> run</span></code></pre></div>
+<div class="highlight"><pre><span></span>cabal<span class="w"> </span>configure
+cabal<span class="w"> </span>run
+</pre></div>
+
 <p>You should see the Haskell code being compiled by GHC. If you see your <code>Hello, Haskell!</code> message printed out, you know it has successfully compiled.</p>
 <h3 id="a-simple-haskell-web-service">A Simple Haskell Web Service</h3>
 <p>Having a program output a message is all very well, but we want this application
 to serve requests over the Internet. We’ll change our <code>Main.hs</code> source file so
 it starts a web server and responds to a route.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- | ~/festhest/festhest/src/Main.hs</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes       #-}</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell   #-}</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TypeFamilies      #-}</span></span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Main</span> (</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  main</span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>) <span class="kw">where</span></span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Yesod</span></span>
-<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">App</span> <span class="ot">=</span> <span class="dt">App</span></span>
-<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span></span>
-<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>mkYesod <span class="st">&quot;App&quot;</span> [parseRoutes| / HomeR GET |]</span>
-<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a><span class="ot">getHomeR ::</span> <span class="dt">Handler</span> <span class="dt">Html</span></span>
-<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>getHomeR <span class="ot">=</span> defaultLayout [whamlet| <span class="kw">&lt;h1&gt;</span>Hello, Haskell! |]</span>
-<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> warp <span class="dv">80</span> <span class="dt">App</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- | ~/festhest/festhest/src/Main.hs</span>
+<span class="cm">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="cm">{-# LANGUAGE QuasiQuotes       #-}</span>
+<span class="cm">{-# LANGUAGE TemplateHaskell   #-}</span>
+<span class="cm">{-# LANGUAGE TypeFamilies      #-}</span>
+
+<span class="kr">module</span><span class="w"> </span><span class="nn">Main</span><span class="w"> </span><span class="p">(</span>
+<span class="w">  </span><span class="nf">main</span>
+<span class="p">)</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="kr">import</span><span class="w"> </span><span class="nn">Yesod</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">App</span>
+<span class="kr">instance</span><span class="w"> </span><span class="kt">Yesod</span><span class="w"> </span><span class="kt">App</span>
+
+<span class="nf">mkYesod</span><span class="w"> </span><span class="s">&quot;App&quot;</span><span class="w"> </span><span class="p">[</span><span class="n">parseRoutes</span><span class="o">|</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="kt">HomeR</span><span class="w"> </span><span class="kt">GET</span><span class="w"> </span><span class="o">|</span><span class="p">]</span>
+
+<span class="nf">getHomeR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Html</span>
+<span class="nf">getHomeR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">defaultLayout</span><span class="w"> </span><span class="p">[</span><span class="n">whamlet</span><span class="o">|</span><span class="w"> </span><span class="o">&lt;</span><span class="n">h1</span><span class="o">&gt;</span><span class="kt">Hello</span><span class="p">,</span><span class="w"> </span><span class="kt">Haskell</span><span class="o">!</span><span class="w"> </span><span class="o">|</span><span class="p">]</span>
+
+<span class="nf">main</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">warp</span><span class="w"> </span><span class="mi">80</span><span class="w"> </span><span class="kt">App</span>
+</pre></div>
+
 <p>The above code snippet is a bare-bones Yesod app. In order for us to have access
 to Yesod, we need to add it to our Cabal file under <code>build-depends</code>, a few lines
 up from the bottom.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="ex">--</span> <span class="kw">|</span> <span class="ex">~/festhest/festhest/festhest.cabal</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ex">name:</span>                festhest</span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ex">version:</span>             0.1.0.0</span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ex">synopsis:</span>            Nothing is more fun than a festlig hest.</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ex">--</span> description:</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="ex">homepage:</span>            http://jezenthomas.com</span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ex">license:</span>             GPL-3</span>
-<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="ex">license-file:</span>        LICENSE</span>
-<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a><span class="ex">author:</span>              Jezen Thomas</span>
-<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a><span class="ex">maintainer:</span>          jezen@jezenthomas.com</span>
-<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a><span class="ex">--</span> copyright:</span>
-<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a><span class="ex">category:</span>            Web</span>
-<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a><span class="ex">build-type:</span>          Simple</span>
-<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="ex">--</span> extra-source-files:</span>
-<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal-version:</span>       <span class="op">&gt;</span>=1.10</span>
-<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a><span class="ex">executable</span> festhest</span>
-<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>  <span class="ex">main-is:</span>             Main.hs</span>
-<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--</span> other-modules:</span>
-<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>  <span class="ex">--</span> other-extensions:</span>
-<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>  <span class="ex">build-depends:</span>       base <span class="op">&gt;</span>=4.8 <span class="kw">&amp;&amp;</span> <span class="op">&lt;</span>4.9, <span class="ex">yesod</span></span>
-<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>  <span class="ex">hs-source-dirs:</span>      src</span>
-<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>  <span class="ex">default-language:</span>    Haskell2010</span></code></pre></div>
+<div class="highlight"><pre><span></span>--<span class="w"> </span><span class="p">|</span><span class="w"> </span>~/festhest/festhest/festhest.cabal
+
+name:<span class="w">                </span>festhest
+version:<span class="w">             </span><span class="m">0</span>.1.0.0
+synopsis:<span class="w">            </span>Nothing<span class="w"> </span>is<span class="w"> </span>more<span class="w"> </span>fun<span class="w"> </span>than<span class="w"> </span>a<span class="w"> </span>festlig<span class="w"> </span>hest.
+--<span class="w"> </span>description:
+homepage:<span class="w">            </span>http://jezenthomas.com
+license:<span class="w">             </span>GPL-3
+license-file:<span class="w">        </span>LICENSE
+author:<span class="w">              </span>Jezen<span class="w"> </span>Thomas
+maintainer:<span class="w">          </span>jezen@jezenthomas.com
+--<span class="w"> </span>copyright:
+category:<span class="w">            </span>Web
+build-type:<span class="w">          </span>Simple
+--<span class="w"> </span>extra-source-files:
+cabal-version:<span class="w">       </span>&gt;<span class="o">=</span><span class="m">1</span>.10
+
+executable<span class="w"> </span>festhest
+<span class="w">  </span>main-is:<span class="w">             </span>Main.hs
+<span class="w">  </span>--<span class="w"> </span>other-modules:
+<span class="w">  </span>--<span class="w"> </span>other-extensions:
+<span class="w">  </span>build-depends:<span class="w">       </span>base<span class="w"> </span>&gt;<span class="o">=</span><span class="m">4</span>.8<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>&lt;<span class="m">4</span>.9,<span class="w"> </span>yesod
+<span class="w">  </span>hs-source-dirs:<span class="w">      </span>src
+<span class="w">  </span>default-language:<span class="w">    </span>Haskell2010
+</pre></div>
+
 <p>Run <code>cabal2nix --shell . &gt; shell.nix</code> again, and then drop into the Nix shell
 with <code>nix-shell</code>. Nix will begin to download all of the project’s new
 dependencies (which come from Yesod). This process takes a little less than six
@@ -243,7 +259,9 @@ and we should see a simple page containing our “Hello, Haskell!” message.</p
 the GNU General Public License. Apparently this setting can be toggled in
 <code>~/.nixpkgs/config.nix</code>, but I don’t have that file so I set an environment
 variable instead (if I’m building without a free license).</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="va">NIXPKGS_ALLOW_UNFREE</span><span class="op">=</span>1</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nv">NIXPKGS_ALLOW_UNFREE</span><span class="o">=</span><span class="m">1</span>
+</pre></div>
+
 <p>This can either be prepended to any command that needs it (like <code>nix-shell</code>), or
 exported in a <code>.env</code> file and enabled with something like <a href="https://github.com/kennethreitz/autoenv">autoenv</a>.</p>
 <h2 id="deployment">Deployment</h2>
@@ -256,8 +274,10 @@ application.</p>
 that Nix can understand. We can easily generate this file with the <code>cabal2nix</code>
 tool that we installed earlier. The tool takes a project directory containing a
 cabal file, so it’s easiest to run the command from the project directory.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="bu">cd</span> ~/festhest/festhest</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ex">cabal2nix</span> . <span class="op">&gt;</span> festhest.nix</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>~/festhest/festhest
+cabal2nix<span class="w"> </span>.<span class="w"> </span>&gt;<span class="w"> </span>festhest.nix
+</pre></div>
+
 <h3 id="the-default-file">The Default File</h3>
 <p>The default file contains some Nix boilerplate that calls our application build
 expression with the packages we need to build the Haskell source code. The GHC
@@ -265,62 +285,68 @@ expression with the packages we need to build the Haskell source code. The GHC
 specify is not cached on Nix’s servers, you’ll spend several hours downloading
 and compiling Haskell packages. This file should live in the project directory,
 adjacent to the cabal file and the application build expression.</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ~/festhest/festhest/default.nix</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span> <span class="ex">pkgs</span> <span class="pp">?</span> import <span class="op">&lt;</span>nixpkgs<span class="op">&gt;</span> {}, compiler <span class="pp">?</span> <span class="st">&quot;ghc7103&quot;</span> }:</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="ex">pkgs.haskell.packages.</span><span class="va">${compiler}</span><span class="ex">.callPackage</span> ./festhest.nix { }</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1"># ~/festhest/festhest/default.nix</span>
+<span class="o">{</span><span class="w"> </span>pkgs<span class="w"> </span>?<span class="w"> </span>import<span class="w"> </span>&lt;nixpkgs&gt;<span class="w"> </span><span class="o">{}</span>,<span class="w"> </span>compiler<span class="w"> </span>?<span class="w"> </span><span class="s2">&quot;ghc7103&quot;</span><span class="w"> </span><span class="o">}</span>:
+pkgs.haskell.packages.<span class="si">${</span><span class="nv">compiler</span><span class="si">}</span>.callPackage<span class="w"> </span>./festhest.nix<span class="w"> </span><span class="o">{</span><span class="w"> </span><span class="o">}</span>
+</pre></div>
+
 <h3 id="services-configuration">Services Configuration</h3>
 <p>This services configuration file declares things like which TCP ports are
 allowed through the firewall, the absolute path of our application to systemd,
 and that the webserver should start after the network has come up. NixOs by
 default only accepts traffic on port 22 (SSH), so we need to add port 80 there
 to make requests to our web service.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ~/festhest/festhest-configuration.nix</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">network.description</span> = <span class="st">&quot;festhest&quot;</span><span class="kw">;</span></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>  <span class="ex">festhest</span> =</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">{</span> <span class="ex">config,</span> pkgs, ... }: let</span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>      <span class="ex">festhest</span> = import ./festhest/default.nix { inherit pkgs<span class="kw">;</span> <span class="kw">};</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>    <span class="er">in</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">{</span> <span class="ex">networking.hostName</span> = <span class="st">&quot;festhest&quot;</span><span class="kw">;</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>      <span class="ex">networking.firewall.allowedTCPPorts</span> = [ 22 80 ]<span class="kw">;</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>      <span class="ex">environment.systemPackages</span> = [ festhest ]<span class="kw">;</span></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>      <span class="ex">systemd.services.festhest</span> =</span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">{</span> <span class="ex">description</span> = <span class="st">&quot;festhest Webserver&quot;</span><span class="kw">;</span></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>          <span class="ex">wantedBy</span> = [ <span class="st">&quot;multi-user.target&quot;</span> ]<span class="kw">;</span></span>
-<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>          <span class="ex">after</span> = [ <span class="st">&quot;network.target&quot;</span> ]<span class="kw">;</span></span>
-<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>          <span class="ex">serviceConfig</span> =</span>
-<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>            <span class="kw">{</span> <span class="ex">ExecStart</span> = <span class="st">&quot;</span><span class="va">${festhest}</span><span class="st">/bin/festhest&quot;</span><span class="kw">;</span></span>
-<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>            <span class="kw">};</span></span>
-<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>        <span class="kw">};</span></span>
-<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">};</span></span>
-<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1"># ~/festhest/festhest-configuration.nix</span>
+<span class="o">{</span>
+<span class="w">  </span>network.description<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;festhest&quot;</span><span class="p">;</span>
+
+<span class="w">  </span><span class="nv">festhest</span><span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="o">{</span><span class="w"> </span>config,<span class="w"> </span>pkgs,<span class="w"> </span>...<span class="w"> </span><span class="o">}</span>:<span class="w"> </span><span class="nb">let</span>
+<span class="w">      </span><span class="nv">festhest</span><span class="w"> </span><span class="o">=</span><span class="w"> </span>import<span class="w"> </span>./festhest/default.nix<span class="w"> </span><span class="o">{</span><span class="w"> </span>inherit<span class="w"> </span>pkgs<span class="p">;</span><span class="w"> </span><span class="o">}</span><span class="p">;</span>
+<span class="w">    </span><span class="k">in</span>
+<span class="w">    </span><span class="o">{</span><span class="w"> </span>networking.hostName<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;festhest&quot;</span><span class="p">;</span>
+
+<span class="w">      </span>networking.firewall.allowedTCPPorts<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="m">22</span><span class="w"> </span><span class="m">80</span><span class="w"> </span><span class="o">]</span><span class="p">;</span>
+<span class="w">      </span>environment.systemPackages<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="w"> </span>festhest<span class="w"> </span><span class="o">]</span><span class="p">;</span>
+
+<span class="w">      </span>systemd.services.festhest<span class="w"> </span><span class="o">=</span>
+<span class="w">        </span><span class="o">{</span><span class="w"> </span><span class="nv">description</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;festhest Webserver&quot;</span><span class="p">;</span>
+<span class="w">          </span><span class="nv">wantedBy</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;multi-user.target&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span>
+<span class="w">          </span><span class="nv">after</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;network.target&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span>
+<span class="w">          </span><span class="nv">serviceConfig</span><span class="w"> </span><span class="o">=</span>
+<span class="w">            </span><span class="o">{</span><span class="w"> </span><span class="nv">ExecStart</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">festhest</span><span class="si">}</span><span class="s2">/bin/festhest&quot;</span><span class="p">;</span>
+<span class="w">            </span><span class="o">}</span><span class="p">;</span>
+<span class="w">        </span><span class="o">}</span><span class="p">;</span>
+<span class="w">    </span><span class="o">}</span><span class="p">;</span>
+<span class="o">}</span>
+</pre></div>
+
 <h3 id="physical-network-configuration">Physical Network Configuration</h3>
 <p>This is the final configuration file, so we’re almost out of the woods. This
 file describes how to connect with our Amazon AWS account. There are essentially
 three relevant variables: the shortname for the keypair used to SSH into EC2
 instances, the EC2 region, and the EC2 instance type.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># ~/festhest/festhest-ec2.nix</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="bu">let</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="ex">region</span> = <span class="st">&quot;eu-central-1&quot;</span><span class="kw">;</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="ex">accessKeyId</span> = <span class="st">&quot;jezen&quot;</span><span class="kw">;</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="er">in</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="kw">{</span> <span class="ex">festhest</span> =</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="kw">{</span> <span class="ex">resources,</span> ... }:</span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="kw">{</span> <span class="ex">deployment.targetEnv</span> = <span class="st">&quot;ec2&quot;</span><span class="kw">;</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="ex">deployment.ec2.accessKeyId</span> = accessKeyId<span class="kw">;</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="ex">deployment.ec2.region</span> = region<span class="kw">;</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="ex">deployment.ec2.instanceType</span> = <span class="st">&quot;t2.micro&quot;</span><span class="kw">;</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="ex">deployment.ec2.keyPair</span> = resources.ec2KeyPairs.festhest-keys<span class="kw">;</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>  <span class="kw">};</span></span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="ex">resources.ec2KeyPairs.festhest-keys</span> =</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">{</span> <span class="ex">inherit</span> region accessKeyId<span class="kw">;</span> <span class="kw">};</span></span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1"># ~/festhest/festhest-ec2.nix</span>
+<span class="nb">let</span>
+<span class="w">  </span><span class="nv">region</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;eu-central-1&quot;</span><span class="p">;</span>
+<span class="w">  </span><span class="nv">accessKeyId</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;jezen&quot;</span><span class="p">;</span>
+
+<span class="k">in</span>
+<span class="o">{</span><span class="w"> </span><span class="nv">festhest</span><span class="w"> </span><span class="o">=</span>
+<span class="w">  </span><span class="o">{</span><span class="w"> </span>resources,<span class="w"> </span>...<span class="w"> </span><span class="o">}</span>:
+<span class="w">  </span><span class="o">{</span><span class="w"> </span>deployment.targetEnv<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;ec2&quot;</span><span class="p">;</span>
+<span class="w">    </span>deployment.ec2.accessKeyId<span class="w"> </span><span class="o">=</span><span class="w"> </span>accessKeyId<span class="p">;</span>
+<span class="w">    </span>deployment.ec2.region<span class="w"> </span><span class="o">=</span><span class="w"> </span>region<span class="p">;</span>
+<span class="w">    </span>deployment.ec2.instanceType<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">&quot;t2.micro&quot;</span><span class="p">;</span>
+<span class="w">    </span>deployment.ec2.keyPair<span class="w"> </span><span class="o">=</span><span class="w"> </span>resources.ec2KeyPairs.festhest-keys<span class="p">;</span>
+
+<span class="w">  </span><span class="o">}</span><span class="p">;</span>
+
+<span class="w">  </span>resources.ec2KeyPairs.festhest-keys<span class="w"> </span><span class="o">=</span>
+<span class="w">    </span><span class="o">{</span><span class="w"> </span>inherit<span class="w"> </span>region<span class="w"> </span>accessKeyId<span class="p">;</span><span class="w"> </span><span class="o">}</span><span class="p">;</span>
+<span class="o">}</span>
+</pre></div>
+
 <h3 id="configuring-amazon-ec2">Configuring Amazon EC2</h3>
 <p>The <code>t2.micro</code> EC2 instance type might not be available to your account, so it’s
 worth checking which types you have access to first.</p>
@@ -347,18 +373,22 @@ should pick your own name.</p>
 <p>Create a new file in your home directory called <code>~/.ec2-keys</code>. This file will
 contain your deployment user name and access keys. The format of this file is
 important; it should adhere to the format <code>&lt;Access Key ID&gt; &lt;Secret Access Key&gt; &lt;user&gt;</code>. As an example:</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="ex">AKIAJF7F33KJJJOL3KZQ</span> 3A5A7ty82BBXRHUVsmPBFyvYp5Xc9FsKFMAkYz4u jezen</span></code></pre></div>
+<div class="highlight"><pre><span></span>AKIAJF7F33KJJJOL3KZQ<span class="w"> </span>3A5A7ty82BBXRHUVsmPBFyvYp5Xc9FsKFMAkYz4u<span class="w"> </span>jezen
+</pre></div>
+
 <h3 id="deploying-to-an-ec2-instance">Deploying To An EC2 Instance</h3>
 <p>Finally, we have our project and its deployment configured, and we’re ready to
 push our application to Amazon’s servers. We’ll use Nix to download and install
 the NixOps cloud deployment tool. We’ll then use NixOps to create our initial
 deployment, and then deploy to Amazon.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install NixOps (about 30 seconds)</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nix-env</span> <span class="at">-i</span> nixops</span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Create initial deployment</span></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="ex">nixops</span> create ./festhest-configuration.nix ./festhest-ec2.nix <span class="at">-d</span> festhest</span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Deploy</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="ex">nixops</span> deploy <span class="at">-d</span> festhest</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1"># Install NixOps (about 30 seconds)</span>
+nix-env<span class="w"> </span>-i<span class="w"> </span>nixops
+<span class="c1"># Create initial deployment</span>
+nixops<span class="w"> </span>create<span class="w"> </span>./festhest-configuration.nix<span class="w"> </span>./festhest-ec2.nix<span class="w"> </span>-d<span class="w"> </span>festhest
+<span class="c1"># Deploy</span>
+nixops<span class="w"> </span>deploy<span class="w"> </span>-d<span class="w"> </span>festhest
+</pre></div>
+
 <p>Upload speed makes a profound impact on the total length of time it takes to
 deploy. Deploying from my machine took around six hours — which is
 excrutiatingly slow — but this is because I had an abysmal upload speed
@@ -374,11 +404,15 @@ index route responds with <code>Hello again, Haskell!</code>, instead of <code>H
 Write to the file, then drop back into the shell.</p>
 <p>Instead of creating a new deploy, we modify our existing one, and then initiate
 the deploy process.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nixops</span> modify ./festhest-configuration.nix ./festhest-ec2.nix <span class="at">-d</span> festhest</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="ex">nixops</span> deploy <span class="at">-d</span> festhest</span></code></pre></div>
+<div class="highlight"><pre><span></span>nixops<span class="w"> </span>modify<span class="w"> </span>./festhest-configuration.nix<span class="w"> </span>./festhest-ec2.nix<span class="w"> </span>-d<span class="w"> </span>festhest
+nixops<span class="w"> </span>deploy<span class="w"> </span>-d<span class="w"> </span>festhest
+</pre></div>
+
 <p>We can find the public IP address of the EC2 instance from the command line with
 NixOps:</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="ex">nixops</span> info <span class="at">-d</span> festhest</span></code></pre></div>
+<div class="highlight"><pre><span></span>nixops<span class="w"> </span>info<span class="w"> </span>-d<span class="w"> </span>festhest
+</pre></div>
+
 <p>If you point your web browser to the public IP address listed, you should see
 your <em>Hello again, Haskell!</em> message displayed. And there we have it: a working
 Haskell web service!</p>

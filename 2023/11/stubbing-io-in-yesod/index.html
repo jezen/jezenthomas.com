@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -63,46 +63,50 @@ credit card, or even just to generate some random number.</p>
 and then respond to the user’s request by reporting whether the randomly
 generated number is even or odd.</p>
 <p>We might write code which looks like this.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE OverloadedStrings #-}</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE QuasiQuotes #-}</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TemplateHaskell #-}</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE TypeFamilies #-}</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Application</span> <span class="kw">where</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">System.Random</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Yesod</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">App</span> <span class="ot">=</span> <span class="dt">App</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>mkYesod <span class="st">&quot;App&quot;</span> [parseRoutes|</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>/random RandomR GET</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>|]</span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="ot">getRandomR ::</span> <span class="dt">Handler</span> <span class="dt">Value</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>getRandomR <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> liftIO randomNumber</span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>  returnJson <span class="op">$</span> isEven n</span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="ot">    randomNumber ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    randomNumber <span class="ot">=</span> randomRIO (<span class="dv">1</span>, <span class="dv">100</span>)</span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="ot">    isEven ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
-<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    isEven n <span class="ot">=</span> <span class="kw">if</span> <span class="fu">even</span> n <span class="kw">then</span> <span class="st">&quot;even&quot;</span> <span class="kw">else</span> <span class="st">&quot;odd&quot;</span></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> warp <span class="dv">3000</span> <span class="dt">App</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="cm">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="cm">{-# LANGUAGE QuasiQuotes #-}</span>
+<span class="cm">{-# LANGUAGE TemplateHaskell #-}</span>
+<span class="cm">{-# LANGUAGE TypeFamilies #-}</span>
+
+<span class="kr">module</span><span class="w"> </span><span class="nn">Application</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="kr">import</span><span class="w"> </span><span class="nn">System.Random</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Yesod</span>
+
+<span class="kr">data</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">App</span>
+
+<span class="nf">mkYesod</span><span class="w"> </span><span class="s">&quot;App&quot;</span><span class="w"> </span><span class="p">[</span><span class="n">parseRoutes</span><span class="o">|</span>
+<span class="o">/</span><span class="n">random</span><span class="w"> </span><span class="kt">RandomR</span><span class="w"> </span><span class="kt">GET</span>
+<span class="o">|</span><span class="p">]</span>
+
+<span class="kr">instance</span><span class="w"> </span><span class="kt">Yesod</span><span class="w"> </span><span class="kt">App</span>
+
+<span class="nf">getRandomR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Value</span>
+<span class="nf">getRandomR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">n</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="n">randomNumber</span>
+<span class="w">  </span><span class="n">returnJson</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">isEven</span><span class="w"> </span><span class="n">n</span>
+<span class="w">  </span><span class="kr">where</span>
+<span class="w">    </span><span class="n">randomNumber</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="kt">Int</span>
+<span class="w">    </span><span class="n">randomNumber</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">randomRIO</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span>
+
+<span class="w">    </span><span class="n">isEven</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">    </span><span class="n">isEven</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">if</span><span class="w"> </span><span class="n">even</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="kr">then</span><span class="w"> </span><span class="s">&quot;even&quot;</span><span class="w"> </span><span class="kr">else</span><span class="w"> </span><span class="s">&quot;odd&quot;</span>
+
+<span class="nf">main</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">main</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">warp</span><span class="w"> </span><span class="mi">3000</span><span class="w"> </span><span class="kt">App</span>
+</pre></div>
+
 <p>This is a complete Yesod application. We can run this locally and it will be
 listening for requests on port 3000. When we send requests there, we can see
 our application dutifully responding with whether or not the randomly generated
 number was even or odd.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode sh"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl http://localhost:3000/random</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;even&quot;</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> curl http://localhost:3000/random</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;odd&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span>$<span class="w"> </span>curl<span class="w"> </span>http://localhost:3000/random
+<span class="s2">&quot;even&quot;</span>
+
+$<span class="w"> </span>curl<span class="w"> </span>http://localhost:3000/random
+<span class="s2">&quot;odd&quot;</span>
+</pre></div>
+
 <p>This is all well and good, but how do we write an automated test for this? We
 can’t control the randomness of our pseudo-random number generator. Similarly,
 if instead of generating a random number this were an HTTP request to attempt
@@ -115,51 +119,59 @@ version that we <em>can</em> control.</p>
 <p>One simple approach for this is with <em>dependency injection</em>.</p>
 <p>Instead of defining our <code>randomNumber</code> function alongside our request handler,
 we can declare it as part of our application’s foundational data type.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">App</span> <span class="ot">=</span> <span class="dt">App</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  {<span class="ot"> appRandomNumber ::</span> <span class="dt">IO</span> <span class="dt">Int</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  }</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">data</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">App</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">appRandomNumber</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="kt">Int</span>
+<span class="w">  </span><span class="p">}</span>
+</pre></div>
+
 <p>When we initialise our application, we construct our <code>App</code> value with the real
 implementation of our function.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">main ::</span> <span class="dt">IO</span> ()</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>main <span class="ot">=</span> warp <span class="dv">3000</span> <span class="op">$</span> <span class="dt">App</span> randomNumber</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    randomNumber <span class="ot">=</span> <span class="co">-- real implementation</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">main</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">main</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">warp</span><span class="w"> </span><span class="mi">3000</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="n">randomNumber</span>
+<span class="w">  </span><span class="kr">where</span>
+<span class="w">    </span><span class="n">randomNumber</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- real implementation</span>
+</pre></div>
+
 <p>Since our <code>randomNumber</code> function is no longer defined alongside our request
 handler, we’ll now need to ask for that function from within the handler
 instead.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">getRandomR ::</span> <span class="dt">Handler</span> <span class="dt">Value</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>getRandomR <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  n <span class="ot">&lt;-</span> liftIO <span class="op">=&lt;&lt;</span> getsYesod appRandomNumber</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  returnJson <span class="op">$</span> isEven n</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="ot">    isEven ::</span> <span class="dt">Int</span> <span class="ot">-&gt;</span> <span class="dt">String</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    isEven n <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">getRandomR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Value</span>
+<span class="nf">getRandomR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">n</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="o">=&lt;&lt;</span><span class="w"> </span><span class="n">getsYesod</span><span class="w"> </span><span class="n">appRandomNumber</span>
+<span class="w">  </span><span class="n">returnJson</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">isEven</span><span class="w"> </span><span class="n">n</span>
+<span class="w">  </span><span class="kr">where</span>
+<span class="w">    </span><span class="n">isEven</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">String</span>
+<span class="w">    </span><span class="n">isEven</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+</pre></div>
+
 <p>This behaves exactly as it did before, but now we’re able to swap out our
 <code>randomNumber</code> function for a fake version in an automated test with
 <code>testModifySite</code>.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ot">withApp ::</span> <span class="dt">SpecWith</span> (<span class="dt">TestApp</span> <span class="dt">App</span>) <span class="ot">-&gt;</span> <span class="dt">Spec</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>withApp <span class="ot">=</span> before <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pure</span> (<span class="dt">App</span> randomNumber, <span class="fu">id</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="ot">stub ::</span> <span class="dt">YesodDispatch</span> a <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> a) <span class="ot">-&gt;</span> <span class="dt">YesodExample</span> a ()</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>stub f <span class="ot">=</span> testModifySite (\app <span class="ot">-&gt;</span> <span class="fu">pure</span> (f app, <span class="fu">id</span>))</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="ot">spec ::</span> <span class="dt">Spec</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>spec <span class="ot">=</span> withApp <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>  describe <span class="st">&quot;GET /random&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;works with even numbers&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>      stub (\a <span class="ot">-&gt;</span> a { appRandomNumber <span class="ot">=</span> <span class="fu">pure</span> <span class="dv">66</span> })</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>      get <span class="dt">RandomR</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      statusIs <span class="dv">200</span></span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      bodyEquals <span class="st">&quot;\&quot;even\&quot;&quot;</span></span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    it <span class="st">&quot;works with odd numbers&quot;</span> <span class="op">$</span> <span class="kw">do</span></span>
-<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>      stub (\a <span class="ot">-&gt;</span> a { appRandomNumber <span class="ot">=</span> <span class="fu">pure</span> <span class="dv">17</span> })</span>
-<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      get <span class="dt">RandomR</span></span>
-<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>      statusIs <span class="dv">200</span></span>
-<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>      bodyEquals <span class="st">&quot;\&quot;odd\&quot;&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="nf">withApp</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">SpecWith</span><span class="w"> </span><span class="p">(</span><span class="kt">TestApp</span><span class="w"> </span><span class="kt">App</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Spec</span>
+<span class="nf">withApp</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">before</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="kt">App</span><span class="w"> </span><span class="n">randomNumber</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">)</span>
+
+<span class="nf">stub</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">YesodDispatch</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">YesodExample</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">stub</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">testModifySite</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="n">app</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="n">f</span><span class="w"> </span><span class="n">app</span><span class="p">,</span><span class="w"> </span><span class="n">id</span><span class="p">))</span>
+
+<span class="nf">spec</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Spec</span>
+<span class="nf">spec</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">withApp</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+
+<span class="w">  </span><span class="n">describe</span><span class="w"> </span><span class="s">&quot;GET /random&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+
+<span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="s">&quot;works with even numbers&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">      </span><span class="n">stub</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">appRandomNumber</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="mi">66</span><span class="w"> </span><span class="p">})</span>
+<span class="w">      </span><span class="n">get</span><span class="w"> </span><span class="kt">RandomR</span>
+<span class="w">      </span><span class="n">statusIs</span><span class="w"> </span><span class="mi">200</span>
+<span class="w">      </span><span class="n">bodyEquals</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">even</span><span class="se">\&quot;</span><span class="s">&quot;</span>
+
+<span class="w">    </span><span class="n">it</span><span class="w"> </span><span class="s">&quot;works with odd numbers&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">      </span><span class="n">stub</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">appRandomNumber</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="mi">17</span><span class="w"> </span><span class="p">})</span>
+<span class="w">      </span><span class="n">get</span><span class="w"> </span><span class="kt">RandomR</span>
+<span class="w">      </span><span class="n">statusIs</span><span class="w"> </span><span class="mi">200</span>
+<span class="w">      </span><span class="n">bodyEquals</span><span class="w"> </span><span class="s">&quot;</span><span class="se">\&quot;</span><span class="s">odd</span><span class="se">\&quot;</span><span class="s">&quot;</span>
+</pre></div>
+
 <p>Of course, the usual warnings apply. There are problems that come along with
 stubbing out functions — if your stub doesn’t accurately reflect what that
 function <em>actually</em> does, then your test is only giving you false confidence.</p>

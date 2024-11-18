@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -63,11 +63,13 @@ language will be at some point described by them as <em>expressive</em>.</p>
 is to effectively convey thought or feeling. There are some languages that are
 so expressive that you immediately understand the author’s intent without
 needing to know the syntax. Take the following lines of Ruby, for example:</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode ruby"><code class="sourceCode ruby"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># &quot;How long ago?&quot;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="dv">10</span><span class="at">.years.ago</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># &quot;I expect my list of car brands to include the best one&quot;</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>expect(car_brands)<span class="at">.to</span> <span class="fu">include</span> <span class="st">&quot;Porsche&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1"># &quot;How long ago?&quot;</span>
+<span class="mi">10</span><span class="o">.</span><span class="n">years</span><span class="o">.</span><span class="n">ago</span>
+
+<span class="c1"># &quot;I expect my list of car brands to include the best one&quot;</span>
+<span class="n">expect</span><span class="p">(</span><span class="n">car_brands</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="w"> </span><span class="kp">include</span><span class="w"> </span><span class="s2">&quot;Porsche&quot;</span>
+</pre></div>
+
 <p>I feel confident offering up those lines of Ruby for debate because they are
 indeed idiomatic. I want to also argue that Haskell is an expressive language
 (and it most certainly is), but I concede I would be cherry-picking from the
@@ -80,12 +82,14 @@ of a Redux project follows a few of the same conventions. The convention that
 irks me the most is the practice of defining a constant who’s value is the
 stringified version of the name of the constant. If that sounds awkward, it’s
 because it is. Here’s how that looks:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> ADD_TODO <span class="op">=</span> <span class="st">'ADD_TODO'</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> DELETE_TODO <span class="op">=</span> <span class="st">'DELETE_TODO'</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> EDIT_TODO <span class="op">=</span> <span class="st">'EDIT_TODO'</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> COMPLETE_TODO <span class="op">=</span> <span class="st">'COMPLETE_TODO'</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> COMPLETE_ALL <span class="op">=</span> <span class="st">'COMPLETE_ALL'</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> CLEAR_COMPLETED <span class="op">=</span> <span class="st">'CLEAR_COMPLETED'</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">ADD_TODO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'ADD_TODO'</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">DELETE_TODO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'DELETE_TODO'</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">EDIT_TODO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'EDIT_TODO'</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">COMPLETE_TODO</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'COMPLETE_TODO'</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">COMPLETE_ALL</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'COMPLETE_ALL'</span>
+<span class="k">export</span><span class="w"> </span><span class="kd">const</span><span class="w"> </span><span class="nx">CLEAR_COMPLETED</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s1">'CLEAR_COMPLETED'</span>
+</pre></div>
+
 <p>What thought, feeling, or idea is the preceding snippet of code trying to
 convey? We can clearly see that we have six different things here, that in a
 better language might be expressed as a list of six things.</p>
@@ -93,12 +97,14 @@ better language might be expressed as a list of six things.</p>
 We’re telling the language how to do its job, whereas we should only be telling
 the language what we want. How might that work in a more expressive language?
 Well, take Haskell, for example:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">data</span> <span class="dt">Action</span> <span class="ot">=</span> <span class="dt">AddTodo</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>            <span class="op">|</span> <span class="dt">DeleteTodo</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>            <span class="op">|</span> <span class="dt">EditTodo</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>            <span class="op">|</span> <span class="dt">CompleteTodo</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>            <span class="op">|</span> <span class="dt">CompleteAll</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>            <span class="op">|</span> <span class="dt">ClearCompleted</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">data</span><span class="w"> </span><span class="kt">Action</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">AddTodo</span>
+<span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="kt">DeleteTodo</span>
+<span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="kt">EditTodo</span>
+<span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="kt">CompleteTodo</span>
+<span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="kt">CompleteAll</span>
+<span class="w">            </span><span class="o">|</span><span class="w"> </span><span class="kt">ClearCompleted</span>
+</pre></div>
+
 <p>Here we can see that the language allows us to boil down our code to just the
 ideas we’re trying to convey. It also doesn’t hurt that GHC will check that all
 our action names match up, but that’s a different topic.</p>

@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -75,32 +75,36 @@ Yesod site. For our purposes, all we need to care about is what we define as
 our <code>outputFormat</code>. The value we use here should be different depending on
 whether you’re running the application in development or production — unless of
 course you <em>want</em> to see JSON logs in development.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Application.hs</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="ot">makeLogWare ::</span> <span class="dt">App</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Middleware</span></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>makeLogWare foundation <span class="ot">=</span></span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  mkRequestLogger def</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    { outputFormat <span class="ot">=</span></span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> appDetailedRequestLogging <span class="op">$</span> appSettings foundation</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">then</span> <span class="dt">Detailed</span> <span class="dt">True</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span> <span class="dt">Apache</span> <span class="op">$</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>               <span class="kw">if</span> appIpFromHeader <span class="op">$</span> appSettings foundation</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>               <span class="kw">then</span> <span class="dt">FromFallback</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>               <span class="kw">else</span> <span class="dt">FromSocket</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    , destination <span class="ot">=</span> <span class="dt">Logger</span> <span class="op">$</span> loggerSet <span class="op">$</span> appLogger foundation</span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- ./src/Application.hs</span>
+
+<span class="nf">makeLogWare</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="kt">Middleware</span>
+<span class="nf">makeLogWare</span><span class="w"> </span><span class="n">foundation</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="n">mkRequestLogger</span><span class="w"> </span><span class="n">def</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">outputFormat</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">      </span><span class="kr">if</span><span class="w"> </span><span class="n">appDetailedRequestLogging</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">appSettings</span><span class="w"> </span><span class="n">foundation</span>
+<span class="w">        </span><span class="kr">then</span><span class="w"> </span><span class="kt">Detailed</span><span class="w"> </span><span class="kt">True</span>
+<span class="w">        </span><span class="kr">else</span><span class="w"> </span><span class="kt">Apache</span><span class="w"> </span><span class="o">$</span>
+<span class="w">               </span><span class="kr">if</span><span class="w"> </span><span class="n">appIpFromHeader</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">appSettings</span><span class="w"> </span><span class="n">foundation</span>
+<span class="w">               </span><span class="kr">then</span><span class="w"> </span><span class="kt">FromFallback</span>
+<span class="w">               </span><span class="kr">else</span><span class="w"> </span><span class="kt">FromSocket</span>
+<span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Logger</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">loggerSet</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">appLogger</span><span class="w"> </span><span class="n">foundation</span>
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+
 <p>Yesod applications are set to use detailed logging in development by default.
 This format is easier to visually parse than either Apache or JSON logs, but
 would be far too noisy in production. The <code>True</code> in <code>Detailed True</code> means we
 want the logs to use colours. A more descriptive type here might have been
 useful, but that’s by the by. Here’s how those detailed logs look (here without
 colour):</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode txt"><code class="sourceCode default"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>GET /auth/page/simple/login</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  Accept: text/html,application/xhtml+xml,application/xml;q…</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  Status: 200 OK 0.007939s</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>GET /favicon.ico</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  Accept: image/webp,image/apng,image/*,*/*;q=0.8</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  Status: 200 OK 0.001512s</span></code></pre></div>
+<div class="highlight"><pre><span></span>GET /auth/page/simple/login
+  Accept: text/html,application/xhtml+xml,application/xml;q…
+  Status: 200 OK 0.007939s
+GET /favicon.ico
+  Accept: image/webp,image/apng,image/*,*/*;q=0.8
+  Status: 200 OK 0.001512s
+</pre></div>
+
 <p>Ok, so that’s just fine, but we’re more interested now in the production logs.
 We don’t want the Apache format, so that’s what we’ll change. The available
 data constructors can be found in the <a href="http://hackage.haskell.org/package/wai-extra-3.0.27/docs/Network-Wai-Middleware-RequestLogger.html#t:OutputFormat">wai-extra</a> package. You’ll see
@@ -125,14 +129,16 @@ suitable mechanism for transferring this kind of data, and we can use the
 this response header to be applied to <em>every</em> request, so we should use a
 middleware to add this functionality to all handlers.</p>
 <p>Adding Yesod middleware is trivial:</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Foundation.hs</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="ot">addUserIdToResponseHeadersMiddleware ::</span> <span class="dt">Handler</span> a <span class="ot">-&gt;</span> <span class="dt">Handler</span> a</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>addUserIdToResponseHeadersMiddleware handler <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> toKey <span class="ot">=</span> UUID.toText <span class="op">.</span> unUserUUID <span class="op">.</span> userUuid <span class="op">.</span> entityVal</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  mUserId <span class="ot">&lt;-</span> toKey <span class="op">&lt;&lt;$&gt;&gt;</span> maybeAuth</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  traverse_ (addHeader <span class="st">&quot;User-ID&quot;</span>) mUserId</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  handler</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- ./src/Foundation.hs</span>
+
+<span class="nf">addUserIdToResponseHeadersMiddleware</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="n">a</span>
+<span class="nf">addUserIdToResponseHeadersMiddleware</span><span class="w"> </span><span class="n">handler</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="kr">let</span><span class="w"> </span><span class="n">toKey</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">UUID</span><span class="o">.</span><span class="n">toText</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">unUserUUID</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">userUuid</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">entityVal</span>
+<span class="w">  </span><span class="n">mUserId</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">toKey</span><span class="w"> </span><span class="o">&lt;&lt;$&gt;&gt;</span><span class="w"> </span><span class="n">maybeAuth</span>
+<span class="w">  </span><span class="n">traverse_</span><span class="w"> </span><span class="p">(</span><span class="n">addHeader</span><span class="w"> </span><span class="s">&quot;User-ID&quot;</span><span class="p">)</span><span class="w"> </span><span class="n">mUserId</span>
+<span class="w">  </span><span class="n">handler</span>
+</pre></div>
+
 <p>In this middleware — which is just a polymorphic handler that composes with
 any other handler — we use <code>maybeAuth</code> to get a value of <code>Maybe (Entity User)</code>.
 We have a function <code>toKey</code> which takes a user’s ID from an <code>Entity User</code>, and
@@ -140,9 +146,11 @@ since our user entity is wrapped in a <code>Maybe</code>, and then again wrapped
 monadic action that retrieves that value from the database, we need to <code>fmap</code>
 <em>twice</em> over <code>maybeAuth</code> to get our <code>Maybe UserUUID</code> in one pass. The custom
 operator <code>&lt;&lt;$&gt;&gt;</code> gives us this double <code>fmap</code>, and is defined as such:</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">infixl</span> <span class="dv">4</span> <span class="op">&lt;&lt;$&gt;&gt;</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ot">(&lt;&lt;$&gt;&gt;) ::</span> (<span class="dt">Functor</span> f, <span class="dt">Functor</span> g) <span class="ot">=&gt;</span> (a <span class="ot">-&gt;</span> b) <span class="ot">-&gt;</span> f (g a) <span class="ot">-&gt;</span> f (g b)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>(<span class="op">&lt;&lt;$&gt;&gt;</span>) <span class="ot">=</span> <span class="fu">fmap</span> <span class="op">.</span> <span class="fu">fmap</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">infixl</span><span class="w"> </span><span class="mi">4</span><span class="w"> </span><span class="o">&lt;&lt;$&gt;&gt;</span>
+<span class="p">(</span><span class="o">&lt;&lt;$&gt;&gt;</span><span class="p">)</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="p">(</span><span class="kt">Functor</span><span class="w"> </span><span class="n">f</span><span class="p">,</span><span class="w"> </span><span class="kt">Functor</span><span class="w"> </span><span class="n">g</span><span class="p">)</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="p">(</span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">b</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="p">(</span><span class="n">g</span><span class="w"> </span><span class="n">a</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">f</span><span class="w"> </span><span class="p">(</span><span class="n">g</span><span class="w"> </span><span class="n">b</span><span class="p">)</span>
+<span class="p">(</span><span class="o">&lt;&lt;$&gt;&gt;</span><span class="p">)</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">fmap</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">fmap</span>
+</pre></div>
+
 <p>If the user is <em>not</em> authenticated, the value of <code>mUserId</code> will be <code>Nothing</code>,
 in which case we <em>do</em> nothing. If the user <em>is</em> authenticated, we add their ID
 it to a response header with a key of <code>User-ID</code>. The <code>traverse_</code> function in
@@ -150,15 +158,17 @@ this context gives us this behaviour of “if the value is a <code>Just</code> t
 something with it, otherwise do nothing”.</p>
 <p>We also need to <em>apply</em> our middleware, which is just a case of tacking it onto
 whatever other middleware chain we already have.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Foundation.hs</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span> <span class="kw">where</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- ...Other stuff is probably here</span></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  yesodMiddleware <span class="ot">=</span> defaultYesodMiddleware</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">.</span> addUserIdToResponseHeadersMiddleware</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- ...More stuff</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- ./src/Foundation.hs</span>
+
+<span class="kr">instance</span><span class="w"> </span><span class="kt">Yesod</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="kr">where</span>
+<span class="w">  </span><span class="c1">-- ...Other stuff is probably here</span>
+
+<span class="w">  </span><span class="n">yesodMiddleware</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">defaultYesodMiddleware</span>
+<span class="w">    </span><span class="o">.</span><span class="w"> </span><span class="n">addUserIdToResponseHeadersMiddleware</span>
+
+<span class="w">  </span><span class="c1">-- ...More stuff</span>
+</pre></div>
+
 <p>That’s great, but there’s a problem: How do we get these response headers in
 our request log formatter? I went through the source, and unfortunately none of
 the formatting middlewares actually provided the response headers to the log
@@ -166,29 +176,33 @@ formatter. I sent a pull request which adds another <code>OutputFormat</code> da
 constructor, along with its associated custom middleware and log formatter to
 the <code>wai-extra</code> package, and it was <a href="https://github.com/yesodweb/wai/pull/762">merged earlier today</a>. So as of version
 <code>3.0.27</code>, you can use this data constructor:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">type</span> <span class="dt">OutputFormatterWithDetailsAndHeaders</span></span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>   <span class="ot">=</span> <span class="dt">ZonedDate</span> <span class="co">-- ^ When the log message was generated</span></span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">Request</span> <span class="co">-- ^ The WAI request</span></span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">Status</span> <span class="co">-- ^ HTTP status code</span></span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">Maybe</span> <span class="dt">Integer</span> <span class="co">-- ^ Response size</span></span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">NominalDiffTime</span> <span class="co">-- ^ Duration of the request</span></span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> [<span class="dt">S8.ByteString</span>] <span class="co">-- ^ The request body</span></span>
-<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">B.Builder</span> <span class="co">-- ^ Raw response</span></span>
-<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> [<span class="dt">Header</span>] <span class="co">-- ^ The response headers</span></span>
-<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="ot">-&gt;</span> <span class="dt">LogStr</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">type</span><span class="w"> </span><span class="kt">OutputFormatterWithDetailsAndHeaders</span>
+<span class="w">   </span><span class="ow">=</span><span class="w"> </span><span class="kt">ZonedDate</span><span class="w"> </span><span class="c1">-- ^ When the log message was generated</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Request</span><span class="w"> </span><span class="c1">-- ^ The WAI request</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Status</span><span class="w"> </span><span class="c1">-- ^ HTTP status code</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">Integer</span><span class="w"> </span><span class="c1">-- ^ Response size</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">NominalDiffTime</span><span class="w"> </span><span class="c1">-- ^ Duration of the request</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">[</span><span class="kt">S8</span><span class="o">.</span><span class="kt">ByteString</span><span class="p">]</span><span class="w"> </span><span class="c1">-- ^ The request body</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">B</span><span class="o">.</span><span class="kt">Builder</span><span class="w"> </span><span class="c1">-- ^ Raw response</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="p">[</span><span class="kt">Header</span><span class="p">]</span><span class="w"> </span><span class="c1">-- ^ The response headers</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">LogStr</span>
+</pre></div>
+
 <p>…together with the new <code>formatAsJSONWithHeaders</code> function. So our <code>makeLogWare</code>
 function can now be changed to this:</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Application.hs</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="ot">makeLogWare ::</span> <span class="dt">App</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Middleware</span></span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>makeLogWare foundation <span class="ot">=</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  mkRequestLogger def</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    { outputFormat <span class="ot">=</span></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      <span class="kw">if</span> appDetailedRequestLogging <span class="op">$</span> appSettings foundation</span>
-<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">then</span> <span class="dt">Detailed</span> <span class="dt">True</span></span>
-<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span> <span class="dt">OutputFormatterWithDetailsAndHeaders</span> formatAsJSONWithHeaders</span>
-<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    , destination <span class="ot">=</span> <span class="dt">Logger</span> <span class="op">$</span> loggerSet <span class="op">$</span> appLogger foundation</span>
-<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    }</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- ./src/Application.hs</span>
+
+<span class="nf">makeLogWare</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="kt">Middleware</span>
+<span class="nf">makeLogWare</span><span class="w"> </span><span class="n">foundation</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="n">mkRequestLogger</span><span class="w"> </span><span class="n">def</span>
+<span class="w">    </span><span class="p">{</span><span class="w"> </span><span class="n">outputFormat</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">      </span><span class="kr">if</span><span class="w"> </span><span class="n">appDetailedRequestLogging</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">appSettings</span><span class="w"> </span><span class="n">foundation</span>
+<span class="w">        </span><span class="kr">then</span><span class="w"> </span><span class="kt">Detailed</span><span class="w"> </span><span class="kt">True</span>
+<span class="w">        </span><span class="kr">else</span><span class="w"> </span><span class="kt">OutputFormatterWithDetailsAndHeaders</span><span class="w"> </span><span class="n">formatAsJSONWithHeaders</span>
+<span class="w">    </span><span class="p">,</span><span class="w"> </span><span class="n">destination</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Logger</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">loggerSet</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">appLogger</span><span class="w"> </span><span class="n">foundation</span>
+<span class="w">    </span><span class="p">}</span>
+</pre></div>
+
 <p>This will now render all request logs in production as JSON, along with the
 request duration and any response headers. It will also redact any request
 header with a key of <code>Cookie</code>, or any response header with a key of
@@ -196,13 +210,15 @@ header with a key of <code>Cookie</code>, or any response header with a key of
 <p>Almost there. Now we just want to generated a unique ID for each request as
 it’s coming in, and stuff that ID in a request header. We can do this easily
 enough at the outer WAI layer.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Application.hs</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ot">addRequestId ::</span> <span class="dt">Middleware</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>addRequestId app req sendRes <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  reqId <span class="ot">&lt;-</span> UUID.toASCIIBytes <span class="op">&lt;$&gt;</span> UUID.nextRandom</span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> hs <span class="ot">=</span> (<span class="st">&quot;Request-ID&quot;</span>, reqId) <span class="op">:</span> WAI.requestHeaders req</span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  app (req { WAI.requestHeaders <span class="ot">=</span> hs }) sendRes</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- ./src/Application.hs</span>
+
+<span class="nf">addRequestId</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Middleware</span>
+<span class="nf">addRequestId</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="n">req</span><span class="w"> </span><span class="n">sendRes</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">reqId</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="kt">UUID</span><span class="o">.</span><span class="n">toASCIIBytes</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="kt">UUID</span><span class="o">.</span><span class="n">nextRandom</span>
+<span class="w">  </span><span class="kr">let</span><span class="w"> </span><span class="n">hs</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="p">(</span><span class="s">&quot;Request-ID&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">reqId</span><span class="p">)</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="kt">WAI</span><span class="o">.</span><span class="n">requestHeaders</span><span class="w"> </span><span class="n">req</span>
+<span class="w">  </span><span class="n">app</span><span class="w"> </span><span class="p">(</span><span class="n">req</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="kt">WAI</span><span class="o">.</span><span class="n">requestHeaders</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">hs</span><span class="w"> </span><span class="p">})</span><span class="w"> </span><span class="n">sendRes</span>
+</pre></div>
+
 <p>The first line uses the <code>uuid</code> package to generate a UUIDv4, and then converts
 it to a human-readable bytestring. We then construct a new value for the
 request headers — here marked as <code>hs</code> — which is just the new header prepended
@@ -211,13 +227,15 @@ request lifecycle, sending along a modified request with the new headers.</p>
 <p>As before, don’t forget to add this new middleware to the appropriate chain.
 This would be our WAI middleware chain, <em>not</em> the Yesod middleware chain we
 used earlier.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- ./src/Application.hs</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="ot">makeApplication ::</span> <span class="dt">App</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Application</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>makeApplication foundation <span class="ot">=</span> <span class="kw">do</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>  logWare  <span class="ot">&lt;-</span> makeLogWare foundation</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>  appPlain <span class="ot">&lt;-</span> toWaiAppPlain foundation</span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> <span class="op">$</span> addRequestId <span class="op">$</span> logWare <span class="op">$</span> defaultMiddlewaresNoLogging appPlain</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- ./src/Application.hs</span>
+
+<span class="nf">makeApplication</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="kt">Application</span>
+<span class="nf">makeApplication</span><span class="w"> </span><span class="n">foundation</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">logWare</span><span class="w">  </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">makeLogWare</span><span class="w"> </span><span class="n">foundation</span>
+<span class="w">  </span><span class="n">appPlain</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">toWaiAppPlain</span><span class="w"> </span><span class="n">foundation</span>
+<span class="w">  </span><span class="n">return</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">addRequestId</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">logWare</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">defaultMiddlewaresNoLogging</span><span class="w"> </span><span class="n">appPlain</span>
+</pre></div>
+
 <p>Go forth, and trace users.</p>
 
   </article>

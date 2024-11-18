@@ -27,7 +27,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
+    <link rel="stylesheet" type="text/css" href="/css/f89e40c86a4e434c1e21c1ec4d092c12.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
@@ -55,9 +55,11 @@
       </p>
     </div>
     <p>You know that <em>primitive obsession</em> is an anti-pattern.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Bad, because it's &quot;stringly typed&quot;</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="ot">validPassword ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>validPassword password <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- Bad, because it's &quot;stringly typed&quot;</span>
+<span class="nf">validPassword</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Bool</span>
+<span class="nf">validPassword</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+</pre></div>
+
 <p>We’re using a <code>Text</code> value to represent a user’s password. This is bad because
 there are so many possible <code>Text</code> values which would not be valid passwords.</p>
 <p>For example, <code>"letmein"</code> is too short to be a valid password.</p>
@@ -66,37 +68,41 @@ system. This saves you from having to program defensively throughout your
 codebase.</p>
 <p>To this end, you introduce a new type which wraps a text value and models the
 concept of a password.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> {<span class="ot"> unPassword ::</span> <span class="dt">Text</span> }</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ot">validPassword ::</span> <span class="dt">Password</span> <span class="ot">-&gt;</span> <span class="dt">Bool</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>validPassword password <span class="ot">=</span> <span class="co">-- …</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="kr">newtype</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">unPassword</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="p">}</span>
+
+<span class="nf">validPassword</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Bool</span>
+<span class="nf">validPassword</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
+</pre></div>
+
 <p>This is better, but it’s still pretty weak. We’ve introduced a different name
 in the type signature so it’s harder to confuse this value for some other
 text value. The problem is that you can construct a <code>Password</code> value from
 literally <em>any</em> text value. This leads to invalid values floating through your
 system.</p>
 <p>We can fix that by writing a <a href="https://kowainik.github.io/posts/haskell-mini-patterns#smart-constructor">smart constructor</a>.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Careful what we export from this module. Hide that constructor.</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="kw">module</span> <span class="dt">Model.Password</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  ( <span class="dt">Password</span>    <span class="co">-- abstract, hiding the constructor</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  , unPassword  <span class="co">-- unwrap a password</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  , password    <span class="co">-- only way to build a password</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  ) <span class="kw">where</span></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co">-- Our type wraps a Text value. No record field here!</span></span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> <span class="dt">Text</span></span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co">-- Unwrap a 'Password'</span></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="ot">unPassword ::</span> <span class="dt">Password</span> <span class="ot">-&gt;</span> <span class="dt">Text</span></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>unPassword (<span class="dt">Password</span> p) <span class="ot">=</span> p</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- Try to construct a 'Password'</span></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="ot">password ::</span> <span class="dt">Text</span> <span class="ot">-&gt;</span> <span class="dt">Either</span> <span class="dt">Text</span> <span class="dt">Password</span></span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>password t</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">length</span> t <span class="op">&lt;</span> <span class="dv">8</span>    <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;Password is too short&quot;</span></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">length</span> t <span class="op">&gt;</span> <span class="dv">64</span>   <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;Password is too long&quot;</span></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> t <span class="op">==</span> <span class="st">&quot;password&quot;</span> <span class="ot">=</span> <span class="dt">Left</span> <span class="st">&quot;Password is too predictable&quot;</span></span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="op">|</span> <span class="fu">otherwise</span>       <span class="ot">=</span> <span class="dt">Right</span> (<span class="dt">Password</span> t)</span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="c1">-- Careful what we export from this module. Hide that constructor.</span>
+<span class="kr">module</span><span class="w"> </span><span class="nn">Model.Password</span>
+<span class="w">  </span><span class="p">(</span><span class="w"> </span><span class="kt">Password</span><span class="w">    </span><span class="c1">-- abstract, hiding the constructor</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nf">unPassword</span><span class="w">  </span><span class="c1">-- unwrap a password</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nf">password</span><span class="w">    </span><span class="c1">-- only way to build a password</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="c1">-- Our type wraps a Text value. No record field here!</span>
+<span class="kr">newtype</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="kt">Text</span>
+
+<span class="c1">-- Unwrap a 'Password'</span>
+<span class="nf">unPassword</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Text</span>
+<span class="nf">unPassword</span><span class="w"> </span><span class="p">(</span><span class="kt">Password</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">p</span>
+
+<span class="c1">-- Try to construct a 'Password'</span>
+<span class="nf">password</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Either</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="kt">Password</span>
+<span class="nf">password</span><span class="w"> </span><span class="n">t</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="mi">8</span><span class="w">    </span><span class="ow">=</span><span class="w"> </span><span class="kt">Left</span><span class="w"> </span><span class="s">&quot;Password is too short&quot;</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">length</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">64</span><span class="w">   </span><span class="ow">=</span><span class="w"> </span><span class="kt">Left</span><span class="w"> </span><span class="s">&quot;Password is too long&quot;</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;password&quot;</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Left</span><span class="w"> </span><span class="s">&quot;Password is too predictable&quot;</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">otherwise</span><span class="w">       </span><span class="ow">=</span><span class="w"> </span><span class="kt">Right</span><span class="w"> </span><span class="p">(</span><span class="kt">Password</span><span class="w"> </span><span class="n">t</span><span class="p">)</span>
+</pre></div>
+
 <p>This module uses explicit exports, because it’s important that the value
 constructor for <code>Password</code> remains internal to this module. The only way the we
 can construct a <code>Password</code> value outside of this module is by applying the
@@ -121,10 +127,12 @@ tempting to ask the compiler to <em>derive</em> the <code>FromJSON</code> instan
 <code>GeneralizedNewtypeDeriving</code> language extension. It’s less code to write and
 maintain, and in many cases you will indeed want a typeclass instance that is
 the same as the instance of the underlying type.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> <span class="dt">Text</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">deriving</span> <span class="dt">FromJSON</span> <span class="co">-- here's your problem</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="cm">{-# LANGUAGE GeneralizedNewtypeDeriving #-}</span>
+
+<span class="kr">newtype</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="kt">Text</span>
+<span class="w">  </span><span class="kr">deriving</span><span class="w"> </span><span class="kt">FromJSON</span><span class="w"> </span><span class="c1">-- here's your problem</span>
+</pre></div>
+
 <p>When you’re using smart constructors however, this will lead to invalid data
 flowing through your system because like record fields, this is also a way to
 circumvent the validation performed by the smart constructor.</p>
@@ -132,18 +140,20 @@ circumvent the validation performed by the smart constructor.</p>
 module exports here. Typeclass instances in Haskell are always exported and
 imported between modules!</p>
 <p>Fixing this is simple — just manually write the instance.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">{-# LANGUAGE LambdaCase #-}</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="kw">newtype</span> <span class="dt">Password</span> <span class="ot">=</span> <span class="dt">Password</span> <span class="dt">Text</span></span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">FromJSON</span> <span class="dt">Password</span> <span class="kw">where</span></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  parseJSON <span class="ot">=</span> \<span class="kw">case</span></span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    (<span class="dt">String</span> p) <span class="ot">-&gt;</span></span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">case</span> password p <span class="kw">of</span></span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Left</span> err <span class="ot">-&gt;</span></span>
-<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>          <span class="fu">fail</span> <span class="op">$</span> <span class="st">&quot;Could not parse Password: &quot;</span> <span class="op">&lt;&gt;</span> unpack p <span class="op">&lt;&gt;</span> <span class="st">&quot;; &quot;</span> <span class="op">&lt;&gt;</span> err <span class="op">&lt;&gt;</span> <span class="st">&quot;.&quot;</span></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">Right</span> pass' <span class="ot">-&gt;</span> <span class="fu">pure</span> pass'</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    _ <span class="ot">-&gt;</span> <span class="fu">fail</span> <span class="st">&quot;Could not parse Password - was not a String&quot;</span></span></code></pre></div>
+<div class="highlight"><pre><span></span><span class="cm">{-# LANGUAGE LambdaCase #-}</span>
+
+<span class="kr">newtype</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="kt">Text</span>
+
+<span class="kr">instance</span><span class="w"> </span><span class="kt">FromJSON</span><span class="w"> </span><span class="kt">Password</span><span class="w"> </span><span class="kr">where</span>
+<span class="w">  </span><span class="n">parseJSON</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="nf">\</span><span class="kr">case</span>
+<span class="w">    </span><span class="p">(</span><span class="kt">String</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">      </span><span class="kr">case</span><span class="w"> </span><span class="n">password</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">        </span><span class="kt">Left</span><span class="w"> </span><span class="n">err</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">          </span><span class="n">fail</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="s">&quot;Could not parse Password: &quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">unpack</span><span class="w"> </span><span class="n">p</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="s">&quot;; &quot;</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="n">err</span><span class="w"> </span><span class="o">&lt;&gt;</span><span class="w"> </span><span class="s">&quot;.&quot;</span>
+<span class="w">        </span><span class="kt">Right</span><span class="w"> </span><span class="n">pass'</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="n">pass'</span>
+<span class="w">    </span><span class="kr">_</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">fail</span><span class="w"> </span><span class="s">&quot;Could not parse Password - was not a String&quot;</span>
+</pre></div>
+
 <p>Despite these two pitfalls, smart constructors are a good return on investment.
 Just be sure you don’t accidentally introduce ways to circumvent the protection
 that they provide.</p>
