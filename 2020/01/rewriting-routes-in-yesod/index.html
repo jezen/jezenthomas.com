@@ -27,14 +27,14 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/99b1b83f825f17c1eb6396135956f2b2.css">
+    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
-    <div class="about">
+    <header>
 
   <a class="portrait" href="/">
-    <img alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+    <img alt="Jezen Thomas" src="/static/img/jgt2.jpg" loading="lazy">
   </a>
 
   <h1 class="site-title">
@@ -42,32 +42,10 @@
   </h1>
 
   <p class="bio">
-    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
-    Haskell programmer.
-    Writing about business and software engineering.
-    Working from anywhere.
+    CTO &amp; Co-Founder at Supercede.
   </p>
 
-  <nav>
-    <ul>
-      <li>
-        <a href="/">Home</a>
-      </li>
-      <li>
-        <a aria-current="true" href="/posts">Blog</a>
-      </li>
-      <li>
-        <a href="/about">About</a>
-      </li>
-      <li id="bmac">
-        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
-      </li>
-    </ul>
-  </nav>
-
-  <footer>&copy; 2024 Jezen Thomas</footer>
-
-</div>
+</header>
 
     <div id="main"><div class="container">
   <article>
@@ -105,57 +83,59 @@ along.</p>
 <p>The example below changes the way auth routes from the
 <a href="https://github.com/riskbook/yesod-auth-simple">yesod-auth-simple</a> auth plugin are rendered. Your own implementation
 may slightly differ.</p>
-<pre><code>instance Yesod App where
-
-  -- other typeclass method overrides
-
-  urlParamRenderOverride y r _ =
-    let root = fromMaybe &quot;&quot; (appRoot (appSettings y))
-        toRoute p = Just $ uncurry (joinPath y root) (p, [])
-     in case r of
-          (AuthR LoginR)               -&gt; toRoute [&quot;login&quot;]
-          (AuthR LogoutR)              -&gt; toRoute [&quot;logout&quot;]
-          (AuthR (PluginR &quot;simple&quot; p)) -&gt; toRoute p
-          _                            -&gt; Nothing
-
-  -- yet more custom stuff</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">instance</span> <span class="dt">Yesod</span> <span class="dt">App</span> <span class="kw">where</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- other typeclass method overrides</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  urlParamRenderOverride y r _ <span class="ot">=</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">let</span> root <span class="ot">=</span> fromMaybe <span class="st">&quot;&quot;</span> (appRoot (appSettings y))</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>        toRoute p <span class="ot">=</span> <span class="dt">Just</span> <span class="op">$</span> <span class="fu">uncurry</span> (joinPath y root) (p, [])</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>     <span class="kw">in</span> <span class="kw">case</span> r <span class="kw">of</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>          (<span class="dt">AuthR</span> <span class="dt">LoginR</span>)               <span class="ot">-&gt;</span> toRoute [<span class="st">&quot;login&quot;</span>]</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>          (<span class="dt">AuthR</span> <span class="dt">LogoutR</span>)              <span class="ot">-&gt;</span> toRoute [<span class="st">&quot;logout&quot;</span>]</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>          (<span class="dt">AuthR</span> (<span class="dt">PluginR</span> <span class="st">&quot;simple&quot;</span> p)) <span class="ot">-&gt;</span> toRoute p</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>          _                            <span class="ot">-&gt;</span> <span class="dt">Nothing</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>  <span class="co">-- yet more custom stuff</span></span></code></pre></div>
 <p>Finally, we want to intercept user requests to the shortened paths and expand
 them to their full form under the hood. This is where our WAI middleware comes
 in. Pay special attention to the final pattern match of the <code>rw</code> function — you
 want all other routes in your application to pass through unaltered.</p>
-<pre><code>import Network.Wai.Middleware.Rewrite (rewritePureWithQueries)
-
-rewriteAuthRoutes :: Middleware
-rewriteAuthRoutes = rewritePureWithQueries rw
-  where
-    plugin :: [Text]
-    plugin = [&quot;auth&quot;, &quot;page&quot;, &quot;simple&quot;]
-
-    rw :: PathsAndQueries -&gt; RequestHeaders -&gt; PathsAndQueries
-    rw ([&quot;register&quot;], _) _                  = (plugin &lt;&gt; [&quot;register&quot;], [])
-    rw ([&quot;confirm&quot;, token], _) _            = (plugin &lt;&gt; [&quot;confirm&quot;, token], [])
-    rw ([&quot;confirmation-email-sent&quot;], _) _   = (plugin &lt;&gt; [&quot;confirmation-email-sent&quot;], [])
-    rw ([&quot;login&quot;], _) _                     = (plugin &lt;&gt; [&quot;login&quot;], [])
-    rw ([&quot;reset-password&quot;], _) _            = (plugin &lt;&gt; [&quot;reset-password&quot;], [])
-    rw ([&quot;reset-password-email-sent&quot;], _) _ = (plugin &lt;&gt; [&quot;reset-password-email-sent&quot;], [])
-    rw ([&quot;logout&quot;], _) _                    = ([&quot;auth&quot;, &quot;logout&quot;], [])
-    rw (path, qs) _                         = (path, qs)
-
-makeApplication :: App -&gt; IO Application
-makeApplication foundation = do
-  logWare  &lt;- makeLogWare foundation
-  appPlain &lt;- toWaiAppPlain foundation
-  initState foundation
-  let middlewares = defaultMiddlewaresNoLogging
-                &gt;&gt;&gt; logWare
-                &gt;&gt;&gt; rewriteAuthRoutes
-  return $ middlewares appPlain</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Network.Wai.Middleware.Rewrite</span> (rewritePureWithQueries)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ot">rewriteAuthRoutes ::</span> <span class="dt">Middleware</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>rewriteAuthRoutes <span class="ot">=</span> rewritePureWithQueries rw</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="kw">where</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ot">    plugin ::</span> [<span class="dt">Text</span>]</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    plugin <span class="ot">=</span> [<span class="st">&quot;auth&quot;</span>, <span class="st">&quot;page&quot;</span>, <span class="st">&quot;simple&quot;</span>]</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="ot">    rw ::</span> <span class="dt">PathsAndQueries</span> <span class="ot">-&gt;</span> <span class="dt">RequestHeaders</span> <span class="ot">-&gt;</span> <span class="dt">PathsAndQueries</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>    rw ([<span class="st">&quot;register&quot;</span>], _) _                  <span class="ot">=</span> (plugin <span class="op">&lt;&gt;</span> [<span class="st">&quot;register&quot;</span>], [])</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    rw ([<span class="st">&quot;confirm&quot;</span>, token], _) _            <span class="ot">=</span> (plugin <span class="op">&lt;&gt;</span> [<span class="st">&quot;confirm&quot;</span>, token], [])</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    rw ([<span class="st">&quot;confirmation-email-sent&quot;</span>], _) _   <span class="ot">=</span> (plugin <span class="op">&lt;&gt;</span> [<span class="st">&quot;confirmation-email-sent&quot;</span>], [])</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    rw ([<span class="st">&quot;login&quot;</span>], _) _                     <span class="ot">=</span> (plugin <span class="op">&lt;&gt;</span> [<span class="st">&quot;login&quot;</span>], [])</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    rw ([<span class="st">&quot;reset-password&quot;</span>], _) _            <span class="ot">=</span> (plugin <span class="op">&lt;&gt;</span> [<span class="st">&quot;reset-password&quot;</span>], [])</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    rw ([<span class="st">&quot;reset-password-email-sent&quot;</span>], _) _ <span class="ot">=</span> (plugin <span class="op">&lt;&gt;</span> [<span class="st">&quot;reset-password-email-sent&quot;</span>], [])</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    rw ([<span class="st">&quot;logout&quot;</span>], _) _                    <span class="ot">=</span> ([<span class="st">&quot;auth&quot;</span>, <span class="st">&quot;logout&quot;</span>], [])</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    rw (path, qs) _                         <span class="ot">=</span> (path, qs)</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="ot">makeApplication ::</span> <span class="dt">App</span> <span class="ot">-&gt;</span> <span class="dt">IO</span> <span class="dt">Application</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>makeApplication foundation <span class="ot">=</span> <span class="kw">do</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  logWare  <span class="ot">&lt;-</span> makeLogWare foundation</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  appPlain <span class="ot">&lt;-</span> toWaiAppPlain foundation</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  initState foundation</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> middlewares <span class="ot">=</span> defaultMiddlewaresNoLogging</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>                <span class="op">&gt;&gt;&gt;</span> logWare</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>                <span class="op">&gt;&gt;&gt;</span> rewriteAuthRoutes</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span> <span class="op">$</span> middlewares appPlain</span></code></pre></div>
 <p>Connect your custom WAI middleware to our middleware chain when building the
 application, and everything should work as you expect.</p>
 
   </article>
 </div>
 </div>
+    <footer>&copy; 2024 Jezen Thomas</footer>
+
 
     <script type="text/javascript">
       [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {

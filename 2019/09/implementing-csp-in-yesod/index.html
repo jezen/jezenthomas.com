@@ -27,14 +27,14 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/99b1b83f825f17c1eb6396135956f2b2.css">
+    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
-    <div class="about">
+    <header>
 
   <a class="portrait" href="/">
-    <img alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+    <img alt="Jezen Thomas" src="/static/img/jgt2.jpg" loading="lazy">
   </a>
 
   <h1 class="site-title">
@@ -42,32 +42,10 @@
   </h1>
 
   <p class="bio">
-    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
-    Haskell programmer.
-    Writing about business and software engineering.
-    Working from anywhere.
+    CTO &amp; Co-Founder at Supercede.
   </p>
 
-  <nav>
-    <ul>
-      <li>
-        <a href="/">Home</a>
-      </li>
-      <li>
-        <a aria-current="true" href="/posts">Blog</a>
-      </li>
-      <li>
-        <a href="/about">About</a>
-      </li>
-      <li id="bmac">
-        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
-      </li>
-    </ul>
-  </nav>
-
-  <footer>&copy; 2024 Jezen Thomas</footer>
-
-</div>
+</header>
 
     <div id="main"><div class="container">
   <article>
@@ -108,10 +86,10 @@ you’re granting execution permission</li>
 </ul>
 <p>The first two constraints are trivial to solve — we can use the <code>uuid</code> and
 <code>base64-bytestring</code> libraries to produce our nonces.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span>           <span class="dt">ClassyPrelude.Yesod</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="kw">qualified</span> <span class="dt">Data.ByteString.Base64</span> <span class="kw">as</span> <span class="dt">B64</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span>           <span class="dt">Data.UUID</span>              (toASCIIBytes)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span>           <span class="dt">Data.UUID.V4</span>           (nextRandom)</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">ClassyPrelude.Yesod</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.ByteString.Base64</span> <span class="kw">qualified</span> <span class="kw">as</span> <span class="dt">B64</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.UUID</span> (toASCIIBytes)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="kw">import</span> <span class="dt">Data.UUID.V4</span> (nextRandom)</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="ot">generateRequestNonce ::</span> <span class="dt">MonadHandler</span> m <span class="ot">=&gt;</span> m <span class="dt">Text</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>generateRequestNonce <span class="ot">=</span> <span class="kw">do</span></span>
@@ -280,6 +258,8 @@ production.</p>
   </article>
 </div>
 </div>
+    <footer>&copy; 2024 Jezen Thomas</footer>
+
 
     <script type="text/javascript">
       [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {

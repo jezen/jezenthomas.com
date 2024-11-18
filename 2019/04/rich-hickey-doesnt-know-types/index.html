@@ -27,14 +27,14 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/99b1b83f825f17c1eb6396135956f2b2.css">
+    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
-    <div class="about">
+    <header>
 
   <a class="portrait" href="/">
-    <img alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+    <img alt="Jezen Thomas" src="/static/img/jgt2.jpg" loading="lazy">
   </a>
 
   <h1 class="site-title">
@@ -42,32 +42,10 @@
   </h1>
 
   <p class="bio">
-    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
-    Haskell programmer.
-    Writing about business and software engineering.
-    Working from anywhere.
+    CTO &amp; Co-Founder at Supercede.
   </p>
 
-  <nav>
-    <ul>
-      <li>
-        <a href="/">Home</a>
-      </li>
-      <li>
-        <a aria-current="true" href="/posts">Blog</a>
-      </li>
-      <li>
-        <a href="/about">About</a>
-      </li>
-      <li id="bmac">
-        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
-      </li>
-    </ul>
-  </nav>
-
-  <footer>&copy; 2024 Jezen Thomas</footer>
-
-</div>
+</header>
 
     <div id="main"><div class="container">
   <article>
@@ -134,13 +112,13 @@ but not for any reason that Hickey is making any allusions to. It could have
 infinite implementations in the sense that you could implement it as the input
 alone, or concatenated with itself, or concatenated with itself twice, or
 thrice, and so on to infinity.</p>
-<pre><code>f :: [a] -&gt; [a]
-f a = a ++ a
--- or
-f a = a ++ a ++ a
--- or
-f a = a ++ a ++ a ++ a
--- ad infinitum</code></pre>
+<div class="sourceCode" id="cb1"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="ot">f ::</span> [a] <span class="ot">-&gt;</span> [a]</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>f a <span class="ot">=</span> a <span class="op">++</span> a</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="co">-- or</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>f a <span class="ot">=</span> a <span class="op">++</span> a <span class="op">++</span> a</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="co">-- or</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>f a <span class="ot">=</span> a <span class="op">++</span> a <span class="op">++</span> a <span class="op">++</span> a</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co">-- ad infinitum</span></span></code></pre></div>
 <p>For practical purposes, this distinction is not useful, so it does nothing to
 support Hickey’s claim that the type signature <code>[a] -&gt; [a]</code> “tells you
 nothing”.</p>
@@ -151,8 +129,8 @@ because of the <a href="https://en.wikipedia.org/wiki/Halting_problem">Halting P
 circumstances) could <em>also</em> push your CPU so hard that your machine overheats,
 bursts into flames, and melts into its own little pool of glowing lava. That’d
 be one hell of a side-effect.</p>
-<pre><code>f :: [a] -&gt; [a]
-f a = f a</code></pre>
+<div class="sourceCode" id="cb2"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="ot">f ::</span> [a] <span class="ot">-&gt;</span> [a]</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>f a <span class="ot">=</span> f a</span></code></pre></div>
 <p>Again, this distinction is not particularly useful. I include these admissions
 in the interest of fairness. I want to be clear that I do not intend to
 misrepresent neither Hickey nor the benefits and drawbacks of a good type
@@ -160,9 +138,9 @@ system such as the one in Haskell.</p>
 <p>Let’s retreat to the realm of the reasonable. Could this function be <code>reverse</code>?
 Yeah, sure. You could recursively call this function with all the elements
 except the first one, joined with a list of just the first item.</p>
-<pre><code>reverse' :: [a] -&gt; [a]
-reverse' [] = []
-reverse' (x:xs) = reverse' xs ++ [x]</code></pre>
+<div class="sourceCode" id="cb3"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="ot">reverse' ::</span> [a] <span class="ot">-&gt;</span> [a]</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>reverse' [] <span class="ot">=</span> []</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>reverse' (x<span class="op">:</span>xs) <span class="ot">=</span> reverse' xs <span class="op">++</span> [x]</span></code></pre></div>
 <p>Pretty standard stuff. What else could it be? Could it be “Give me the first
 <em>n</em> elements of the list?” Yeah, that works. You could also drop the first <em>n</em>
 elements of the list.</p>
@@ -176,9 +154,9 @@ This principle stacks up with <em>enormously</em> meaningful effect.</p>
 transparency, what would happen on subsequent calls to this function?</p>
 <p>For it to do a shuffle, it would need a random seed. You could either pass that
 in, which would make it something like</p>
-<pre><code>f :: Seed -&gt; [a] -&gt; [a]</code></pre>
+<div class="sourceCode" id="cb4"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ot">f ::</span> <span class="dt">Seed</span> <span class="ot">-&gt;</span> [a] <span class="ot">-&gt;</span> [a]</span></code></pre></div>
 <p>…or you would have to do it in IO, which would make it</p>
-<pre><code>f :: [a] -&gt; IO [a]</code></pre>
+<div class="sourceCode" id="cb5"><pre class="sourceCode haskell"><code class="sourceCode haskell"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ot">f ::</span> [a] <span class="ot">-&gt;</span> <span class="dt">IO</span> [a]</span></code></pre></div>
 <p>Once again, there are quite many things we can <em>know</em> about what a function can
 do just by reading its type signature.</p>
 <p>You may begin to believe that since I have so far railed about theory, the
@@ -230,6 +208,8 @@ people.</p>
   </article>
 </div>
 </div>
+    <footer>&copy; 2024 Jezen Thomas</footer>
+
 
     <script type="text/javascript">
       [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {

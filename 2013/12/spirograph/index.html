@@ -27,14 +27,14 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/gif" href="/doom.gif">
-    <link rel="stylesheet" type="text/css" href="/css/99b1b83f825f17c1eb6396135956f2b2.css">
+    <link rel="stylesheet" type="text/css" href="/css/fff534be224c1ee1188839fb57c525f2.css">
     <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
   </head>
   <body>
-    <div class="about">
+    <header>
 
   <a class="portrait" href="/">
-    <img alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+    <img alt="Jezen Thomas" src="/static/img/jgt2.jpg" loading="lazy">
   </a>
 
   <h1 class="site-title">
@@ -42,32 +42,10 @@
   </h1>
 
   <p class="bio">
-    CTO &amp; Co-Founder at <a href="https://supercede.com">Supercede</a>.
-    Haskell programmer.
-    Writing about business and software engineering.
-    Working from anywhere.
+    CTO &amp; Co-Founder at Supercede.
   </p>
 
-  <nav>
-    <ul>
-      <li>
-        <a href="/">Home</a>
-      </li>
-      <li>
-        <a aria-current="true" href="/posts">Blog</a>
-      </li>
-      <li>
-        <a href="/about">About</a>
-      </li>
-      <li id="bmac">
-        <a href="https://buymeacoffee.com/jezen">Buy me a coffee</a>
-      </li>
-    </ul>
-  </nav>
-
-  <footer>&copy; 2024 Jezen Thomas</footer>
-
-</div>
+</header>
 
     <div id="main"><div class="container">
   <article>
@@ -85,14 +63,211 @@ Sass. Making art like this is pretty simple; you draw a line, and adjust it
 slightly at regular intervals with the loop. The animation is slightly off-sync
 relative to the position of each respective line, which creates the effect of
 the shape evolving through many interesting patterns.</p>
-<p data-height="540" data-theme-id="477" data-slug-hash="bCyrF" data-user="jezen" data-default-tab="result" class="codepen">
-See the Pen <a href="http://codepen.io/jezen/pen/bCyrF">bCyrF</a> by Jezen Thomas (<a href="http://codepen.io/jezen"><span class="citation" data-cites="jezen">@jezen</span></a>) on <a href="http://codepen.io">CodePen</a>
-</p>
-<script async src="//codepen.io/assets/embed/ei.js"></script>
+<div id="spirograph">
+<ul>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+<li>
+</li>
+</ul>
+</div>
+<p>The key to doing this in a reasonable way is to use pre-processors like Haml
+and Sass to generate the markup and styles with some simple loops.</p>
+<p>The Haml code generates an unordered list with 90 list items inside.</p>
+<pre class="haml"><code>%ul
+  -(1..90).each do
+    %li</code></pre>
+<p>The Sass code uses an only slightly more complicated loop with some variable substitution and basic arithmetic to displace each list item by a regular interval.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode sass"><code class="sourceCode sass"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">@for</span> <span class="va">$i</span> from <span class="dv">1</span> through <span class="dv">90</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  li<span class="in">:nth-child(#{$i})</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">transform</span>: <span class="fu">rotate(</span><span class="va">$i</span><span class="op">*</span><span class="dv">4</span><span class="op">+</span>deg<span class="fu">)</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">animation</span>: rot-<span class="op">#{</span><span class="va">$i</span><span class="op">}</span> <span class="dv">3000</span><span class="dt">s</span> <span class="dv">infinite</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="im">@keyframes</span> rot-<span class="op">#{</span><span class="va">$i</span><span class="op">}</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    100%</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>      <span class="kw">transform</span>: <span class="fu">rotate(</span><span class="va">$i</span><span class="op">*</span><span class="dv">360</span><span class="dt">deg</span><span class="fu">)</span></span></code></pre></div>
 
   </article>
 </div>
 </div>
+    <footer>&copy; 2024 Jezen Thomas</footer>
+
 
     <script type="text/javascript">
       [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
