@@ -1,12 +1,18 @@
+{-# LANGUAGE BlockArguments #-}
+{-# LANGUAGE ImportQualifiedPost #-}
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ViewPatterns #-}
 
 import Control.Monad (forM_)
 import Data.ByteString.Char8 (pack)
 import Data.ByteString.Lazy (fromStrict)
 import Data.Digest.Pure.MD5 (md5)
-import Data.List (groupBy, isSuffixOf, sortOn)
+import Data.List (groupBy, intercalate, isSuffixOf, sortOn)
+import Data.Maybe
 import Data.Monoid ((<>))
 import Data.Ord (Down(..), comparing)
+import Data.Text qualified as T
 import Data.Time.Calendar (toGregorian)
 import Data.Time.Clock (UTCTime, utctDay)
 import Data.Time.Format (formatTime)
@@ -15,7 +21,11 @@ import Debug.Trace
 import Hakyll hiding (host)
 import Redirects
 import System.FilePath.Posix (takeBaseName, takeDirectory, (</>))
+import Text.Pandoc
+import Text.Pandoc.Citeproc
+import Text.Pandoc.Highlighting (pygments, styleToCss, zenburn)
 import Text.Pandoc.Options
+import Text.Pandoc.Walk (walkM)
 
 host :: String
 host = "https://jezenthomas.com"
@@ -186,23 +196,20 @@ pageCtx = mconcat
   ]
 
 blogCompiler :: Compiler (Item String)
-blogCompiler = pandocCompilerWith readerOpts writerOpts
+blogCompiler =
+  pandocCompilerWithTransformM
+    defaultHakyllReaderOptions
+    defaultHakyllWriterOptions
+    pygmentsHighlight
   where
-  readerOpts :: ReaderOptions
-  readerOpts = defaultHakyllReaderOptions
-    { readerExtensions =
-        readerExtensions defaultHakyllReaderOptions <> extensionsFromList
-           [ Ext_tex_math_single_backslash  -- TeX math btw (..) [..]
-           , Ext_tex_math_double_backslash  -- TeX math btw \(..\) \[..\]
-           , Ext_tex_math_dollars           -- TeX math between $..$ or $$..$$
-           , Ext_latex_macros               -- Parse LaTeX macro definitions (for math only)
-           ]
-      }
-
-  writerOpts :: WriterOptions
-  writerOpts = defaultHakyllWriterOptions
-    { writerHTMLMathMethod = MathJax ""
-    }
+  pygmentsHighlight :: Pandoc -> Compiler Pandoc
+  pygmentsHighlight = walkM \case
+    CodeBlock (_, listToMaybe -> mbLang, _) (T.unpack -> body) -> do
+      let lang = T.unpack (fromMaybe "text" mbLang)
+      RawBlock "html" . T.pack <$> callPygs lang body
+    block -> pure block
+  callPygs :: String -> String -> Compiler String
+  callPygs lang = unixFilter "pygmentize" [ "-l", lang, "-f", "html" ]
 
 -- custom routes
 --------------------------------------------------------------------------------

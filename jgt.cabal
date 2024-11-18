@@ -16,7 +16,9 @@ executable site
     , filepath
     , hakyll              >=4.16 && <4.17
     , pandoc
+    , pandoc-types
     , pureMD5
+    , text
     , time
     , time-locale-compat
 

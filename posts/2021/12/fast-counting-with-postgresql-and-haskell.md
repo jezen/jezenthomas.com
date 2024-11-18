@@ -273,7 +273,7 @@ Finally, when it comes to presenting the result length to the user, we're able
 to implement a more informative UI owing to the fact that our figures are
 meaningfully tagged.
 
-```hamlet
+```
 <p.results-length>
   $case resultLen
     $of Approximate n

@@ -168,13 +168,6 @@ abbrev {
   border-bottom: 1px dotted #888;
 }
 
-.sourceCode a,
-.sourceCode a:hover {
-  border: none;
-  color: inherit;
-  cursor: default;
-}
-
 a:hover {
   color: #ff7315;
 }
@@ -184,10 +177,9 @@ p {
 }
 
 pre {
-  background: #fbfbfb;
   border-width: 1px 0;
   border-style: solid;
-  border-color: #e1e1e1;
+  border-color: var(--border-color);
   margin: 0 -20px;
   font-size: 12px;
   line-height: 16px;
@@ -213,22 +205,6 @@ pre > code {
 
 code {
   background: #f5f5f5;
-}
-
-.sourceCode {
-  font-size: 13px;
-  margin: 3em -20px;
-}
-
-@media (min-width: 920px) {
-  .sourceCode {
-    margin: 3em 0;
-    margin-left: calc(50% - 300px);
-  }
-}
-
-.sourceCode .sourceCode {
-  margin: 0;
 }
 
 sup {
@@ -388,6 +364,12 @@ blockquote p em {
 /* Article -------------------------------------------------------------- {{{ */
 article {
   padding: 0 20px;
+}
+
+@media (min-width: 640px) {
+  article {
+    padding: 0;
+  }
 }
 
 article h2 {

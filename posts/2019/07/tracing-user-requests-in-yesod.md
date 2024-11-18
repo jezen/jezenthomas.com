@@ -53,7 +53,7 @@ want the logs to use colours. A more descriptive type here might have been
 useful, but that's by the by. Here's how those detailed logs look (here without
 colour):
 
-```txt
+```text
 GET /auth/page/simple/login
   Accept: text/html,application/xhtml+xml,application/xml;q…
   Status: 200 OK 0.007939s
