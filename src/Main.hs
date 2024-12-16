@@ -149,7 +149,7 @@ main = hakyll $ do
       posts <- recentFirst =<< loadAll "posts/*/*/*"
       let ctx =  constField "title" "All Posts | Jezen Thomas"
               <> boolField "page-blog" (const True)
-              <> publishedGroupField "years" posts postCtx
+              <> publishedGroupField "years" posts (postCtx <> utcCtx)
               <> cssPathCtx
               <> defaultContext
 

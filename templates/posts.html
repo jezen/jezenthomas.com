@@ -3,12 +3,12 @@
   <ul class="posts">
     $for(years)$$for(posts)$
       <li class="post">
-        <a class="post-title" href="$url$">$title$</a>
-        $if(excerpt)$<p class="post-excerpt">$excerpt$</p>$endif$
-        <p class="post-date">
-          <span>$date$</span>
-          | <a href="$url$">Continue reading &rarr;</a>
-        </p>
+        <a class="post-title" href="$url$">
+          $title$
+          <span class="post-date">
+            $utcMonth$ $utcDay$<sup>$utcOrdinal$</sup>, $utcYear$
+          </span>
+        </a>
       </li>
     $endfor$$endfor$
   </ul>
