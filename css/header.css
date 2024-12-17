@@ -28,10 +28,11 @@ header {
 }
 
 header .portrait img {
-  border-width: 1px;
-  border-style: solid;
   border-color: #555;
   border-radius: 50%;
+  border-style: solid;
+  border-width: 1px;
+  height: 80px;
   width: 80px;
 }
 
