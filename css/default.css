@@ -2,8 +2,18 @@
   --main-bg-color: #fff;
   --main-fg-color: #000;
   --main-fg-secondary-color: #333;
-  --border-color: #e3e3e3;
+  --border-color: 227, 227, 227;
   --code-bg: #f5f5f5;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --main-bg-color: #191919;
+    --main-fg-color: #ece9e6;
+    --main-fg-secondary-color: #aaa;
+    --border-color: 51, 51, 51;
+    --code-bg: #272822;
+  }
 }
 
 /* Scaffold ------------------------------------------------------------- {{{ */
@@ -26,22 +36,12 @@ body {
   font-size: 15px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --main-bg-color: #191919;
-    --main-fg-color: #ece9e6;
-    --main-fg-secondary-color: #aaa;
-    --border-color: #333;
-    --code-bg: #272822;
-  }
-}
-
 #main {
   overflow: hidden;
 }
 
 img {
-  border-color: var(--border-color);
+  border-color: rgb(var(--border-color));
   border-radius: 10px;
   border-style: solid;
   border-width: 1px;
@@ -71,7 +71,7 @@ img {
 }
 
 .posts .post {
-  border-bottom: 1px solid #222;
+  border-bottom: 1px solid rgba(var(--border-color), .5);
   margin: 0;
   overflow: hidden;
 }
@@ -201,7 +201,7 @@ p {
 pre {
   border-width: 1px 0;
   border-style: solid;
-  border-color: var(--border-color);
+  border-color: rgb(var(--border-color));
   margin: 0 -20px;
   font-size: 12px;
   line-height: 16px;
