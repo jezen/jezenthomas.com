@@ -302,14 +302,14 @@ blockquote p em {
 }
 
 .about-page h2 {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgb(var(--border-color));
   font-size: 1.6rem;
   margin-top: 0;
   padding-bottom: .5rem;
 }
 
 .about-page h3 {
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid rgb(var(--border-color));
   font-size: 1.6rem;
   padding-bottom: .5rem;
 }
@@ -359,6 +359,16 @@ blockquote p em {
   margin: 0 8px 12px 0;
 }
 
+@media (prefers-color-scheme: dark) {
+  .about-page .yes li,
+  .about-page .no li {
+    background-color: rgb(63 63 107 / 46%);
+    border-color: rgb(60 53 55 / 71%);
+    box-shadow: inset 1px 1px 3px 0 hsl(0deg 4.63% 25.8% / 68%);
+    color: #fff;
+  }
+}
+
 .about-page .yes li {
   position: relative;
 }
@@ -373,6 +383,13 @@ blockquote p em {
 .about-page .yes a:hover {
   background-color: #f4f9ff;
   color: #000;
+}
+
+@media (prefers-color-scheme: dark) {
+  .about-page .yes a:hover {
+    background-color: rgb(63 63 107 / 46%);
+    color: #fff;
+  }
 }
 
 .about-page .yes li img {
