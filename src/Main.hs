@@ -113,34 +113,18 @@ main = hakyll $ do
     route idRoute
     dep <- makePatternDependency "css/*"
     rulesExtraDependencies [dep] $ compile $ do
-      let recentPostList :: Int -> Compiler String
-          recentPostList n = do
-            posts   <- loadAllSnapshots "posts/*/*/*" "content" >>= recentFirst
-            itemTpl <- loadBody "templates/post-index.html"
-            applyTemplateList itemTpl postCtx (take n posts)
       let ctx =  constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
               <> postCtx
               <> boolField "page-home" (const True)
               <> cssPathCtx
 
       getResourceBody
-        >>= applyAsTemplate (field "posts" (const (recentPostList 3)))
         >>= loadAndApplyTemplate "templates/default.html" ctx
         >>= cleanIndexUrls
 
   create ["about/index.html"] $ do
     route idRoute
-    dep <- makePatternDependency "css/*"
-    rulesExtraDependencies [dep] $ compile $ do
-      let ctx =  constField "title" "About | Jezen Thomas"
-              <> boolField "page-about" (const True)
-              <> cssPathCtx
-              <> defaultContext
-
-      makeItem ""
-        >>= loadAndApplyTemplate "templates/about.html" ctx
-        >>= loadAndApplyTemplate "templates/default.html" ctx
-        >>= cleanIndexUrls
+    compile $ makeItem $ Redirect "/"
 
   create ["posts/index.html"] $ do
     route idRoute
