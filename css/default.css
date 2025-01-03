@@ -404,6 +404,10 @@ blockquote p em {
   cursor: not-allowed;
   padding: 4px 8px;
 }
+
+.about-img {
+  margin-bottom: 1.5em;
+}
 /* }}} */
 /* Article -------------------------------------------------------------- {{{ */
 article {
