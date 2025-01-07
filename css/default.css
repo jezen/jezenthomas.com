@@ -181,7 +181,7 @@ a,
 a:visited {
   color: inherit;
   cursor: pointer;
-  border-bottom: 1px dotted #888;
+  border-bottom: 1px solid #888;
   text-decoration: none;
 }
 
@@ -421,7 +421,11 @@ article {
 }
 
 article h2 {
-  font-size: 16px;
+  font-size: 22px;
+}
+
+article h2 + p {
+  margin-top: 1em;
 }
 
 article p,
