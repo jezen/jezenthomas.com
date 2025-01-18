@@ -85,9 +85,12 @@ img {
 }
 
 article .post-title {
+  border-bottom: 1px solid rgb(var(--border-color));
   font-size: 1.6rem;
   letter-spacing: -0.5px;
   line-height: 35px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
 }
 
 .post-title a {
@@ -161,11 +164,26 @@ h3 {
 
 .post-meta {
   color: var(--main-fg-secondary-color);
-  font-size: 14px;
+  display: flex;
+  font-size: 13px;
+  justify-content: space-between;
+  margin-bottom: 3em;
 }
 
 .post-meta p {
   margin: 0;
+}
+
+.rss {
+  border: none;
+  color: var(--main-fg-color);
+  display: flex;
+}
+
+.rss svg {
+  fill: #ff7315;
+  margin-right: 6px;
+  width: 16px;
 }
 
 .post-date {
@@ -482,16 +500,27 @@ ol {
 /* }}} */
 
 footer {
+  border-top: 1px solid rgb(var(--border-color));
   color: var(--main-fg-secondary-color);
+  display: flex;
   font-size: 11px;
+  justify-content: space-between;
   margin: auto;
   padding: 20px;
+}
+
+footer p {
+  margin: 0;
+}
+
+footer .rss svg {
+  width: 14px;
 }
 
 @media (min-width: 640px) {
   footer {
     max-width: 600px;
-    padding: 20px 0 40px;
+    padding: 14px 0 40px;
   }
 }
 
