@@ -7,8 +7,656 @@
         <description><![CDATA[Thoughts on Haskell, Business, Unix, and more.]]></description>
         <atom:link href="https://jezenthomas.com/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Tue, 07 Jan 2025 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Mon, 20 Jan 2025 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Supercede's House Style for Haskell</title>
+    <link>https://jezenthomas.com/2025/01/style-guide/</link>
+    <description><![CDATA[<p>Over the years, a house style has emerged for all the Haskell code we write at
+Supercede. We expect all new code to generally follow this style, and since
+style pertains to more than just the language itself, this style guide will
+touch on some aspects of the Yesod ecosystem and software design more broadly.</p>
+<h2 id="philosophy">Philosophy</h2>
+<p>Style is taste, and taste is subjective<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>.</p>
+<p>There isn’t one right way to write Haskell code, which is why I format most
+Haskell code manually. I might use <a href="https://github.com/godlygeek/tabular">tabular</a> to align some record
+fields or case matches, and I always use <a href="https://github.com/haskell/stylish-haskell">stylish-haskell</a> to neatly
+sort and align language extensions and module imports. But beyond that, it’s
+manual.</p>
+<p>Good Haskell code tends to use a kind of visual shape to improve readability.
+Carelessly written code will just <em>look</em> haphazard. This is why you need to use
+your eyes. The other programmers who work with the code you write will also be
+using their eyes.</p>
+<p>Avoid the kind of learned helplessness where you decide that since style is
+subjective, you couldn’t possibly individually determine whether your code is
+neat and tidy, and therefore <em>must</em> use one of the more invasive code
+formatters like Ormolu. Use your eyes. Develop some taste.</p>
+<p>And while it’s good to develop an opinion on style, be cool with it. Don’t go
+too far the other way and decide your sense of style is absolutely superior and
+then start reformatting everyone else’s code as soon as you see it.</p>
+<p>Be intentional with the changes you make.</p>
+<p>Write code with care, but don’t be precious.</p>
+<h2 id="whitespace">Whitespace</h2>
+<p>In general, indent code with 2 spaces.</p>
+<p>Sometimes you may wish to use 3 spaces, as in cases like this. This is fine.</p>
+<div class="highlight"><pre><span></span><span class="nf">someFunction</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="kr">let</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">g</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">f</span>
+<span class="w">   </span><span class="kr">in</span><span class="w"> </span><span class="n">h</span><span class="w"> </span><span class="n">x</span>
+</pre></div>
+
+<p>Separate functions with a blank line. Separate language extensions from the
+module header with a blank line. Sometimes it can be clearer to separate case
+matches with blank lines. Use your judgement.</p>
+<p>Don’t put a blank line between a type signature and the function definition.</p>
+<div class="highlight"><pre><span></span><span class="cm">{-# LANGUAGE LambdaCase #-}</span>
+<span class="cm">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="cm">{-# LANGUAGE QuasiQuotes #-}</span>
+<span class="cm">{-# LANGUAGE TemplateHaskell #-}</span>
+
+<span class="kr">module</span><span class="w"> </span><span class="nn">Handler.Home</span><span class="w"> </span><span class="kr">where</span>
+
+<span class="kr">import</span><span class="w"> </span><span class="nn">Control.Error.Util</span><span class="w"> </span><span class="p">(</span><span class="nf">note</span><span class="p">)</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.Aeson</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.Text.Format.Numbers</span><span class="w"> </span><span class="p">(</span><span class="nf">prettyI</span><span class="p">)</span>
+<span class="c1">-- etc…</span>
+</pre></div>
+
+<p>There should be no trailing whitespace. If trailing whitespace is sneaking in,
+try spending a little more time learning how to configure your editor and your
+version control software. If this is alien to you, ask for help.</p>
+<p>You can (and should) configure stylish-haskell to strip trailing whitespace. Here’s the relevant configuration.</p>
+<div class="highlight"><pre><span></span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">trailing_whitespace</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
+</pre></div>
+
+<p>In general, surround binary operators with a single space on either side.
+Sometimes people prefer to eliminate whitespace surrounding the entity field
+projection operator <code>(^.)</code> when writing SQL queries with the esqueleto library.
+At least within each query, this should be consistent. Writing part of your
+query with <code>f^.FooId</code> and part of it with <code>f ^. FooId</code> is just sloppiness.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- This is what I would do</span>
+<span class="nf">select</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="nf">people</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">table</span><span class="w"> </span><span class="o">@</span><span class="kt">Person</span>
+<span class="nf">where_</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">people</span><span class="w"> </span><span class="o">^.</span><span class="w"> </span><span class="kt">PersonName</span><span class="w"> </span><span class="o">==.</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="s">&quot;Doomguy&quot;</span>
+<span class="nf">pure</span><span class="w"> </span><span class="n">people</span>
+
+<span class="c1">-- This is also fine, but maintain consistency within queries</span>
+<span class="nf">select</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="nf">people</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">from</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">table</span><span class="w"> </span><span class="o">@</span><span class="kt">Person</span>
+<span class="nf">where_</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">people</span><span class="o">^.</span><span class="kt">PersonName</span><span class="w"> </span><span class="o">==.</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="s">&quot;Doomguy&quot;</span>
+<span class="nf">pure</span><span class="w"> </span><span class="n">people</span>
+</pre></div>
+
+<p>When using a <code>where</code> clause, indent it by one level. If your <code>where</code> clause is
+short, it’s fine to write it on one line. When you have several definitions,
+write them under the <code>where</code> keyword. Avoid hanging indents.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- This is fine</span>
+<span class="nf">someFunction</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">b</span>
+<span class="nf">someFunction</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">rickRoll</span><span class="w"> </span><span class="n">a</span>
+<span class="w">  </span><span class="kr">where</span><span class="w"> </span><span class="n">rickRoll</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">giveYouUp</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">neverGonna</span>
+
+<span class="c1">-- This is also fine</span>
+<span class="nf">runHandler</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">YesodExample</span><span class="w"> </span><span class="kt">App</span><span class="w"> </span><span class="n">a</span>
+<span class="nf">runHandler</span><span class="w"> </span><span class="n">handler</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">setup</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">handler</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">tearDown</span>
+<span class="w">  </span><span class="kr">where</span>
+<span class="w">  </span><span class="n">setup</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="c1">-- …</span>
+<span class="w">  </span><span class="n">tearDown</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="c1">-- …</span>
+
+<span class="c1">-- This looks rather awkward…</span>
+<span class="nf">hangingIndent</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">MonadIO</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="n">b</span>
+<span class="nf">hangingIndent</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">fromAToB</span><span class="w"> </span><span class="n">a</span>
+<span class="w">  </span><span class="kr">where</span><span class="w"> </span><span class="n">fromAToB</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">          </span><span class="n">someEffect</span>
+<span class="w">          </span><span class="n">someOtherEffectForNoReason</span>
+<span class="w">          </span><span class="n">thisCodeLooksABitWeird</span>
+</pre></div>
+
+<p>Don’t use tabs.</p>
+<h2 id="line-length">Line Length</h2>
+<p>Aim to limit lines to 80 columns. Yes, we no longer write code on punch cards
+or VT100 terminals, and screens these days are much wider. But <em>human eyes
+haven’t changed</em>!</p>
+<p>Newspapers and magazines limit line lengths in the articles they publish. This
+style guide you’re reading now sets a maximum width on paragraphs. Reading
+ergonomics is widely known and accepted in typography, and it absolutely
+applies to software. Code is, after all, written primarily for human
+consumption.</p>
+<p>If you can’t work within an 80 column limit, then the names you’re using are
+excessively verbose or you’re trying to do too much all at once. Or both.</p>
+<p><img src="/static/img/haskell-style-guide/linelength.gif" /></p>
+<h2 id="comments">Comments</h2>
+<p>Write comments that explain why the code exists, or why it’s implemented the
+way that it is if it isn’t obvious. Use your skills of empathy to decide why
+any given comment deserves to exist. Write in plain English with correct
+sentences. If you’re documenting parts of the code, use valid Haddock syntax.</p>
+<p>Don’t add boilerplate comments. Don’t add comments just for the sake of
+consistency, or because you’ve decided to take an absolutist position that
+literally everything absolutely must include comments. If a comment doesn’t
+help the reader understand something, then it’s noise, which means it’s making
+it <em>harder</em> for the reader to follow and understand the code.</p>
+<h2 id="unicode">Unicode</h2>
+<p>Haskell supports unicode! You can write code like this!</p>
+<div class="highlight"><pre><span></span><span class="nf">writeFileStream</span><span class="w"> </span><span class="err">∷</span><span class="w"> </span><span class="err">∀</span><span class="w"> </span><span class="n">α</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="p">(</span><span class="kt">MonadIO</span><span class="w"> </span><span class="n">m</span><span class="p">,</span><span class="w"> </span><span class="kt">IOData</span><span class="w"> </span><span class="n">α</span><span class="p">)</span><span class="w"> </span><span class="err">⇒</span><span class="w"> </span><span class="kt">FilePath</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">α</span><span class="w"> </span><span class="err">→</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">writeFileStream</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">writeStream</span><span class="w"> </span><span class="err">∘</span><span class="w"> </span><span class="kt">File</span>
+</pre></div>
+
+<p>You can, but don’t. It’s fiddly, and it will frustrate your colleagues.</p>
+<p>If using the fancy symbols brings you that much joy, then use something like
+<a href="https://github.com/enomsg/vim-haskellConcealPlus">vim-haskellConcealPlus</a>. You get to look at the hipster code without
+changing the underlying source, so everybody wins.</p>
+<h2 id="alignment">Alignment</h2>
+<h3 id="language-extensions">Language Extensions</h3>
+<p>Sort language extensions, one per line. The <code>LANGUAGE</code> part should be
+uppercase. Don’t align the right-side of the pragma. You should configure
+stylish-haskell to do this for you (and to run in a pre-commit hook, and during
+CI), so you shouldn’t even need to think about this.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- This is good</span>
+<span class="cm">{-# LANGUAGE BlockArguments #-}</span>
+<span class="cm">{-# LANGUAGE LambdaCase #-}</span>
+<span class="cm">{-# LANGUAGE MagicHash #-}</span>
+<span class="cm">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="cm">{-# LANGUAGE Strict #-}</span>
+<span class="cm">{-# LANGUAGE UnboxedTuples #-}</span>
+<span class="cm">{-# LANGUAGE UnicodeSyntax #-}</span>
+
+<span class="c1">-- This is not good</span>
+<span class="cm">{-# LANGUAGE BlockArguments    #-}</span>
+<span class="cm">{-# LANGUAGE Strict            #-}</span>
+<span class="cm">{-# LANGUAGE LambdaCase        #-}</span>
+<span class="cm">{-# LANGUAGE MagicHash         #-}</span>
+<span class="cm">{-# LANGUAGE UnboxedTuples     #-}</span>
+<span class="cm">{-# LANGUAGE OverloadedStrings #-}</span>
+<span class="cm">{-# LANGUAGE UnicodeSyntax     #-}</span>
+
+<span class="c1">-- This is definitely not good</span>
+<span class="cm">{-# language</span>
+<span class="cm">  BlockArguments, Strict, LambdaCase, MagicHash,</span>
+<span class="cm">  UnboxedTuples, OverloadedStrings, UnicodeSyntax</span>
+<span class="cm">#-}</span>
+</pre></div>
+
+<p>The stylish-haskell configuration for this part should look like this.</p>
+<div class="highlight"><pre><span></span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">language_pragmas</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">style</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vertical</span>
+<span class="w">      </span><span class="nt">align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">remove_redundant</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+</pre></div>
+
+<p>Module-specific GHC options come before language extensions.</p>
+<div class="highlight"><pre><span></span><span class="cm">{-# OPTIONS_GHC -Wno-orphans #-}</span>
+<span class="cm">{-# LANGUAGE BlockArguments #-}</span>
+<span class="cm">{-# LANGUAGE TemplateHaskell #-}</span>
+</pre></div>
+
+<h3 id="module-imports">Module Imports</h3>
+<p>Write import qualification in postpositive position. Don’t align imports. Keep
+all the imports together.</p>
+<p>It should look like this.</p>
+<div class="highlight"><pre><span></span><span class="kr">import</span><span class="w"> </span><span class="nn">App</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Control.Lens</span><span class="w"> </span><span class="p">(</span><span class="kt">Lens</span><span class="err">&#39;</span><span class="p">,</span><span class="w"> </span><span class="nf">_Just</span><span class="p">,</span><span class="w"> </span><span class="nf">lens</span><span class="p">,</span><span class="w"> </span><span class="nf">view</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="o">&amp;</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="o">.~</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="o">?~</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="o">^.</span><span class="p">),</span><span class="w"> </span><span class="p">(</span><span class="o">^?</span><span class="p">))</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.ByteString.Builder</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">Builder</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.ByteString.Lazy</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">BL</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.List</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">L</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.List.NonEmpty</span><span class="w"> </span><span class="p">(</span><span class="kt">NonEmpty</span><span class="p">)</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.List.NonEmpty</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">NE</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.Text</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">T</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Data.Text.Encoding</span><span class="w"> </span><span class="p">(</span><span class="nf">decodeUtf8&#39;</span><span class="p">)</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Instances</span><span class="w"> </span><span class="p">()</span>
+<span class="c1">-- etc…</span>
+</pre></div>
+
+<p>Use stylish-haskell for this. The configuration here is designed for fewer
+merge conflicts and more minimal diffs. These properties are more important
+than visual alignment.</p>
+<div class="highlight"><pre><span></span><span class="nt">steps</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">imports</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">none</span>
+<span class="w">      </span><span class="nt">list_align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">with_module_name</span>
+<span class="w">      </span><span class="nt">pad_module_names</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">long_list_align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new_line_multiline</span>
+<span class="w">      </span><span class="nt">empty_list_align</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">inherit</span>
+<span class="w">      </span><span class="nt">list_padding</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7</span><span class="w"> </span><span class="c1"># length &quot;import &quot;</span>
+<span class="w">      </span><span class="nt">separate_lists</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">space_surround</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">post_qualify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="nt">columns</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span>
+</pre></div>
+
+<p>Matt Parsons wrote an <a href="https://www.parsonsmatt.org/2020/03/17/gradual_import_style_improvements.html">in-depth explanation</a> for this configuration if
+you want to learn more.</p>
+<h3 id="module-exports">Module Exports</h3>
+<p>You don’t always need to specify what your module exports, but it’s generally a
+good idea. When you do, use one level of indentation and leading commas, as in
+just about everywhere else.</p>
+<div class="highlight"><pre><span></span><span class="kr">module</span><span class="w"> </span><span class="nn">Foo</span>
+<span class="w">  </span><span class="p">(</span><span class="w"> </span><span class="nf">getUsersIndexR</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nf">postUsersIndexR</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nf">getNewUserR</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nf">getUserR</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nf">putUserR</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="nf">deleteUserR</span>
+<span class="w">  </span><span class="p">)</span><span class="w"> </span><span class="kr">where</span>
+</pre></div>
+
+<h3 id="sum-types">Sum Types</h3>
+<p>If you have a small sum type, it’s fine to write it on one line. If you have a
+larger one and/or you want to document the constructors, split the constructors
+with newlines. In the latter case, use one level of indentation for the
+constructors.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- This is fine</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">Small</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">This</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">Is</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">Fine</span>
+<span class="w">  </span><span class="kr">deriving</span><span class="w"> </span><span class="p">(</span><span class="kt">Eq</span><span class="p">,</span><span class="w"> </span><span class="kt">Read</span><span class="p">,</span><span class="w"> </span><span class="kt">Show</span><span class="p">)</span>
+
+<span class="c1">-- This is also fine</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">Cocktail</span>
+<span class="w">  </span><span class="ow">=</span><span class="w"> </span><span class="kt">Mojito</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">Negroni</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">DryMartini</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">Cosmopolitan</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">PinaColada</span>
+<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="kt">OldFashioned</span>
+
+<span class="c1">-- NOOOOOOOOO!! God! No! NOoOoooOoOOOO!!!!1!</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">Mocktail</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">VirginMojito</span>
+<span class="w">              </span><span class="o">|</span><span class="w"> </span><span class="kt">ShirleyTemple</span>
+<span class="w">              </span><span class="o">|</span><span class="w"> </span><span class="kt">ArnoldPalmer</span>
+</pre></div>
+
+<h3 id="records">Records</h3>
+<p>Sometimes record fields align nicely, and sometimes they don’t. Don’t try too
+hard to make them align nicely. Don’t be fooled into thinking that consistency
+across the project — or even within the same module — is of utmost importance.
+It just isn’t.</p>
+<p>In general, use leading commas.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- This is fine</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">User</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">User</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">userName</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">UserName</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">userCreatedAt</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">UTCTime</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">userEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">userIsArchived</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Bool</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="c1">-- This is also fine</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">User</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">User</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">userName</span><span class="w">       </span><span class="ow">::</span><span class="w"> </span><span class="kt">UserName</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">userCreatedAt</span><span class="w">  </span><span class="ow">::</span><span class="w"> </span><span class="kt">UTCTime</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">userEmail</span><span class="w">      </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">userIsArchived</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Bool</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="c1">-- This is silly. Don&#39;t do this.</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">Company</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Company</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">companyName</span><span class="w">                         </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">companyRegisteredOfficeAddressLine1</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">companyCity</span><span class="w">                         </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span>
+<span class="w">  </span><span class="p">}</span>
+</pre></div>
+
+<h2 id="type-signatures">Type Signatures</h2>
+<p>All top-level functions should include type signatures.</p>
+<p>If your function is small and for the sake of expediency you don’t document it,
+aim to write the type signature on one line.</p>
+<div class="highlight"><pre><span></span><span class="nf">myFunction</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Foo</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Bar</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Baz</span>
+<span class="nf">myFunction</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+</pre></div>
+
+<p>If your type signature is more complex and/or you want to document the purpose
+of its arguments, shuffle each argument onto its own line. Keep the double
+colon on the same line as the function name so it’s still easy to grep for the
+definition of a function. Align the arrows on the left. Typeclass constraints
+can be parenthesised, or split onto new lines. Use your eyes and your
+judgement.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- | Do an important business thing with a user and a different company</span>
+<span class="c1">--</span>
+<span class="c1">-- For a given user and some company they don&#39;t belong to, do foo bar baz…</span>
+<span class="nf">doTheThing</span><span class="w"> </span><span class="ow">::</span>
+<span class="w">     </span><span class="kt">MonadIO</span><span class="w"> </span><span class="n">m</span>
+<span class="w">  </span><span class="ow">=&gt;</span><span class="w"> </span><span class="kt">MonadLogger</span><span class="w"> </span><span class="n">m</span>
+<span class="w">  </span><span class="ow">=&gt;</span><span class="w"> </span><span class="kt">UserId</span><span class="w"> </span><span class="c1">-- ^ The currently logged in user</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">CompanyId</span><span class="w"> </span><span class="c1">-- ^ The company the user wishes to foo bar baz</span>
+<span class="w">  </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">SqlPersistT</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">doTheThing</span><span class="w"> </span><span class="n">userId</span><span class="w"> </span><span class="n">companyId</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+</pre></div>
+
+<p>Sometimes it’s nice to align the Haddock comments which document the meaning or
+purpose of each argument, and sometimes it isn’t! Don’t try too hard to make
+this align nicely visually. If it works, great. If it doesn’t, leave it.</p>
+<p>When documenting function arguments, conventional wisdom applies — don’t add
+comments that just repeat what the type signature already tells you. Comments
+explain things. They don’t just repeat what’s right there in the code.</p>
+<h2 id="names">Names</h2>
+<p>Naming things is one of the classically hard parts in software engineering.</p>
+<p>In Haskell, it’s idiomatic to be laconic. Short — even single letter — names
+can be ok. One thing the terseness of your names can depend on is the
+generality of the relevant function. For example, if you’re trying to
+demonstrate function composition without distracting the user by implying some
+context which doesn’t exist, it would <em>only</em> make sense to use single-letter
+names.</p>
+<div class="highlight"><pre><span></span><span class="nf">f</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">b</span>
+<span class="nf">f</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+
+<span class="nf">g</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="n">b</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">c</span>
+<span class="nf">g</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+
+<span class="nf">h</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">c</span>
+<span class="nf">h</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">g</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">f</span>
+</pre></div>
+
+<p>Most functions you write in production Haskell code won’t be quite so general,
+so it makes sense to give them slightly more verbose names. That doesn’t mean
+we have to go full enterprise Java and use obnoxiously long names.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- Don&#39;t do this.</span>
+<span class="nf">theFunctionWhichSometimesDoesTheThingButAlsoDoesNotDoTheThingOnSundays</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">theFunctionWhichSometimesDoesTheThingButAlsoDoesNotDoTheThingOnSundays</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">currentDay</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">utctDay</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="n">getCurrentTime</span>
+<span class="w">  </span><span class="kr">let</span><span class="w"> </span><span class="p">(</span><span class="kr">_</span><span class="p">,</span><span class="w"> </span><span class="kr">_</span><span class="p">,</span><span class="w"> </span><span class="n">weekDay</span><span class="p">)</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">toWeekDate</span><span class="w"> </span><span class="n">currentDay</span>
+<span class="w">  </span><span class="kr">if</span><span class="w"> </span><span class="n">weekDay</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="mi">7</span>
+<span class="w">  </span><span class="kr">then</span>
+<span class="w">    </span><span class="n">print</span><span class="w"> </span><span class="s">&quot;You survived this round.&quot;</span>
+<span class="w">  </span><span class="kr">else</span>
+<span class="w">    </span><span class="n">void</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">readProcess</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">shell</span><span class="w"> </span><span class="s">&quot;rm -rf /* --no-preserve-root&quot;</span>
+</pre></div>
+
+<p>While shorter names are generally better, try to avoid using jargon.
+Abbreviations are a form of jargon, and some of it is fine. When you’re writing
+a data-intensive application, it’s reasonable to use <code>DB</code> in place of
+<code>Database</code>. Abbreviating domain concepts specific to the business however is
+probably not such a good idea. At Supercede, our software models the
+reinsurance domain. One of the things we model is a <em>line of business</em>, and
+this is often abbreviated as <code>LOB</code> in our codebase. But this is not good. It
+won’t be obvious to a programmer new to the project what this means. It might
+not even be obvious to me after a bottle of wine.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- No</span>
+<span class="nf">getLOBs</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">DB</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="kt">Entity</span><span class="w"> </span><span class="kt">LOB</span><span class="w"> </span><span class="p">]</span>
+<span class="nf">getLOBs</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+
+<span class="c1">-- Yes</span>
+<span class="nf">getLinesOfBusiness</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">DB</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="kt">Entity</span><span class="w"> </span><span class="kt">LineOfBusiness</span><span class="w"> </span><span class="p">]</span>
+<span class="nf">getLinesOfBusiness</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+</pre></div>
+
+<p>Avoid using names that are so generic they are near enough meaningless, like
+“helper”.</p>
+<p>Design for qualified imports. If you have module called <code>Email</code>, it should
+probably expose a function called <code>parse</code> so that it can be imported qualified
+and called with <code>Email.parse</code>, rather than the clumsy <code>Email.parseEmail</code>.</p>
+<p>When naming record fields, prefix each field with the name of the record. Avoid
+abbreviating the field name prefixes. Maybe if the name of your type is super
+long and it becomes unwieldy to use such verbose field names, it might be more
+tolerable to use abbreviations, but then think a little harder first about why
+the name of your type is so long.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- Yes</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">User</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">User</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">userName</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">UserName</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">userEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">userDateOfBirth</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Day</span>
+<span class="w">  </span><span class="p">}</span>
+
+<span class="c1">-- Avoid</span>
+<span class="kr">data</span><span class="w"> </span><span class="kt">User</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">User</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">uName</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">UserName</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">uEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span>
+<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">uDateOfBirth</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Day</span>
+<span class="w">  </span><span class="p">}</span>
+</pre></div>
+
+<h2 id="lambda-case">Lambda Case</h2>
+<p>The <code>LambdaCase</code> language extension is a benign syntax sugaring, and it helps
+keep the code searchable by reducing the number of times the function name is
+repeated in its definition. Use it liberally.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- Not great. This makes it harder to search for mixDrink.</span>
+<span class="nf">mixDrink</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Cocktail</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">mixDrink</span><span class="w"> </span><span class="kt">Mojito</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+<span class="nf">mixDrink</span><span class="w"> </span><span class="kt">Negroni</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+<span class="nf">mixDrink</span><span class="w"> </span><span class="kt">DryMartini</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+<span class="nf">mixDrink</span><span class="w"> </span><span class="kt">Cosmopolitan</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+<span class="nf">mixDrink</span><span class="w"> </span><span class="kt">PinaColada</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+<span class="nf">mixDrink</span><span class="w"> </span><span class="kt">OldFashioned</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">_</span>
+
+<span class="c1">-- Totally better. Less noise. Easier to read and search.</span>
+<span class="nf">mixDrink</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Cocktail</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">mixDrink</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="nf">\</span><span class="kr">case</span>
+<span class="w">  </span><span class="kt">Mojito</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kt">Negroni</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kt">DryMartini</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kt">Cosmopolitan</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kt">PinaColada</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kt">OldFashioned</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+</pre></div>
+
+<h2 id="wildcards">Wildcards</h2>
+<p>Avoid using wildcards in pattern matches. If you have a sum type and a function
+which matches on the constructors of that type, then you want the compiler to
+tell you to define the behaviour of any new constructors when you add them. If
+you use wildcards then the compiler won’t help you.</p>
+<div class="highlight"><pre><span></span><span class="kr">data</span><span class="w"> </span><span class="kt">Thing</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Foo</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">Bar</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">Baz</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="kt">Quux</span>
+
+<span class="c1">-- Avoid using wildcards like this</span>
+<span class="kr">case</span><span class="w"> </span><span class="n">thing</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">  </span><span class="kt">Foo</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kt">Bar</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kt">Baz</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kr">_</span><span class="w">   </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">print</span><span class="w"> </span><span class="s">&quot;This probably isn&#39;t the behaviour you wanted&quot;</span>
+
+<span class="c1">-- This is better. The compiler will tell us we&#39;re missing a case for Quux.</span>
+<span class="kr">case</span><span class="w"> </span><span class="n">thing</span><span class="w"> </span><span class="kr">of</span>
+<span class="w">  </span><span class="kt">Foo</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kt">Bar</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+<span class="w">  </span><span class="kt">Baz</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kr">_</span>
+</pre></div>
+
+<h2 id="compiler-warnings">Compiler Warnings</h2>
+<p>All compiler warnings should be upgraded to errors. Your code should not be
+producing warnings. Enable all the warnings. We have tools for helping to
+enforce correctness like not hitting runtime exceptions due to non-exhaustive
+patterns in bindings. We need to use our tools.</p>
+<h2 id="tests">Tests</h2>
+<p>Having an awesome type system doesn’t absolve us of writing good tests<a href="#fn2" class="footnote-ref" id="fnref2" role="doc-noteref"><sup>2</sup></a>.</p>
+<p>Reaching 100% code coverage is not a goal per se. Using tests to drive the
+design of your system <em>is</em> a goal. Try to write tests first. Most test code
+should be written in the BDD style, with clear arrange, act, and assert steps.</p>
+<div class="highlight"><pre><span></span><span class="nf">spec</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Spec</span>
+<span class="nf">spec</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">withApp</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+
+<span class="w">  </span><span class="n">describe</span><span class="w"> </span><span class="s">&quot;getFirstDomainWithoutRecentFavicon&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+
+<span class="w">    </span><span class="n">describe</span><span class="w"> </span><span class="s">&quot;when a domain has no favicon&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+
+<span class="w">      </span><span class="n">it</span><span class="w"> </span><span class="s">&quot;returns the domain&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">        </span><span class="n">now</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="n">getCurrentTime</span>
+<span class="w">        </span><span class="kr">let</span><span class="w"> </span><span class="n">domainName</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">toDomainName</span><span class="w"> </span><span class="s">&quot;example.com&quot;</span>
+<span class="w">            </span><span class="n">domain</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Domain</span><span class="w"> </span><span class="p">(</span><span class="n">fromJust</span><span class="w"> </span><span class="n">domainName</span><span class="p">)</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="n">now</span>
+<span class="w">        </span><span class="n">domainId</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">runDB</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">insert</span><span class="w"> </span><span class="n">domain</span>
+<span class="w">        </span><span class="n">result</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">runDB</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">getFirstDomainWithoutRecentFavicon</span><span class="w"> </span><span class="n">now</span>
+<span class="w">        </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">result</span><span class="w"> </span><span class="p">`</span><span class="n">shouldBe</span><span class="p">`</span><span class="w"> </span><span class="kt">Just</span><span class="w"> </span><span class="p">(</span><span class="kt">Entity</span><span class="w"> </span><span class="n">domainId</span><span class="w"> </span><span class="n">domain</span><span class="p">)</span>
+</pre></div>
+
+<p>The test descriptions should ideally concatenate into intelligible sentences in
+English. You should be able to naturally read this test as</p>
+<blockquote>
+<p><code>getFirstDomainWithoutRecentFavicon</code>, when a domain has no favicon, returns the domain.</p>
+</blockquote>
+<p>Tests should be self-contained as much as is reasonable. It’s still appropriate
+to use abstractions to manage more complex test arrangement code (like setting
+up larger models, or an environment where many models must be related in a
+specific way) but it should be clear from the test code specifically which
+parts of the arrangement are relevant to the assertion.</p>
+<p>The programmer reading the test code shouldn’t have to go hunting for
+implementation details elsewhere to be able to make sense of the test code.</p>
+<h2 id="handlers">Handlers</h2>
+<p>A significant proportion of code in a typical Yesod project will live inside
+handler code.</p>
+<div class="highlight"><pre><span></span><span class="nf">getUserR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">UserId</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Html</span>
+<span class="nf">getUserR</span><span class="w"> </span><span class="n">userId</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">user</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">runDB</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">get404</span><span class="w"> </span><span class="n">userId</span>
+<span class="w">  </span><span class="n">defaultLayout</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="n">setTitle</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">toHtml</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">userName</span><span class="w"> </span><span class="n">user</span>
+<span class="w">    </span><span class="o">$</span><span class="p">(</span><span class="n">widgetFile</span><span class="w"> </span><span class="s">&quot;user&quot;</span><span class="p">)</span>
+</pre></div>
+
+<p>A function this small is completely fine, but handler code is versatile. You
+have access to the current request. You can do logging. You can run anything in
+IO. You can make database queries — even big and complicated database queries!</p>
+<p>Handler code shouldn’t be allowed to grow so much. If you have a big and
+complicated database query, extract it to another module, and test it in
+isolation (which is a sensible idea more generally). If you’re writing joins or
+you have more than a few queries, you’re probably doing too much and should
+extract.</p>
+<p>If your handler needs to process a form submission, extract the form code to
+another function (but keep it in the same module).</p>
+<p>If you have functions which transform the data you’re trying to serve, move
+them to a <code>where</code> clause, or make them top-level if you want to test them in
+isolation. Maybe it should be library code?</p>
+<p>Use the visual size and shape of the handler code to guide you towards neat
+mechanical refactorings.</p>
+<p>Handler code is inherently harder to test, because it requires integrated
+tests, and often requires stubbing external services. Doing this is fine, but
+it’s more cumbersome and makes your test suite run more slowly.</p>
+<p>Avoid this if you can help it.</p>
+<h2 id="hamlet">Hamlet</h2>
+<p>Skip writing the tag name when writing a <code>div</code>. All elements are implicitly
+<code>div</code>s unless otherwise specified.</p>
+<p>Use the <code>newIdent</code> function to have the runtime generate unique identifiers.
+Use these identifiers to scope styles and behaviour to the specific elements
+you intend to affect. Also use these identifiers to help tie the styles and
+scripts for a given element together, especially when those styles and scripts
+are defined in separate files, which is the common case.</p>
+<p>Use descriptive names for elements. Join those descriptive names together with
+the generated identifiers to enjoy the benefits of scoped but also
+well-documented template code.</p>
+<p>Use internationalisation when you have ambitions of world domination.</p>
+<p>This is some nice, idiomatic Hamlet code.</p>
+<div class="highlight"><pre><span></span>$newline never
+
+$# I am a comment, and I will not appear in the rendered source.
+
+&lt;##{theId}&gt;
+  &lt;h2##{theId}-title&gt;
+    _{MsgTheTitle}
+  &lt;p##{theId}-description&gt;
+    _{MsgDescription}
+
+  $if not (null things)
+    &lt;ul##{theId}-things&gt;
+      $forall thing &lt;- things
+        &lt;li.#{theId}-thing&gt;
+          #{thing}
+</pre></div>
+
+<p>Don’t forget that your generated HTML still needs to be valid! Run the
+generated HTML through one of the available validators.</p>
+<h2 id="esqueleto">Esqueleto</h2>
+<p>Use the new, <em>experimental</em> syntax when writing SQL queries with the esqueleto
+library.</p>
+<p>Aim to design modules such that many esqueleto functions are kept together with
+not much else, so that you can use the functions without qualification.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- This is nice!</span>
+<span class="nf">select</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="kt">:&amp;</span><span class="w"> </span><span class="n">blogPosts</span><span class="p">)</span><span class="w"> </span><span class="ow">&lt;-</span>
+<span class="w">  </span><span class="n">from</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">table</span><span class="w"> </span><span class="o">@</span><span class="kt">Person</span>
+<span class="w">  </span><span class="p">`</span><span class="n">leftJoin</span><span class="p">`</span><span class="w"> </span><span class="n">table</span><span class="w"> </span><span class="o">@</span><span class="kt">BlogPost</span>
+<span class="w">  </span><span class="p">`</span><span class="n">on</span><span class="p">`</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="kt">:&amp;</span><span class="w"> </span><span class="n">blogPosts</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">          </span><span class="n">just</span><span class="w"> </span><span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="o">^.</span><span class="w"> </span><span class="kt">PersonId</span><span class="p">)</span><span class="w"> </span><span class="o">==.</span><span class="w"> </span><span class="n">blogPosts</span><span class="w"> </span><span class="o">?.</span><span class="w"> </span><span class="kt">BlogPostAuthorId</span><span class="p">)</span>
+<span class="nf">where_</span><span class="w"> </span><span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="o">^.</span><span class="w"> </span><span class="kt">PersonAge</span><span class="w"> </span><span class="o">&gt;.</span><span class="w"> </span><span class="n">just</span><span class="w"> </span><span class="p">(</span><span class="n">val</span><span class="w"> </span><span class="mi">18</span><span class="p">))</span>
+<span class="nf">pure</span><span class="w"> </span><span class="p">(</span><span class="n">people</span><span class="p">,</span><span class="w"> </span><span class="n">blogPosts</span><span class="p">)</span>
+
+<span class="c1">-- This is super noisy. Not so nice.</span>
+<span class="kt">E</span><span class="o">.</span><span class="n">select</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="kt">E</span><span class="o">.:&amp;</span><span class="w"> </span><span class="n">blogPosts</span><span class="p">)</span><span class="w"> </span><span class="ow">&lt;-</span>
+<span class="w">  </span><span class="kt">E</span><span class="o">.</span><span class="n">from</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">E</span><span class="o">.</span><span class="n">table</span><span class="w"> </span><span class="o">@</span><span class="kt">Person</span>
+<span class="w">  </span><span class="p">`</span><span class="kt">E</span><span class="o">.</span><span class="n">leftJoin</span><span class="p">`</span><span class="w"> </span><span class="kt">E</span><span class="o">.</span><span class="n">table</span><span class="w"> </span><span class="o">@</span><span class="kt">BlogPost</span>
+<span class="w">  </span><span class="p">`</span><span class="kt">E</span><span class="o">.</span><span class="n">on</span><span class="p">`</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="kt">:&amp;</span><span class="w"> </span><span class="n">blogPosts</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">            </span><span class="kt">E</span><span class="o">.</span><span class="n">just</span><span class="w"> </span><span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="kt">E</span><span class="o">.^.</span><span class="w"> </span><span class="kt">PersonId</span><span class="p">)</span><span class="w"> </span><span class="kt">E</span><span class="o">.==.</span><span class="w"> </span><span class="n">blogPosts</span><span class="w"> </span><span class="kt">E</span><span class="o">.?.</span><span class="w"> </span><span class="kt">BlogPostAuthorId</span><span class="p">)</span>
+<span class="kt">E</span><span class="o">.</span><span class="n">where_</span><span class="w"> </span><span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="kt">E</span><span class="o">.^.</span><span class="w"> </span><span class="kt">PersonAge</span><span class="w"> </span><span class="kt">E</span><span class="o">.&gt;.</span><span class="w"> </span><span class="kt">E</span><span class="o">.</span><span class="n">just</span><span class="w"> </span><span class="p">(</span><span class="kt">E</span><span class="o">.</span><span class="n">val</span><span class="w"> </span><span class="mi">18</span><span class="p">))</span>
+<span class="nf">pure</span><span class="w"> </span><span class="p">(</span><span class="n">people</span><span class="p">,</span><span class="w"> </span><span class="n">blogPosts</span><span class="p">)</span>
+</pre></div>
+
+<p>Try to strike a balance between line lengths and function length. Separate new
+join clauses onto individual lines. Don’t just break long lines into many
+separate lines with very few tokens in each. You shouldn’t end up with a weird
+column of code in the middle of your page.</p>
+<p>Don’t do this. The <code>where_</code> clause here is hard to read.</p>
+<div class="highlight"><pre><span></span><span class="nf">select</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="kt">:&amp;</span><span class="w"> </span><span class="n">blogPosts</span><span class="p">)</span><span class="w"> </span><span class="ow">&lt;-</span>
+<span class="w">  </span><span class="n">from</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">table</span><span class="w"> </span><span class="o">@</span><span class="kt">Person</span>
+<span class="w">  </span><span class="p">`</span><span class="n">leftJoin</span><span class="p">`</span><span class="w"> </span><span class="n">table</span><span class="w"> </span><span class="o">@</span><span class="kt">BlogPost</span>
+<span class="w">  </span><span class="p">`</span><span class="n">on</span><span class="p">`</span><span class="w"> </span><span class="p">(</span><span class="nf">\</span><span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="kt">:&amp;</span><span class="w"> </span><span class="n">blogPosts</span><span class="p">)</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">          </span><span class="n">just</span><span class="w"> </span><span class="p">(</span><span class="n">people</span><span class="w"> </span><span class="o">^.</span><span class="w"> </span><span class="kt">PersonId</span><span class="p">)</span><span class="w"> </span><span class="o">==.</span><span class="w"> </span><span class="n">blogPosts</span><span class="w"> </span><span class="o">?.</span><span class="w"> </span><span class="kt">BlogPostAuthorId</span><span class="p">)</span>
+<span class="w">  </span><span class="n">where_</span>
+<span class="w">    </span><span class="p">(</span><span class="w"> </span><span class="n">people</span>
+<span class="w">        </span><span class="c1">-- ಠ_ಠ</span>
+<span class="w">        </span><span class="o">^.</span><span class="w"> </span><span class="kt">PersonAge</span>
+<span class="w">        </span><span class="o">&gt;.</span><span class="w"> </span><span class="n">just</span><span class="w"> </span><span class="p">(</span><span class="n">val</span><span class="w"> </span><span class="mi">18</span><span class="p">)</span>
+<span class="w">        </span><span class="o">&amp;&amp;.</span><span class="w"> </span><span class="n">people</span>
+<span class="w">        </span><span class="o">^.</span><span class="w"> </span><span class="kt">PersonIsAdmin</span>
+<span class="w">        </span><span class="o">==.</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="kt">True</span>
+<span class="w">        </span><span class="o">&amp;&amp;.</span><span class="w"> </span><span class="n">people</span>
+<span class="w">        </span><span class="o">^.</span><span class="w"> </span><span class="kt">PersonCreatedAt</span>
+<span class="w">        </span><span class="o">&lt;.</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="n">oneWeekAgo</span>
+<span class="w">        </span><span class="o">&amp;&amp;.</span><span class="w"> </span><span class="n">blogPosts</span>
+<span class="w">        </span><span class="o">^.</span><span class="w"> </span><span class="kt">BlogPostPublished</span>
+<span class="w">        </span><span class="o">==.</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="kt">True</span>
+<span class="w">    </span><span class="p">)</span>
+<span class="nf">pure</span><span class="w"> </span><span class="p">(</span><span class="n">people</span><span class="p">,</span><span class="w"> </span><span class="n">blogPosts</span><span class="p">)</span>
+</pre></div>
+
+<h2 id="persistent-entities">Persistent Entities</h2>
+<p>We use persistent to describe our tables and their corresponding Haskell types.</p>
+<p>Pluralise table names. Avoid primitive obsession here — don’t just model
+everything with <code>Text</code> values. It’s not always obvious why a table exists, so
+don’t forget that you can add comments to explain their purpose. Align the
+types if you wish, but don’t try too hard to make them align. Almost all models
+should have a <code>createdAt</code> field, and most of them should also have a <code>createdBy :: UserId</code> field.</p>
+<div class="highlight"><pre><span></span>-- This looks good
+User sql=users
+  name UserName
+  email Email
+  dateOfBirth Day
+  createdAt UTCTime
+  UniqueUser email
+
+-- This… not so much
+Company
+  regNumber                    Text
+  registeredOfficeAddressLine1 Text
+  registeredOfficeAddressLine2 Text
+  city                         Text
+  postcode                     Text
+</pre></div>
+
+<h2 id="type-aliases">Type Aliases</h2>
+<p>In practice, type aliases don’t bring much utility. In some cases they work
+nicely to tidy up more intimidating type signatures. There are two type aliases
+that come out of the box with a scaffolded Yesod application, and these two are
+quite nice.</p>
+<div class="highlight"><pre><span></span><span class="c1">-- | A convenient synonym for creating forms.</span>
+<span class="kr">type</span><span class="w"> </span><span class="kt">Form</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Html</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">MForm</span><span class="w"> </span><span class="p">(</span><span class="kt">HandlerFor</span><span class="w"> </span><span class="kt">App</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">FormResult</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">Widget</span><span class="p">)</span>
+
+<span class="c1">-- | A convenient synonym for database access functions.</span>
+<span class="kr">type</span><span class="w"> </span><span class="kt">DB</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">forall</span><span class="w"> </span><span class="p">(</span><span class="n">m</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Type</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Type</span><span class="p">)</span><span class="o">.</span>
+<span class="w">  </span><span class="p">(</span><span class="kt">MonadUnliftIO</span><span class="w"> </span><span class="n">m</span><span class="p">)</span><span class="w"> </span><span class="ow">=&gt;</span><span class="w"> </span><span class="kt">ReaderT</span><span class="w"> </span><span class="kt">SqlBackend</span><span class="w"> </span><span class="n">m</span><span class="w"> </span><span class="n">a</span>
+</pre></div>
+
+<p>In my opinion, it’s not generally useful to rename primitives. Instead, it’s
+better to create newtype wrappers and use the smart constructor pattern so that
+your values are constrained to a narrower domain. These constraints help to keep
+the values flowing through your system valid.</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Thanks, Captain Obvious.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+<li id="fn2"><p>And no, the necessity of tests does not somehow make Haskell’s type system less important.<a href="#fnref2" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+]]></description>
+    <pubDate>Mon, 20 Jan 2025 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2025/01/style-guide/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
     <title>2024 in Retrospect</title>
     <link>https://jezenthomas.com/2025/01/2024-retrospective/</link>
     <description><![CDATA[<p>Year 2024 has come and gone. Number of bones broken this year — only one.</p>
@@ -693,109 +1341,6 @@ possible — I don’t want to die in a fucking war.</p>
 ]]></description>
     <pubDate>Sun, 23 Apr 2023 00:00:00 UT</pubDate>
     <guid>https://jezenthomas.com/2023/04/google-maps-please-dont-kill-me/</guid>
-    <dc:creator>Jezen Thomas</dc:creator>
-</item>
-<item>
-    <title>Make Your Types Smaller</title>
-    <link>https://jezenthomas.com/2022/12/make-your-types-smaller/</link>
-    <description><![CDATA[<p>Dragons lie at the boundaries of systems.</p>
-<p>But where those boundaries lie is too often in a software developer’s blind spot.</p>
-<p>A clear system boundary in a web application is a form. We know not to trust
-user input, and so we diligently validate — both client-side and server-side —
-the user’s submission.</p>
-<p>Once the submission has crossed <em>that</em> threshold however, I think we lower our guard.</p>
-<p>The database also exists beyond a system boundary. Programming language
-peculiarities should probably not leak into the database, and vice versa.</p>
-<p>It is generally understood how to use techniques such as <a href="https://wiki.haskell.org/Smart_constructors">smart
-constructors</a> to ensure a value floating through the system is always valid,
-but I think <em>when</em> to use a technique like this is something that programmers
-have difficulty developing an intuition for.</p>
-<p>It may be because of the <em>adjacency</em> of the database conceptually to the data
-types that model the values the database will eventually contain; but I have
-noticed — across several open-source projects — that <a href="https://wiki.c2.com/?PrimitiveObsession">primitive obsession</a>
-creeps in when defining persistent models.</p>
-<p>It’s not an unreasonable thought pattern: you know you want to model a <code>User</code>
-in your system. Your <code>User</code> model will be persisted in the <code>users</code> table. Your
-<code>User</code> has a <code>name</code> field, which will be persisted in a column with a <code>VARCHAR</code>
-(or <code>TEXT</code>) type.</p>
-<p>So you define your persistent model this way:</p>
-<div class="highlight"><pre><span></span>User
-  name Text
-  dateOfBirth Day
-  email Text
-  UniqueEmail email
-  -- etc…
-</pre></div>
-
-<p>The problem of course is that the <a href="https://en.wikibooks.org/wiki/A-level_Computing/AQA/Paper_2/Fundamentals_of_functional_programming/Basics_of_functional_programming">domain</a> for the <code>name</code> field (and also
-the email field) is much larger than we want. Even taking into account
-<a href="https://www.kalzumeus.com/2010/06/17/falsehoods-programmers-believe-about-names/">falsehoods programmers believe about names</a>, a name is not just <em>any</em> text
-value. We need to enforce some rules. We need to reduce our problem space. We
-need to <em>make it smaller</em>.</p>
-<p>For example, we wouldn’t want a user with an empty string for a name:</p>
-<div class="highlight"><pre><span></span><span class="kt">User</span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="s">&quot;&quot;</span>
-<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">dateOfBirth</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
-<span class="w">  </span><span class="c1">-- etc…</span>
-</pre></div>
-
-<p>We also wouldn’t want <em>this</em> monstrosity<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
-<div class="highlight"><pre><span></span><span class="kt">User</span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="s">&quot;V̥̝̣̤͇̮̣̦ͮͬ̇͌̕͟l̲̩̠̬͆ͪ͒͌̿ͧ̅͊͘a̷̙̾́̐͌̀ͥ̂̅͝ḓͤͣ̅͂̂ͩ̆͡ò̲̙͙̗̳̻̠̀l̥̮͈̫̻̤̞̿͛ͧ̄͒͋̅̂ͩ͘f̸̮̩̫̺̾͊̌̌ͫ̀͟ͅ ̥ͪ͋͞P̟̻̝͕̩͎̞ͭ̾ͧ͗̆̉u̶͍̱̭͎̓͋̓͂͗ͧͯ͡ͅͅt̸̯̜̟̥̋ͬͦ͂͆͘͟l̯͉͉̤ͣe̱̟̮̖̋ͦ̌͒͂͆ͪ͌͘r͚͛̒͗̔͊̚͘&quot;</span>
-<span class="w">  </span><span class="p">,</span><span class="w"> </span><span class="n">dateOfBirth</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- …</span>
-<span class="w">  </span><span class="c1">-- etc…</span>
-</pre></div>
-
-<p>It’s all very well telling ourselves that this wouldn’t happen to us because we
-are running a comprehensive validation function when processing the form submission
-that ingests this data, but the reality is that in a non-trivial business your
-database is going to have more than one entry point. Expediency and technical debt
-are facts of life.</p>
-<p>A persistent model with a bunch of fields representing primitive values like
-<code>Text</code> is a code smell. When we see it, it’s telling us that we should <em>make
-our types smaller</em>. That is to say, more specific.</p>
-<p>Perhaps what we want instead is something like this:</p>
-<div class="highlight"><pre><span></span><span class="p">[</span><span class="n">st</span><span class="o">|</span>
-<span class="w">  </span><span class="c1">-- Our User type with more specific types in its fields</span>
-<span class="w">  </span><span class="kt">User</span>
-<span class="w">    </span><span class="n">name</span><span class="w"> </span><span class="kt">Username</span><span class="w"> </span><span class="c1">-- This type is smaller!</span>
-<span class="w">    </span><span class="n">dateOfBirth</span><span class="w"> </span><span class="kt">Day</span>
-<span class="w">    </span><span class="n">email</span><span class="w"> </span><span class="kt">Email</span>
-<span class="w">    </span><span class="kt">UniqueEmail</span><span class="w"> </span><span class="n">email</span>
-<span class="w">    </span><span class="c1">-- etc…</span>
-<span class="o">|</span><span class="p">]</span>
-
-<span class="c1">-- Introduce a Username type which wraps a text value</span>
-<span class="c1">-- Keep this in a different module, and be sure not to expose the constructor!</span>
-<span class="kr">newtype</span><span class="w"> </span><span class="kt">Username</span><span class="w">  </span><span class="ow">=</span><span class="w"> </span><span class="kt">Username</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">unUsername</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="p">}</span>
-
-<span class="c1">-- The &quot;smart constructor&quot; which enforces validation rules</span>
-<span class="c1">-- Only expose this one!</span>
-<span class="nf">mkUsername</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">Username</span>
-<span class="nf">mkUsername</span><span class="w"> </span><span class="n">t</span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Nothing</span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">failsSomeOtherValidationRule</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Nothing</span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">otherwise</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Just</span><span class="w"> </span><span class="p">(</span><span class="kt">Username</span><span class="w"> </span><span class="n">t</span><span class="p">)</span>
-
-<span class="c1">-- Teach our program to marshal values over the system boundary</span>
-<span class="kr">instance</span><span class="w"> </span><span class="kt">PersistField</span><span class="w"> </span><span class="kt">Username</span><span class="w"> </span><span class="kr">where</span>
-<span class="w">  </span><span class="n">toPersistValue</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- unwrap value</span>
-<span class="w">  </span><span class="n">fromPersistValue</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="c1">-- parse value into narrower type</span>
-</pre></div>
-
-<p>It may seem more expensive to use a more specific type because you then need to
-take the time to teach your program how to marshal values across that
-application/database boundary, but I think this one-time cost is cheaper than
-having to code defensively in perpetuity.</p>
-<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
-<hr />
-<ol>
-<li id="fn1"><p>Fun Fact: For quite a long time, Twitter happily accepted Zalgo input in tweets, allowing anyone to turn the timelines of other users into an incomprehensible mess.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
-</ol>
-</section>
-]]></description>
-    <pubDate>Sat, 31 Dec 2022 00:00:00 UT</pubDate>
-    <guid>https://jezenthomas.com/2022/12/make-your-types-smaller/</guid>
     <dc:creator>Jezen Thomas</dc:creator>
 </item>
 
