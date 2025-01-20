@@ -3,6 +3,8 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 import Control.Monad (forM_)
 import Data.ByteString.Char8 (pack)
@@ -20,12 +22,19 @@ import Data.Time.Locale.Compat (defaultTimeLocale)
 import Debug.Trace
 import Hakyll hiding (host)
 import Redirects
-import System.FilePath.Posix (takeBaseName, takeDirectory, (</>))
+import System.FilePath.Posix (takeBaseName, takeDirectory, (</>), splitPath, joinPath, dropExtension)
 import Text.Pandoc
 import Text.Pandoc.Citeproc
 import Text.Pandoc.Highlighting (pygments, styleToCss, zenburn)
 import Text.Pandoc.Options
 import Text.Pandoc.Walk (walkM)
+import Data.Map (Map)
+import Data.Map qualified as Map
+import Data.Vector (Vector, fromList)
+import Data.Vector qualified as V
+import Data.Aeson (Value)
+
+import WMentions
 
 host :: String
 host = "https://jezenthomas.com"
@@ -61,6 +70,8 @@ styleSheets =
 
 main :: IO ()
 main = hakyll $ do
+
+  mentions <- preprocess getFromFileOrWebmentionIO
 
   compiledStylesheetPath <- preprocess $ do
     styles <- mapM readFile styleSheets
@@ -102,10 +113,28 @@ main = hakyll $ do
     dep <- makePatternDependency "css/*"
     rulesExtraDependencies [dep] $ compile $ do
       ident <- getUnderlying
+
+      let wmreplies = listField "replies" (field "repl" (return . itemBody))
+            (traverse (makeItem  . fromMaybe "" . renderReply)
+                (V.toList . fromMaybe V.empty . Map.lookup (target) $ replies mentions))
+
+          wmlikes = listField "likes" (field "like" (return . itemBody))
+            (traverse (makeItem . fromMaybe "" . renderLike)
+                (V.toList . fromMaybe V.empty . Map.lookup target $ likes mentions))
+
+          wmreposts = listField "reposts" (field "repo" (return . itemBody))
+            (traverse (makeItem .  fromMaybe "" . renderRepost)
+                (V.toList . fromMaybe V.empty . Map.lookup target $ reposts mentions))
+
+          ctx = postCtx <> utcCtx <> wmreplies <> wmlikes
+
+          cleanTarget = dropExtension . joinPath . drop 1 . splitPath . toFilePath
+          target = traceShowId $ drop 8 host </> cleanTarget ident <> "/"
+
       blogCompiler
         >>= loadAndApplyTemplate "templates/post-content.html" postCtx
         >>= saveSnapshot "content"
-        >>= loadAndApplyTemplate "templates/post.html" (postCtx <> utcCtx)
+        >>= loadAndApplyTemplate "templates/post.html" ctx
         >>= loadAndApplyTemplate "templates/default.html" (postCtx <> boolField "page-blog" (const True))
         >>= cleanIndexUrls
 

@@ -11,5 +11,28 @@
       $partial("templates/feed.html")$
     </div>
     $body$
+    <br>
+    $if(likes)$
+    <div class="body likes">
+        $for(likes)$
+             $like$
+        $endfor$
+    </div>
+    $endif$
+    $if(replies)$
+    <div class="body replies">
+        $for(replies)$
+            $repl$
+        $endfor$
+    </div>
+    $endif$
+    $if(reposts)$
+    <div class="body replies">
+        $for(reposts)$
+            $repo$
+        $endfor$
+    </div>
+    $endif$
   </article>
+
 </div>

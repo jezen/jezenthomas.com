@@ -162,6 +162,55 @@ h3 {
   font-size: 1rem;
 }
 
+.mentions {
+  margin: 0;
+  padding: 0;
+}
+
+.mention {
+  display: flex;
+  margin-bottom: 1.5em;
+}
+
+.mention__authorImageLink {
+  flex-shrink: 0;
+  margin-right: 0.8em;
+}
+
+.mention__image {
+  width: 60px;
+  height: 60px;
+}
+
+.mention__authorLink {
+  display: block;
+  margin-bottom: 0.1em;
+}
+
+.mention__content {
+  margin-bottom: 0.1em;
+}
+
+.likes {
+  margin: 0;
+  padding: 0;
+}
+
+.like {
+  margin-right: 0.5em;
+}
+
+.like__image {
+  width: 40px;
+  height: 40px;
+  margin-bottom: 0.1em;
+  transition: scale linear 0.1s;
+}
+
+.like__image:hover {
+  scale: 1.33;
+}
+
 .post-meta {
   color: var(--main-fg-secondary-color);
   display: flex;
