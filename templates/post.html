@@ -8,11 +8,11 @@
         | $location$
         $endif$
       </p>
-      $partial("templates/feed.html")$
     </div>
     $body$
     <br>
     $if(likes)$
+    <h4>likes</h4>
     <div class="body likes">
         $for(likes)$
              $like$
@@ -20,6 +20,7 @@
     </div>
     $endif$
     $if(replies)$
+    <h4>replies</h4>
     <div class="body replies">
         $for(replies)$
             $repl$
@@ -27,7 +28,8 @@
     </div>
     $endif$
     $if(reposts)$
-    <div class="body replies">
+    <h4>reposts</h4>
+    <div class="body reposts">
         $for(reposts)$
             $repo$
         $endfor$

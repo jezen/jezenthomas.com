@@ -11,6 +11,7 @@ import Data.Maybe
 import GHC.Generics(Generic)
 import System.Environment.Blank (getEnv)
 import System.Posix.Files (fileExist)
+import System.FilePath.Posix (takeBaseName, takeDirectory, (</>), splitPath, joinPath, dropExtension)
 import Text.Blaze.Html.Renderer.String (renderHtml)
 import Data.Map (Map)
 import Data.Map qualified as Map
@@ -19,8 +20,10 @@ import Text.Blaze.Html5 qualified as H
 import Text.Blaze.Html5.Attributes qualified as H
 import Data.String (fromString)
 import Network.Wreq qualified as W
+import Data.Functor (($>))
 import Data.Aeson
 import Data.Aeson (Value)
+import Data.Aeson.Encode.Pretty (encodePretty)
 import Data.Aeson.KeyMap qualified as JK
 import Control.Lens ((^.))
 import Data.Vector (Vector, fromList)
@@ -30,8 +33,10 @@ import Data.Text (Text)
 import Data.Text qualified as T
 import Data.ByteString (ByteString)
 import Data.ByteString qualified as B
+import Data.ByteString.Lazy qualified as BL
 import Data.Ord qualified as Ord
 import Control.Applicative ((<|>))
+import Hakyll hiding (host)
 
 type WMPost = String
 
@@ -58,12 +63,11 @@ instance FromJSON GetWM where
             Array vec -> pure . GetWM $ SM (foldToMap likes) (foldToMap replies) (foldToMap reposts) where
 
                 foldToMap objs = Map.fromList $ foldl go mempty (V.groupBy gb objs) where
-                    -- go :: [(WMPost, Vector Value)] -> Vector Value -> [(WMPost, Vector Value)]
                     go wmmap ls
                         | V.null ls = wmmap
                         | otherwise = case V.head ls of
                             Object o -> case JK.lookup "wm-target" o of
-                                Just (String t) -> (drop 8 $ T.unpack t, ls) : wmmap
+                                Just (String t) -> (cleanTarget $ T.unpack t, ls) : wmmap
                                 _ -> wmmap
                             _ -> wmmap
 
@@ -79,6 +83,21 @@ instance FromJSON GetWM where
                 isType _ _ = False
 
             _ -> fail "failed to parse chidren as an array"
+
+
+cleanTarget :: String -> String
+cleanTarget t = ensureSlash . dropExtension . joinPath $ case splitPath t of
+    ("https://" : host : []) -> ["/"]
+    ("https://" : host : "posts/" : path) -> path
+    ("https://" : host : path) -> path
+    ( host : "posts/" : path) -> path
+    ( "posts/" : path) -> path
+    ["/"] -> ["/"]
+    path -> "himum" : path
+  where
+    ensureSlash [] = ['/']
+    ensureSlash [c] | c /= '/' = c:['/'] | otherwise = [c]
+    ensureSlash (x:xs) = x : ensureSlash xs
 
 
 renderRepost (Object kmap) = do
@@ -119,8 +138,8 @@ getFromFileOrWebmentionIO = do
     webementionIoToken <- getEnv "WMTOKEN"
     newMentions <- case webementionIoToken of
       Nothing -> do
-        putStrLn $ "Warning: no webmention.io token found"
-        putStrLn $ "Warning: please set WMTOKEN environmental variable"
+        putStrLn $ "Warning: Webmentions: no webmention.io token found"
+        putStrLn $ "Warning: Webmentions: please set WMTOKEN environment variable"
         pure emptySM
       Just token -> do
 
@@ -130,12 +149,11 @@ getFromFileOrWebmentionIO = do
           200 -> case fmap unGetWM . eitherDecode $ response ^. W.responseBody of
               Right sm@(SM _ _ _) -> pure sm
               Left err -> do
-                putStrLn $ "Error: decoding webmentions. aeson error: "
-                    <> show err
+                putStrLn $ "Error: Webmentions: couldn't decode webmention.io response: Aeson error: " <> show err
                 pure $ SM mempty mempty mempty
 
           bad -> do
-            putStrLn $ "Error: fetching webmentions. status code: " <> show bad
+            putStrLn $ "Error: Webmentions: couldn't fetch webmentions. response status code: " <> show bad
             pure emptySM
 
     fileExist "webmentions.json" >>= \case
@@ -157,10 +175,6 @@ getFromFileOrWebmentionIO = do
 
             comparison o1 o2 = (Ord.compare (encode o1) (encode o2))
 
-        encodeFile "webmentions.json" result
-        pure result
+        BL.writeFile "webmentions.json" (encodePretty result) $> result
 
-      False -> do
-        encodeFile "webmentions.json" newMentions
-        pure newMentions
-
+      False -> BL.writeFile "webmentions.json" (encodePretty newMentions) $> newMentions

@@ -19,7 +19,6 @@ import Data.Time.Calendar (toGregorian)
 import Data.Time.Clock (UTCTime, utctDay)
 import Data.Time.Format (formatTime)
 import Data.Time.Locale.Compat (defaultTimeLocale)
-import Debug.Trace
 import Hakyll hiding (host)
 import Redirects
 import System.FilePath.Posix (takeBaseName, takeDirectory, (</>), splitPath, joinPath, dropExtension)
@@ -112,24 +111,23 @@ main = hakyll $ do
     route postCleanRoute
     dep <- makePatternDependency "css/*"
     rulesExtraDependencies [dep] $ compile $ do
-      ident <- getUnderlying
+      target <- cleanTarget . toFilePath <$> getUnderlying
 
-      let wmreplies = listField "replies" (field "repl" (return . itemBody))
-            (traverse (makeItem  . fromMaybe "" . renderReply)
-                (V.toList . fromMaybe V.empty . Map.lookup (target) $ replies mentions))
+      let wmreplies = listField "replies" (field "repl" idctx) (mkList renderReply $ replies mentions)
+          wmlikes   = listField "likes"   (field "like" idctx) (mkList renderLike $ likes mentions)
+          wmreposts = listField "reposts" (field "repo" idctx) (mkList renderRepost $ reposts mentions)
 
-          wmlikes = listField "likes" (field "like" (return . itemBody))
-            (traverse (makeItem . fromMaybe "" . renderLike)
-                (V.toList . fromMaybe V.empty . Map.lookup target $ likes mentions))
+          idctx = pure . itemBody
 
-          wmreposts = listField "reposts" (field "repo" (return . itemBody))
-            (traverse (makeItem .  fromMaybe "" . renderRepost)
-                (V.toList . fromMaybe V.empty . Map.lookup target $ reposts mentions))
+          debugctx i = do
+            debugCompiler $ "LOOK: ctx: " <> show (itemBody i)
+            pure $ itemBody i
 
-          ctx = postCtx <> utcCtx <> wmreplies <> wmlikes
+          mkList render mentions =
+            (traverse (makeItem .  fromMaybe "" . render)
+                (V.toList . fromMaybe V.empty . Map.lookup target $ mentions))
 
-          cleanTarget = dropExtension . joinPath . drop 1 . splitPath . toFilePath
-          target = traceShowId $ drop 8 host </> cleanTarget ident <> "/"
+          ctx = postCtx <> utcCtx <> wmreplies <> wmlikes <> wmreposts
 
       blogCompiler
         >>= loadAndApplyTemplate "templates/post-content.html" postCtx
