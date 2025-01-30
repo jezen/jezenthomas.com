@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>My Technological Regrets</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="After several years working on Supercede, I’ve had time to reflect on some technical choices we made. Some of them worked well, others I’d approach differently if I were starting again. Here’s what I regret, and why.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="My Technological Regrets">
+    <meta property="og:description" content="After several years working on Supercede, I’ve had time to reflect on some technical choices we made. Some of them worked well, others I’d approach differently if I were starting again. Here’s what I regret, and why.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/regrets/cover.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="My Technological Regrets">
+    <meta name="twitter:description" content="After several years working on Supercede, I’ve had time to reflect on some technical choices we made. Some of them worked well, others I’d approach differently if I were starting again. Here’s what I regret, and why.">
+    <meta name="twitter:image" content="/static/img/regrets/cover.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="msvalidate.01" content="0BFF5F9B2745D86F899A8E0A7FB7BCE0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/883a335d965fd58957350e20145f6e1b.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+    <script src="https://analytics.ahrefs.com/analytics.js" data-key="vYwTMxlPcZFRl0z1O6Ai6A" async></script>
+    <script src="https://cdn.usefathom.com/script.js" data-site="OTTAMRJZ" defer></script>
+  </head>
+  <body>
+    <header>
+  <a class="portrait" href="/">
+    <img width="80" height="80" alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+  </a>
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+  <p class="bio">
+    CTO &amp; Co-Founder at Supercede.
+  </p>
+</header>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">My Technological Regrets</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        January 30<sup>th</sup>, 2025
+        
+        | Đà Nẵng, Vietnam
+        
+      </p>
+      <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+    </div>
+    <p>After several years working on Supercede, I’ve had time to reflect on some of
+the technical choices we made. Some of them worked well, others I’d approach
+differently if I were starting again. Here’s what I regret, and why.</p>
+<h2 id="elm-was-the-wrong-choice-for-our-ui">Elm Was the Wrong Choice for Our UI</h2>
+<p>When I started working on Supercede, I had the idea that any more complex parts
+of the UI should be written in Elm, rather than with React or perhaps just
+managing all DOM interaction manually with plain JavaScript.</p>
+<p>If you need to write in a Single Page Application (SPA) style, I think Elm is
+probably the best possible choice. I would absolutely choose Elm if I were
+writing a greenfield SPA today.</p>
+<p>It doesn’t matter that Elm doesn’t have typeclasses, and it doesn’t matter that
+Elm doesn’t have the same kind of churn that the rest of the JavaScript world
+has come to expect. These are both features. I’m familiar with some of the
+criticisms levelled at Elm, but chief, <a href="https://reasonablypolymorphic.com/blog/elm-is-wrong/">this ain’t it</a>.</p>
+<p>The reasons why I have come to regret Elm are not inherent to Elm itself. The
+problems are in product design, and what that necessarily implies about the
+system design. As it turns out, Supercede just doesn’t [currently] need any of
+the user interface written in SPA style. This is enterprise software for
+reinsurance professionals. Most of the interactivity should be modelled with
+server-rendered web forms. Kind of like how web applications were written 20
+years ago.</p>
+<p>If you design your application as a backend which serves some JSON and a SPA
+which consumes and operates on that data, you have two separate systems. To
+marshal values as they flow between the boundaries of those two systems, you
+need to somehow manage the synchronisation of the types of those values on both
+sides (and that’s true also of dynamically-typed languages), and you need to
+manage how those values serialise and deserialise, and you probably need to
+duplicate some of the business logic and parsing/validation logic. You might —
+as we did at Supercede — introduce a code generation mechanism which runs as
+part of your build step and enforces that all of these things remain
+synchronised. But this is more code to compile. More to maintain. More to
+document. More to constantly be aware of. It doesn’t come for free.</p>
+<p>Alternatively, you could choose to not have these problems by designing your
+product in a different way. This sounds like a constraint, and it is. But
+that’s a good thing! Design is all about constraints. Constraints liberate. If
+you can’t design within constraints, then you’re just a bad designer.</p>
+<h2 id="event-sourcing-added-complexity-we-didnt-need">Event Sourcing Added Complexity We Didn’t Need</h2>
+<p>We knew from the beginning that auditability would be an important property of
+our system. Event sourcing — where the current state of the system is derived
+by replaying a chronological sequence of events — seems an obvious choice for
+this.</p>
+<p>The problem is that event sourcing is <em>hard</em>.</p>
+<p>Sure, it’s not insurmountably hard. You can quickly gain a conceptual intuition
+for how event sourcing should work when it’s explained to you, and you can
+readily draw parallels to other systems which work more or less the same way,
+like distributed version control, or your bank account.</p>
+<p>But the complexity of designing and maintaining an event sourced system doesn’t
+come for free. It’s not even cheap. When you want to introduce a change to the
+system, you need to think much harder about threading that change through each
+component of the event sourcing system. You need to think harder about when
+effects happen. Should running a projection also send transactional email?
+Probably not. Other effects? Hard to say.</p>
+<p>You can learn the theory. You can learn the skills. But it’s <em>probably</em> too
+much to take on for a startup when they’re still trying to find product/market
+fit. Your time is better spent building features that paying customers actually
+care about. And most customers — especially for a product like Supercede —
+really care about auditability. But they <em>don’t</em> care whether that auditability
+is implemented with event sourcing, and not, say, some audit tables.</p>
+<p>There are cases where event sourcing is absolutely the right approach, and
+should be coupled with deeper measures of integrity like <a href="https://en.wikipedia.org/wiki/Write_once_read_many">WORM drives</a>, but
+those cases are less common than the software conference circuit might have you
+believe. Much like microservices, I suppose.</p>
+<h2 id="over-reliance-on-postgresql-slowed-development">Over-Reliance on PostgreSQL Slowed Development</h2>
+<p>This regret isn’t about PostgreSQL per se. It’s more about tightly coupling to
+database-specific implementation details, and the consequences of such a
+coupling.</p>
+<p>One of the consequences is slower test execution. Most of Supercede’s test code
+is written in an integrated style using the yesod-test library. Between each
+test, we create a new application state and reset the database so that
+individual tests do not affect the execution environment of other tests.
+Truncations are slow in PostgreSQL, and for some specific design reasons it’s
+not really feasible to wrap each test in a transaction which is rolled back at
+the end<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>. We have other projects which use the same libraries but instead
+run tests against an in-memory SQLite database, which works great and runs
+quickly.</p>
+<p>Depending on features specific to PostgreSQL also means you need to run a real
+database server in your continuous integration setup. It’s more to install, and
+you need to run it all in a virtual machine. It’s just more <em>stuff</em>. And stuff
+is a liability.</p>
+<p>For most of the more generic database work, I would prefer to abstract away the
+details of the database with libraries like persistent and esqueleto. There
+might be parts of the application that necessarily rely on specific database
+features, but I think those parts should be extracted or in some way isolated,
+perhaps even so they can be stubbed in the general case.</p>
+<h2 id="lenses">Lenses</h2>
+<p>Lenses are brilliant, and for any new non-trivial Elm project, I would likely
+reach for a lens library like <a href="https://package.elm-lang.org/packages/arturopala/elm-monocle/latest/">elm-monocle</a>. But that’s because I think Elm
+projects — at least in my experience — tend towards keeping all state in one
+foundational data structure which will necessarily become complex as the
+project grows.</p>
+<p>Your foundational data structure — your <code>Model</code> — is not some peripheral detail
+that you interact with only occasionally. Because it’s so central, you work
+with it constantly and so the mental model for manipulating that data structure
+with lenses becomes rudimentary, rather than a novel curiosity.</p>
+<p>Lenses are so worth it if you have this design and the ergonomics constraints
+it brings.</p>
+<p>But if you don’t? I don’t think it’s worth it.</p>
+<p>Lenses in Haskell read <em>quite</em> differently from more conventionally written
+Haskell code. So much so, that while being ordinary Haskell, you could almost
+consider them a domain specific language.</p>
+<p>Working with lenses and maintaining a flow state requires familiarity, which I
+don’t think you can establish if you only flirt with lenses by lightly dusting
+it around the periphery of your project.</p>
+<p>At Supercede, we haven’t gone <em>all-in</em> on lenses. Some engineers have made the
+choice to lightly dust lenses on the periphery. Those parts now cause visible
+lines in the skin of programmers’ faces any time that programmer is forced to
+read and understand what we’ve written.</p>
+<p>So, I regret our lens adoption. In hindsight, it seems gratuitous. Perhaps we
+indulged in whether or not some code <em>could</em> be written in terms of lenses,
+while neglecting to consider whether or not that code <em>should</em> be written that
+way.</p>
+<h2 id="bem-naming-conventions-stifled-thoughtful-design">BEM Naming Conventions Stifled Thoughtful Design</h2>
+<p>It’s tough, balancing <a href="https://en.wikipedia.org/wiki/Not_invented_here#:~:text=Not%20invented%20here%20(NIH)%20is,against%20ideas%20from%20the%20outside."><em>Not Invented Here</em></a> syndrome with first principles
+thinking. It’s not economically sensible to reinvent every wheel, nor is it
+sustainable to surrender to the learned helplessness of <em>best practice</em>, which
+is itself a form of <a href="https://simple.wikipedia.org/wiki/Appeal_to_tradition#:~:text=Appeal%20to%20tradition%20(also%20known,always%20done%20it%20this%20way%22.">fallacious reasoning</a>.</p>
+<p>The <a href="https://getbem.com">Block Element Modifier</a> naming convention is one such <em>best practice</em>.
+I regret allowing it to creep in to our codebase because I think it allowed
+some developers to try to absolve themselves of the kind of thinking required
+to come up with meaningful names for things. Communicating intent through clear
+writing is one of the most important parts of the job.</p>
+<p>The use of BEM has also made us stop thinking about how the problem of CSS
+selector scoping could otherwise be solved. The BEM naming convention could
+certainly be the right choice in some tech stacks, but in our Yesod project we
+have better tools! We generate unique identifiers for components at runtime,
+with some components being comprised of smaller components. This of course
+isn’t exclusive to Yesod — other ecosystems solve this problem differently. But
+the point is that this problem <em>can</em> be solved differently, and to ignore that
+for the sake of <em>best practice</em> is folly.</p>
+<h2 id="we-abstracted-too-early-and-it-cost-us">We Abstracted Too Early, and It Cost Us</h2>
+<p>Haskell is a high level programming language. Almost all of the code we write
+describes what we wish to achieve, and not specifically <em>how</em> the runtime
+should achieve it. So, premature optimisation is not really a problem we’ve
+faced historically. At least, not in terms of algorithmic efficiency. Instead,
+the premature optimisation that we have at times fallen afoul of is abstracting
+too early, and abstracting the wrong things.</p>
+<p>The worst offences here typically look like functions which are highly
+configurable, but don’t really <em>do</em> anything particularly interesting. For
+example, extracting a user interface component library, so that all the buttons
+in your UI look the same. But in some places, the button should be a different
+colour, so you make that a configuration option. And then in some places, the
+button should be a different size, so you make that a configuration option. And
+then in some places, the button…</p>
+<p>You get the idea.</p>
+<p>A function that requires a load of configuration in order for it to understand
+how it’s meant to behave is probably a code smell. Instead of one highly
+configurable function, we could have written a few different functions. Or, we
+could have written a few different CSS mixins and composed those together.</p>
+<h2 id="haskells-type-system-isnt-a-substitute-for-good-tests">Haskell’s Type System Isn’t a Substitute for Good Tests</h2>
+<p>Haskell’s type system is <em>brilliant</em>.</p>
+<p>The type system obviates the need to write so many of the more onerous tests
+that we would have had to write and maintain if we were writing our project in
+something like Ruby or Python. Tests that assert the shapes of data structures,
+or that functions are called with the right arguments — that kind of thing.</p>
+<p>But ensuring that a SQL query doesn’t throw an exception at runtime? We still
+need tests for that. Or documenting and automatically verifying the expected
+behaviour of a path through the system? We still need tests for that. There are
+many more examples to list, but this list isn’t meant to be exhaustive.</p>
+<p>Despite being able to leverage a tool as powerful as the [Glorious] Glasgow
+Haskell Compiler, I’m still seeing a huge amount of value in using automated
+tests to drive out the design of the system. This shouldn’t really be
+surprising either — types and tests are different things and serve different
+purposes.</p>
+<p>In parts of our project where the test suite is well written, I’m seeing that
+it continues to be well written as my colleagues write more production code.
+This might come from a kind of social pressure — conscientious developers
+generally want to leave a project in a better state than they found it. If a
+test suite is well written, it just <em>feels</em> bad to make a change that leaves
+the test suite relatively less comprehensive.</p>
+<p>So, my regret here is in not investing enough in establishing a culture of
+test-driven design. And I don’t just mean we haven’t written <em>enough</em> tests.
+There’s an art to writing test code, since its purpose isn’t purely to prevent
+regressions. If we had a better cultural awareness of how to use automated
+tests to drive out the design of our system, we’d almost certainly have a
+better production codebase for it. We do have this culture at least partially
+established in our team, but it’s harder to add this after the fact. And
+because the existing test code isn’t always ideal, the path of least resistance
+isn’t to write ideal test code, and the relative growth of good test code
+against new production code isn’t self-perpetuating.</p>
+<p>In other words, it takes more effort now to get to where we want to be with our
+test code than if we had done this up front.</p>
+<h2 id="slow-ci-kills-productivity">Slow CI Kills Productivity</h2>
+<p>Programmers have a kind of adversarial relationship with continuous integration
+systems. It’s a healthy conflict though — the whole point is to ensure that the
+changes you make are sound.</p>
+<p>As you work, you push changes and your CI system runs an assortment of checks
+against them. You might be otherwise happy with your contribution and all of
+your automated tests are passing during local development, but then the CI
+system flags that you neglected to add a migration. Or that the code fails some
+linting rules, or that while your code works just fine on the compiler version
+or system architecture that you are running locally, it fails on other compiler
+versions or system architectures that you also need to support.</p>
+<p>So, the build on CI is failing. You make another change, push that change, and
+wait again for CI to pass or fail. Another failure. Make more changes. Push
+again. Wait.</p>
+<p>This style of working is of course fine, but if CI is slow, it means your
+iteration cycle is slow. And a slow iteration cycle easily distracts
+programmers and kills motivation. Scaling this lack of efficiency up to a team
+of people means the company isn’t shipping software as fast as it should.</p>
+<p>In hindsight, I should have invested more effort into keeping tests fast and
+build times short. The compound productivity gains from this just make economic
+sense.</p>
+<h2 id="lessons-learned">Lessons Learned</h2>
+<p>Looking back, the choices we made were [usually] generally well-motivated. If I
+were starting Supercede today however, I would take a firmer stand against
+over-engineering, and I would be more conservative — not just in the number of
+tools and libraries we depend on, but also in how much of any given language we
+use. Haskell is a great language, but we don’t need to use <em>all</em> of it.</p>
+<p>This retrospective has also reaffirmed to me how important test-driven design
+is as a way to approach software development. I learned all about it a decade
+ago, forgot it, and then had to relearn — painfully — why TDD matters.</p>
+<p>Finally, I don’t regret for a minute any of the time I spent learning about
+<a href="https://en.wikipedia.org/wiki/List_of_fallacies">logical fallacies</a>. Software engineering as an industry is <em>rampant</em> with
+fallacious reasoning, and often it’s enough to recognise fallacious reasoning
+when it’s being employed in order to not fall prey to it.</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>Or maybe there <em>is</em> a way to do this, and I just haven’t figured out how yet.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+  </article>
+</div>
+</div>
+    <footer>
+  <p>&copy; 2025 Jezen Thomas</p>
+  <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+</footer>
+
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script type="text/javascript" src="https://www.htmlqa.com/send.js"></script>
+  </body>
+</html>
