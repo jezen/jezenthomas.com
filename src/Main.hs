@@ -3,6 +3,8 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE ViewPatterns #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 import Control.Monad (forM_)
 import Data.ByteString.Char8 (pack)
@@ -17,15 +19,21 @@ import Data.Time.Calendar (toGregorian)
 import Data.Time.Clock (UTCTime, utctDay)
 import Data.Time.Format (formatTime)
 import Data.Time.Locale.Compat (defaultTimeLocale)
-import Debug.Trace
 import Hakyll hiding (host)
 import Redirects
-import System.FilePath.Posix (takeBaseName, takeDirectory, (</>))
+import System.FilePath.Posix (takeBaseName, takeDirectory, (</>), splitPath, joinPath, dropExtension)
 import Text.Pandoc
 import Text.Pandoc.Citeproc
 import Text.Pandoc.Highlighting (pygments, styleToCss, zenburn)
 import Text.Pandoc.Options
 import Text.Pandoc.Walk (walkM)
+import Data.Map (Map)
+import Data.Map qualified as Map
+import Data.Vector (Vector, fromList)
+import Data.Vector qualified as V
+import Data.Aeson (Value)
+
+import WMentions
 
 host :: String
 host = "https://jezenthomas.com"
@@ -61,6 +69,8 @@ styleSheets =
 
 main :: IO ()
 main = hakyll $ do
+
+  mentions <- preprocess getFromFileOrWebmentionIO
 
   compiledStylesheetPath <- preprocess $ do
     styles <- mapM readFile styleSheets
@@ -101,11 +111,28 @@ main = hakyll $ do
     route postCleanRoute
     dep <- makePatternDependency "css/*"
     rulesExtraDependencies [dep] $ compile $ do
-      ident <- getUnderlying
+      target <- cleanTarget . toFilePath <$> getUnderlying
+
+      let wmreplies = listField "replies" (field "repl" idctx) (mkList renderReply $ replies mentions)
+          wmlikes   = listField "likes"   (field "like" idctx) (mkList renderLike $ likes mentions)
+          wmreposts = listField "reposts" (field "repo" idctx) (mkList renderRepost $ reposts mentions)
+
+          idctx = pure . itemBody
+
+          debugctx i = do
+            debugCompiler $ "LOOK: ctx: " <> show (itemBody i)
+            pure $ itemBody i
+
+          mkList render mentions =
+            (traverse (makeItem .  fromMaybe "" . render)
+                (V.toList . fromMaybe V.empty . Map.lookup target $ mentions))
+
+          ctx = postCtx <> utcCtx <> wmreplies <> wmlikes <> wmreposts
+
       blogCompiler
         >>= loadAndApplyTemplate "templates/post-content.html" postCtx
         >>= saveSnapshot "content"
-        >>= loadAndApplyTemplate "templates/post.html" (postCtx <> utcCtx)
+        >>= loadAndApplyTemplate "templates/post.html" ctx
         >>= loadAndApplyTemplate "templates/default.html" (postCtx <> boolField "page-blog" (const True))
         >>= cleanIndexUrls
 

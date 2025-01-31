@@ -1,8 +1,12 @@
-name: Build and deploy to GitHub Pages
-on: push
+name: Webmentions Sync and Redeploy
+
+on:
+  schedule:
+    - cron: "0 */24 * * *"
+  workflow_dispatch:
 
 jobs:
-  build-deploy:
+  webmentions-sync-rebuild-redeploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -20,12 +24,14 @@ jobs:
       - name: Commit webmentions to repository
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check for changes and commit
         run: |
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             set +e
             git add webmentions.json
             git diff --quiet && git diff --staged --quiet || (git commit -m "Sync webmentions [skip actions]"; git push origin test)
+
             set -e
 
       - name: Deploy
