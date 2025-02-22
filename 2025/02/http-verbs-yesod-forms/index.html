@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>HTTP Verbs in Yesod Forms</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="Form submissions in Yesod aren't restricted to only GET and POST. Yesod's runFormPost is about parsing the request body from a form submission, regardless of the actual HTTP verb that was used.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="HTTP Verbs in Yesod Forms">
+    <meta property="og:description" content="Form submissions in Yesod aren't restricted to only GET and POST. Yesod's runFormPost is about parsing the request body from a form submission, regardless of the actual HTTP verb that was used.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/http-verbs-yesod-forms/cover.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="HTTP Verbs in Yesod Forms">
+    <meta name="twitter:description" content="Form submissions in Yesod aren't restricted to only GET and POST. Yesod's runFormPost is about parsing the request body from a form submission, regardless of the actual HTTP verb that was used.">
+    <meta name="twitter:image" content="/static/img/http-verbs-yesod-forms/cover.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="msvalidate.01" content="0BFF5F9B2745D86F899A8E0A7FB7BCE0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/883a335d965fd58957350e20145f6e1b.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+    <script src="https://analytics.ahrefs.com/analytics.js" data-key="vYwTMxlPcZFRl0z1O6Ai6A" async></script>
+    <script src="https://cdn.usefathom.com/script.js" data-site="OTTAMRJZ" defer></script>
+  </head>
+  <body>
+    <header>
+  <a class="portrait" href="/">
+    <img width="80" height="80" alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+  </a>
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+  <p class="bio">
+    CTO &amp; Co-Founder at Supercede.
+  </p>
+</header>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">HTTP Verbs in Yesod Forms</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        February 22<sup>nd</sup>, 2025
+        
+        | Chiang Mai, Thailand
+        
+      </p>
+      <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+    </div>
+    <p>The main function provided by the yesod-form library for processing form
+submissions is <a href="https://hackage.haskell.org/package/yesod-form-1.7.9/docs/Yesod-Form-Functions.html#v:runFormPost"><code>runFormPost</code></a>.</p>
+<p>As the name implies, this function processes <code>POST</code> requests. But what if you
+want to use a different verb, like <code>PUT</code>? The library is a little confusing in
+this way, because the <em>post</em> in <code>runFormPost</code> doesn’t actually refer to the HTTP
+method that triggered the execution of the handler code.</p>
+<p>The point of <code>runFormPost</code> is actually just about running the parser against the
+request <em>body</em>, rather than the query string as would happen with <code>runFormGet</code>.</p>
+<p>Conceptually, this makes some sense as a design decision when you remember that
+web browsers natively only support <code>GET</code> and <code>POST</code> as values of the <code>method</code>
+attribute in HTML forms. The difference between those two values is perfectly
+reflected in the design of the library — the values in the form are transferred
+in either the query string or the request body respectively.</p>
+<p>While HTML forms only support <code>GET</code> and <code>POST</code> natively, a typical Yesod
+project will also support <a href="https://hackage.haskell.org/package/wai-extra#:~:text=Allows%20overriding%20of%20the%20HTTP%20request%20method%20via%20the%20_method%20query%20string%20parameter">request method overriding</a>, by applying a value
+for the <code>_method</code> parameter in the query string.</p>
+<p>In Hamlet, this looks something like this.</p>
+<div class="highlight"><pre><span></span>&lt;form  method=post action=@?{(ExampleR, [(&quot;_method&quot;, &quot;PUT&quot;)])}&gt;
+</pre></div>
+
+<p>This form submission would then be routed to the appropriate handler.</p>
+<div class="highlight"><pre><span></span><span class="nf">putExampleR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="kt">Html</span>
+<span class="nf">putExampleR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="p">((</span><span class="n">result</span><span class="p">,</span><span class="w"> </span><span class="n">form</span><span class="p">),</span><span class="w"> </span><span class="n">enctype</span><span class="p">)</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">runFormPost</span><span class="w"> </span><span class="n">exampleForm</span>
+<span class="w">  </span><span class="c1">-- …</span>
+</pre></div>
+
+<p>So, the browser sends a <code>POST</code> request, but the application actually interprets
+this as a <code>PUT</code> request and routes it to the appropriate handler. We then process
+the form in that handler with <code>runFormPost</code>, because the data is still
+transferred in the request body.</p>
+
+  </article>
+</div>
+</div>
+    <footer>
+  <p>&copy; 2025 Jezen Thomas</p>
+  <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+</footer>
+
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script type="text/javascript" src="https://www.htmlqa.com/send.js"></script>
+  </body>
+</html>
