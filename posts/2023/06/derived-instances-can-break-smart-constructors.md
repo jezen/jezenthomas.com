@@ -1,5 +1,5 @@
 ---
-title: Derived Instances Can Break Smart Constructors, Too
+title: Derived Instances Can Break Smart Constructors
 date: 2023-06-09
 location: Kraków, Poland
 excerpt:

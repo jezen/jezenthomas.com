@@ -20,6 +20,7 @@ header {
 .site-title a {
   border-bottom: none;
   color: var(--main-fg-color);
+  text-decoration: none;
 }
 
 .portrait {
