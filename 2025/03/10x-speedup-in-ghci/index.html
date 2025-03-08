@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>A 10x Speedup in GHCi</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="Running tests in GHCi can be slow due to single-threaded execution, but enabling multi-core parallelism can significantly improve performance.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="A 10x Speedup in GHCi">
+    <meta property="og:description" content="Running tests in GHCi can be slow due to single-threaded execution, but enabling multi-core parallelism can significantly improve performance.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/10x-speedup-in-ghci/cover.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="A 10x Speedup in GHCi">
+    <meta name="twitter:description" content="Running tests in GHCi can be slow due to single-threaded execution, but enabling multi-core parallelism can significantly improve performance.">
+    <meta name="twitter:image" content="/static/img/10x-speedup-in-ghci/cover.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="msvalidate.01" content="0BFF5F9B2745D86F899A8E0A7FB7BCE0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/bccd0f8e2f98f0eb6c83e2a7e8e24d56.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+    <script src="https://analytics.ahrefs.com/analytics.js" data-key="vYwTMxlPcZFRl0z1O6Ai6A" async></script>
+    <script src="https://cdn.usefathom.com/script.js" data-site="OTTAMRJZ" defer></script>
+  </head>
+  <body>
+    <header>
+  <a class="portrait" href="/">
+    <img width="80" height="80" alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+  </a>
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+  <p class="bio">
+    CTO &amp; Co-Founder at Supercede.
+  </p>
+</header>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">A 10x Speedup in GHCi</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        March  7<sup>th</sup>, 2025
+        
+        | Koh Samui, Thailand
+        
+      </p>
+      <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+    </div>
+    <p>Many of us at Supercede use GHCi directly when developing Haskell projects. It
+runs the local development server, and the automated test suite, and serves as
+a scratch pad for ad hoc expression evaluation and type inspection.</p>
+<p>We make heavy use of integrated tests with the yesod-test framework.</p>
+<p>One of our projects now has more than 500 tests.</p>
+<p>Running the tests in GHCi takes about 150 seconds. Not terrible, but not great
+either. Certainly not fast enough to encourage developers to practice TDD and
+run the entire suite regularly.</p>
+<div class="highlight"><pre><span></span>Finished in 150.2305 seconds
+508 examples, 0 failures, 3 pending
+</pre></div>
+
+<p>However, running the same test suite with <code>cabal test</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> takes only about
+12 seconds.</p>
+<p>That’s a significant improvement!</p>
+<div class="highlight"><pre><span></span>Finished in 11.7001 seconds
+508 examples, 0 failures, 3 pending
+</pre></div>
+
+<p>As it turns out, the difference is in concurrency in the runtime system. The
+project’s cabal file includes some GHC options which enable multi-core
+parallelism and allows the program to run with all available CPU cores.</p>
+<div class="highlight"><pre><span></span>test-suite test
+  type:               exitcode-stdio-1.0
+  main-is:            Main.hs
+  hs-source-dirs:     test
+  ghc-options:
+    -threaded -rtsopts -with-rtsopts=-N
+    -- there are more options here, but they're unrelated
+</pre></div>
+
+<p>So the test suite runs slowly in GHCi, because the tests are running on a
+single thread. It’s possible to start GHCi with multi-core parallelism by
+running <code>ghci +RTS -N</code> from the shell, but this is fiddly to write, and I don’t
+think writing a shell alias is the right thing to do. The project’s development
+environment should <em>just work</em> for everyone who contributes to the project, and
+they shouldn’t need to create shell aliases or tinker with these inputs in
+order to enjoy the improved performance.</p>
+<p>Fortunately, it’s possible to change RTS settings at runtime, so I’ve added
+these lines to end of the project’s <code>.ghci</code> file.</p>
+<div class="highlight"><pre><span></span><span class="kr">import</span><span class="w"> </span><span class="nn">GHC.Conc</span>
+<span class="nf">n</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">getNumProcessors</span>
+<span class="nf">setNumCapabilities</span><span class="w"> </span><span class="p">(</span><span class="n">max</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+
+<p>First we use <code>getNumProcessors</code> to get the number of CPUs the machine has,
+and then we set the number of Haskell threads that can run simultaneously.
+As recommended in <a href="https://hackage.haskell.org/package/base-4.21.0.0/docs/Control-Concurrent.html#v:setNumCapabilities">the documentation</a>, we leave a core free to avoid
+contention with other processes.</p>
+<p>Running the same test suite in GHCi with this RTS configuration takes ~12-20
+seconds, which is on average about a 10x improvement. There will also be some
+differences with GHCi interpreting rather than compiling code, but I think at
+this scale the difference is insignificant.</p>
+<p>While this isn’t related to parallelism, the last thing we do in our <code>.ghci</code>
+file is to enable the display of timing and memory stats, plus the inferred
+type of the variable bound for each statement.</p>
+<div class="highlight"><pre><span></span>:set +s +t
+</pre></div>
+
+<p>We do this last, because otherwise when entering GHCi we’ll see timing and
+memory stats for every comment written in the <code>.ghci</code> file, <em>i.e.</em>,
+several lines like this:</p>
+<div class="highlight"><pre><span></span>(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+</pre></div>
+
+<hr />
+<p>One fairly obvious way to not have to think about any of this would be to use
+<code>cabal repl</code> which is essentially a managed way to launch GHCi, though that
+comes with its own configuration concerns. I like the quick startup time of
+GHCi, and I like having a deeper understanding of what the interpreter is or
+isn’t doing.</p>
+<p>I’ve been happily using GHCi for the past decade, and I’m not currently
+convinced that adding a wrapper around the interpreter would make my
+development workflow any simpler. There is an argument to be made for cabal’s
+dependency resolution, but I’m using Nix to manage packages anyway.</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>We actually run our checks with <code>nix flake check -L</code>, but this uses cabal under the hood.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+
+  </article>
+</div>
+</div>
+    <footer>
+  <p>&copy; 2025 Jezen Thomas</p>
+  <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+</footer>
+
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script type="text/javascript" src="https://www.htmlqa.com/send.js"></script>
+  </body>
+</html>

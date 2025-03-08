@@ -7,8 +7,102 @@
         <description><![CDATA[Thoughts on Haskell, Business, Unix, and more.]]></description>
         <atom:link href="https://jezenthomas.com/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Sat, 22 Feb 2025 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Fri, 07 Mar 2025 00:00:00 UT</lastBuildDate>
         <item>
+    <title>A 10x Speedup in GHCi</title>
+    <link>https://jezenthomas.com/2025/03/10x-speedup-in-ghci/</link>
+    <description><![CDATA[<p>Many of us at Supercede use GHCi directly when developing Haskell projects. It
+runs the local development server, and the automated test suite, and serves as
+a scratch pad for ad hoc expression evaluation and type inspection.</p>
+<p>We make heavy use of integrated tests with the yesod-test framework.</p>
+<p>One of our projects now has more than 500 tests.</p>
+<p>Running the tests in GHCi takes about 150 seconds. Not terrible, but not great
+either. Certainly not fast enough to encourage developers to practice TDD and
+run the entire suite regularly.</p>
+<div class="highlight"><pre><span></span>Finished in 150.2305 seconds
+508 examples, 0 failures, 3 pending
+</pre></div>
+
+<p>However, running the same test suite with <code>cabal test</code><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> takes only about
+12 seconds.</p>
+<p>That’s a significant improvement!</p>
+<div class="highlight"><pre><span></span>Finished in 11.7001 seconds
+508 examples, 0 failures, 3 pending
+</pre></div>
+
+<p>As it turns out, the difference is in concurrency in the runtime system. The
+project’s cabal file includes some GHC options which enable multi-core
+parallelism and allows the program to run with all available CPU cores.</p>
+<div class="highlight"><pre><span></span>test-suite test
+  type:               exitcode-stdio-1.0
+  main-is:            Main.hs
+  hs-source-dirs:     test
+  ghc-options:
+    -threaded -rtsopts -with-rtsopts=-N
+    -- there are more options here, but they&#39;re unrelated
+</pre></div>
+
+<p>So the test suite runs slowly in GHCi, because the tests are running on a
+single thread. It’s possible to start GHCi with multi-core parallelism by
+running <code>ghci +RTS -N</code> from the shell, but this is fiddly to write, and I don’t
+think writing a shell alias is the right thing to do. The project’s development
+environment should <em>just work</em> for everyone who contributes to the project, and
+they shouldn’t need to create shell aliases or tinker with these inputs in
+order to enjoy the improved performance.</p>
+<p>Fortunately, it’s possible to change RTS settings at runtime, so I’ve added
+these lines to end of the project’s <code>.ghci</code> file.</p>
+<div class="highlight"><pre><span></span><span class="kr">import</span><span class="w"> </span><span class="nn">GHC.Conc</span>
+<span class="nf">n</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">getNumProcessors</span>
+<span class="nf">setNumCapabilities</span><span class="w"> </span><span class="p">(</span><span class="n">max</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+
+<p>First we use <code>getNumProcessors</code> to get the number of CPUs the machine has,
+and then we set the number of Haskell threads that can run simultaneously.
+As recommended in <a href="https://hackage.haskell.org/package/base-4.21.0.0/docs/Control-Concurrent.html#v:setNumCapabilities">the documentation</a>, we leave a core free to avoid
+contention with other processes.</p>
+<p>Running the same test suite in GHCi with this RTS configuration takes ~12-20
+seconds, which is on average about a 10x improvement. There will also be some
+differences with GHCi interpreting rather than compiling code, but I think at
+this scale the difference is insignificant.</p>
+<p>While this isn’t related to parallelism, the last thing we do in our <code>.ghci</code>
+file is to enable the display of timing and memory stats, plus the inferred
+type of the variable bound for each statement.</p>
+<div class="highlight"><pre><span></span>:set +s +t
+</pre></div>
+
+<p>We do this last, because otherwise when entering GHCi we’ll see timing and
+memory stats for every comment written in the <code>.ghci</code> file, <em>i.e.</em>,
+several lines like this:</p>
+<div class="highlight"><pre><span></span>(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+(0.00 secs, 0 bytes)
+</pre></div>
+
+<hr />
+<p>One fairly obvious way to not have to think about any of this would be to use
+<code>cabal repl</code> which is essentially a managed way to launch GHCi, though that
+comes with its own configuration concerns. I like the quick startup time of
+GHCi, and I like having a deeper understanding of what the interpreter is or
+isn’t doing.</p>
+<p>I’ve been happily using GHCi for the past decade, and I’m not currently
+convinced that adding a wrapper around the interpreter would make my
+development workflow any simpler. There is an argument to be made for cabal’s
+dependency resolution, but I’m using Nix to manage packages anyway.</p>
+<section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes">
+<hr />
+<ol>
+<li id="fn1"><p>We actually run our checks with <code>nix flake check -L</code>, but this uses cabal under the hood.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section>
+]]></description>
+    <pubDate>Fri, 07 Mar 2025 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2025/03/10x-speedup-in-ghci/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
     <title>HTTP Verbs in Yesod Forms</title>
     <link>https://jezenthomas.com/2025/02/http-verbs-yesod-forms/</link>
     <description><![CDATA[<p>The main function provided by the yesod-form library for processing form
@@ -1334,115 +1428,6 @@ that context clearer, and sometimes the context is already clear enough.</p>
 ]]></description>
     <pubDate>Thu, 17 Aug 2023 00:00:00 UT</pubDate>
     <guid>https://jezenthomas.com/2023/08/haskell-pattern-qualified-imports/</guid>
-    <dc:creator>Jezen Thomas</dc:creator>
-</item>
-<item>
-    <title>Yesod Forms, Newtypes, and Smart Constructors</title>
-    <link>https://jezenthomas.com/2023/06/yesod-forms-with-newtypes-and-smart-constructors/</link>
-    <description><![CDATA[<p>Say we’re writing a web application, and we’re modelling a login form.</p>
-<p>If the types in your system are primitive, you don’t need to do much to parse
-them from values outside your system boundary, <em>i.e.</em>, those submitted by a
-user through a web form.</p>
-<p>It’s easy enough to use a <code>textField</code> for each field in our login form.</p>
-<div class="highlight"><pre><span></span><span class="c1">-- Assume this type synonym exists for all examples in this article</span>
-<span class="kr">type</span><span class="w"> </span><span class="kt">Form</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Html</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">MForm</span><span class="w"> </span><span class="p">(</span><span class="kt">HandlerFor</span><span class="w"> </span><span class="kt">App</span><span class="p">)</span><span class="w"> </span><span class="p">(</span><span class="kt">FormResult</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="kt">Widget</span><span class="p">)</span>
-
-<span class="c1">-- A login form with a single field</span>
-<span class="kr">data</span><span class="w"> </span><span class="kt">LoginForm</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">LoginForm</span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">loginFormEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="nf">loginForm</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Form</span><span class="w"> </span><span class="kt">LoginForm</span>
-<span class="nf">loginForm</span><span class="w"> </span><span class="n">extra</span><span class="w"> </span><span class="ow">=</span><span class="w">  </span><span class="kr">do</span>
-<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">mreq</span><span class="w"> </span><span class="n">textField</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="kt">Nothing</span>
-<span class="w">  </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="kt">LoginForm</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="n">fst</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="n">widgetFile</span><span class="w"> </span><span class="s">&quot;login&quot;</span><span class="p">))</span>
-</pre></div>
-
-<p>No surprises here.</p>
-<h2 id="with-newtypes">With Newtypes</h2>
-<p>What if our types aren’t exactly <code>Text</code> values, but are some kind of
-equivalent type? For example, what if we’re representing our email value with a
-newtype which wraps the underlying text value?</p>
-<p>In Yesod, a <code>Field</code> cannot be a functor so it’s not obvious how to reuse a
-<code>textField</code> and make it produce an <code>Email</code> value instead.</p>
-<p>Fortunately, Yesod’s <a href="https://hackage.haskell.org/package/yesod-form">form library</a> provides <a href="https://hackage.haskell.org/package/yesod-form-1.7.4/docs/Yesod-Form-Functions.html#v:convertField"><code>convertField</code></a> to handle
-this case. You apply this function to a couple of functions for converting to
-and from your newtype, and a form field you wish to wrap.</p>
-<div class="highlight"><pre><span></span><span class="kr">newtype</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">unEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="p">}</span>
-
-<span class="kr">data</span><span class="w"> </span><span class="kt">LoginForm</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">LoginForm</span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">loginFormEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="nf">loginForm</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Form</span><span class="w"> </span><span class="kt">LoginForm</span>
-<span class="nf">loginForm</span><span class="w"> </span><span class="n">extra</span><span class="w"> </span><span class="ow">=</span><span class="w">  </span><span class="kr">do</span>
-<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">mreq</span><span class="w"> </span><span class="p">(</span><span class="n">convertField</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="n">unEmail</span><span class="w"> </span><span class="n">textField</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="kt">Nothing</span>
-<span class="w">  </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="kt">LoginForm</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="n">fst</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="n">widgetFile</span><span class="w"> </span><span class="s">&quot;login&quot;</span><span class="p">))</span>
-</pre></div>
-
-<h2 id="with-smart-constructors">With Smart Constructors</h2>
-<p>Newtype wrappers are better than working directly with primitive types, but by
-themselves they don’t provide a great deal of type safety because the wrapped
-data isn’t any more constrained than when it’s unwrapped.</p>
-<p>To solve that, we would reach for a <a href="https://kowainik.github.io/posts/haskell-mini-patterns#smart-constructor">smart constructor</a>.</p>
-<div class="highlight"><pre><span></span><span class="c1">-- Explicitly exclude the value constructor</span>
-<span class="kr">module</span><span class="w"> </span><span class="nn">Email</span><span class="w"> </span><span class="p">(</span><span class="kt">Email</span><span class="p">,</span><span class="w"> </span><span class="nf">unEmail</span><span class="p">,</span><span class="w"> </span><span class="nf">email</span><span class="p">)</span><span class="w"> </span><span class="kr">where</span>
-
-<span class="c1">-- The newtype wrapper without a record field</span>
-<span class="kr">newtype</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="kt">Text</span>
-
-<span class="c1">-- Unwrap the newtype</span>
-<span class="nf">unEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Text</span>
-<span class="nf">unEmail</span><span class="w"> </span><span class="p">(</span><span class="kt">Email</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">email</span>
-
-<span class="c1">-- The smart constructor</span>
-<span class="nf">email</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Text</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">Email</span>
-<span class="nf">email</span><span class="w"> </span><span class="n">t</span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="s">&quot;@&quot;</span><span class="w"> </span><span class="p">`</span><span class="n">isInfixOf</span><span class="p">`</span><span class="w"> </span><span class="n">t</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Just</span><span class="w"> </span><span class="p">(</span><span class="kt">Email</span><span class="w"> </span><span class="n">t</span><span class="p">)</span>
-<span class="w">  </span><span class="o">|</span><span class="w"> </span><span class="n">otherwise</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Nothing</span>
-</pre></div>
-
-<p>What if we’re using the smart constructor pattern and our newtypes can’t be
-naïvely constructed? We can’t use <code>convertField</code> because the types won’t line
-up.</p>
-<p>Again, Yesod conveniently provides <a href="https://hackage.haskell.org/package/yesod-form-1.7.4/docs/Yesod-Form-Functions.html#v:checkMMap"><code>checkMMap</code></a> for transforming some
-existing field into one that both performs validation <em>and</em> converts the
-datatype. This way we can use our smart constructor in the field directly
-instead of having to define validation rules in two places.</p>
-<p>This function wants to ultimately produce an <code>Either msg b</code> but our smart
-constructor only produces a <code>Maybe b</code>. We can use the <a href="https://hackage.haskell.org/package/errors-2.3.0/docs/Control-Error-Util.html#v:note"><code>note</code></a> function to
-promote it and provide a friendly error message.</p>
-<div class="highlight"><pre><span></span><span class="kr">module</span><span class="w"> </span><span class="nn">Main</span><span class="w"> </span><span class="kr">where</span>
-
-<span class="kr">import</span><span class="w"> </span><span class="nn">Email</span>
-
-<span class="kr">data</span><span class="w"> </span><span class="kt">LoginForm</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">LoginForm</span>
-<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="n">loginFormEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Email</span>
-<span class="w">  </span><span class="p">}</span>
-
-<span class="nf">loginForm</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Form</span><span class="w"> </span><span class="kt">LoginForm</span>
-<span class="nf">loginForm</span><span class="w"> </span><span class="n">extra</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
-<span class="w">  </span><span class="n">email</span><span class="w"> </span><span class="ow">&lt;-</span>
-<span class="w">    </span><span class="kr">let</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">asText</span><span class="w"> </span><span class="s">&quot;Invalid email&quot;</span>
-<span class="w">        </span><span class="n">checkEmail</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">pure</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">note</span><span class="w"> </span><span class="n">msg</span><span class="w"> </span><span class="o">.</span><span class="w"> </span><span class="n">email</span>
-<span class="w">     </span><span class="kr">in</span><span class="w"> </span><span class="n">mreq</span><span class="w"> </span><span class="p">(</span><span class="n">checkMMap</span><span class="w"> </span><span class="n">checkEmail</span><span class="w"> </span><span class="n">unEmail</span><span class="w"> </span><span class="n">textField</span><span class="p">)</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="kt">Nothing</span>
-<span class="w">  </span><span class="n">pure</span><span class="w"> </span><span class="p">(</span><span class="kt">LoginForm</span><span class="w"> </span><span class="o">&lt;$&gt;</span><span class="w"> </span><span class="n">fst</span><span class="w"> </span><span class="n">email</span><span class="p">,</span><span class="w"> </span><span class="o">$</span><span class="p">(</span><span class="n">widgetFile</span><span class="w"> </span><span class="s">&quot;login&quot;</span><span class="p">))</span>
-</pre></div>
-
-<p>Since <code>checkMMap</code> runs in the <code>Handler</code> monad, you can also run IO actions or
-database transactions as part of the validation step. For example, you could
-query the database and check that the email address you’re trying to log in
-with actually exists.</p>
-<p>If you want a little more assurance, it might be worth writing a property-based
-test which asserts that your functions to convert to and from your newtype
-successfully <a href="https://hedgehog.qa/article/haskell-round-trip">roundtrip</a>.</p>
-<p>Yesod’s form library is actually pretty powerful and satisying. It could
-perhaps do with more examples of what good looks like, and hopefully this short
-article helps. I’ve found that my code is generally neater when I’m able to
-manage parsing/validation together at the web form level.</p>
-]]></description>
-    <pubDate>Wed, 14 Jun 2023 00:00:00 UT</pubDate>
-    <guid>https://jezenthomas.com/2023/06/yesod-forms-with-newtypes-and-smart-constructors/</guid>
     <dc:creator>Jezen Thomas</dc:creator>
 </item>
 
