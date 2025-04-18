@@ -45,6 +45,7 @@ myFeedConfiguration = FeedConfiguration
 copyFiles :: [Pattern]
 copyFiles =
   [ "static/**"
+  , "css/**"
   , "404.html"
   , "robots.txt"
   , "doom.gif"
