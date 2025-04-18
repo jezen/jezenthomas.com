@@ -50,43 +50,15 @@ copyFiles =
   , "doom.gif"
   ]
 
-styleSheets :: [FilePath]
-styleSheets =
-  [ "css/normalize.css"
-  , "css/default.css"
-  , "css/header.css"
-  , "css/syntax.css"
-  , "css/spirograph.css"
-  ]
-
 main :: IO ()
 main = hakyll $ do
-
-  compiledStylesheetPath <- preprocess $ do
-    styles <- mapM readFile styleSheets
-    let h = md5 $ fromStrict $ pack $ compressCss $ mconcat styles
-    pure $ "css/" <> show h <> ".css"
-
-  let cssPathCtx = constField "cssPath" compiledStylesheetPath
 
   forM_ copyFiles $ \ptrn ->
     match ptrn $ do
       route idRoute
       compile copyFileCompiler
 
-  match "css/*" $ route idRoute >> compile compressCssCompiler
-
-  create [fromFilePath compiledStylesheetPath] $ do
-    route idRoute
-    compile $ do
-      styles <- mapM (load . fromFilePath) styleSheets
-      let ctx = listField "styles" pageCtx (pure styles)
-      makeItem ""
-        >>= loadAndApplyTemplate "templates/empty.html" ctx
-
-  let postCtx =  postSlugField "slug"
-              <> pageCtx
-              <> cssPathCtx
+  let postCtx = postSlugField "slug" <> pageCtx
 
   let utcCtx = field "utcOrdinal" getItemUTCOrdinal
             <> field "utcDay" getItemUTCDay
@@ -99,8 +71,7 @@ main = hakyll $ do
 
   match "posts/*/*/*" $ do
     route postCleanRoute
-    dep <- makePatternDependency "css/*"
-    rulesExtraDependencies [dep] $ compile $ do
+    compile $ do
       ident <- getUnderlying
       blogCompiler
         >>= loadAndApplyTemplate "templates/post-content.html" postCtx
@@ -111,12 +82,10 @@ main = hakyll $ do
 
   match "index.html" $ do
     route idRoute
-    dep <- makePatternDependency "css/*"
-    rulesExtraDependencies [dep] $ compile $ do
+    compile $ do
       let ctx =  constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
               <> postCtx
               <> boolField "page-home" (const True)
-              <> cssPathCtx
 
       getResourceBody
         >>= loadAndApplyTemplate "templates/default.html" ctx
@@ -128,13 +97,11 @@ main = hakyll $ do
 
   create ["posts/index.html"] $ do
     route idRoute
-    dep <- makePatternDependency "css/*"
-    rulesExtraDependencies [dep] $ compile $ do
+    compile $ do
       posts <- recentFirst =<< loadAll "posts/*/*/*"
       let ctx =  constField "title" "All Posts | Jezen Thomas"
               <> boolField "page-blog" (const True)
               <> publishedGroupField "years" posts (postCtx <> utcCtx)
-              <> cssPathCtx
               <> defaultContext
 
       makeItem ""
@@ -160,13 +127,12 @@ main = hakyll $ do
         >>= cleanIndexHtmls
 
   create ["feed.xml"] $ do
-         route   idRoute
-         compile $ do
-           let feedCtx = pageCtx <> bodyField "description"
-           posts <- fmap (take 10) . recentFirst =<<
-                   loadAllSnapshots "posts/*/*/*" "content"
-           renderRss myFeedConfiguration feedCtx posts
-             >>= cleanIndexHtmls
+    route   idRoute
+    compile $ do
+      let feedCtx = pageCtx <> bodyField "description"
+      posts <- fmap (take 10) . recentFirst
+        =<< loadAllSnapshots "posts/*/*/*" "content"
+      renderRss myFeedConfiguration feedCtx posts >>= cleanIndexHtmls
 
   match "templates/*" $ compile templateCompiler
 
