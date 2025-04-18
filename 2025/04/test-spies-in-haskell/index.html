@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Test Spies in Haskell</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="Learn how to spy on function calls in Yesod tests using a stubbed dependency and a bit of mutable state.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Test Spies in Haskell">
+    <meta property="og:description" content="Learn how to spy on function calls in Yesod tests using a stubbed dependency and a bit of mutable state.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/test-spies-in-haskell/cover.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Test Spies in Haskell">
+    <meta name="twitter:description" content="Learn how to spy on function calls in Yesod tests using a stubbed dependency and a bit of mutable state.">
+    <meta name="twitter:image" content="/static/img/test-spies-in-haskell/cover.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="msvalidate.01" content="0BFF5F9B2745D86F899A8E0A7FB7BCE0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="/css/default.css">
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/syntax.css">
+    <link rel="stylesheet" type="text/css" href="/css/spirograph.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+    <script src="https://analytics.ahrefs.com/analytics.js" data-key="vYwTMxlPcZFRl0z1O6Ai6A" async></script>
+    <script src="https://cdn.usefathom.com/script.js" data-site="OTTAMRJZ" defer></script>
+  </head>
+  <body>
+    <header>
+  <a class="portrait" href="/">
+    <img width="80" height="80" alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+  </a>
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+  <p class="bio">
+    CTO &amp; Co-Founder at Supercede.
+  </p>
+</header>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Test Spies in Haskell</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        April 18<sup>th</sup>, 2025
+        
+        | Sopot, Poland
+        
+      </p>
+      <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+    </div>
+    <p>When testing a web application, you often want to make sure that a certain
+email <em>would</em> be sent — without actually sending it. How do you test that?</p>
+<p>Take something like a transactional email: a user signs up, resets their
+password, or completes a purchase — and your application needs to send a
+notification. You don’t care how the email gets sent — just that it was
+triggered correctly.</p>
+<p>The simplest implementation for the email-sending function might look like this.</p>
+<div class="highlight"><pre><span></span><span class="nf">sendEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Recipient</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">sendEmail</span><span class="w"> </span><span class="n">recipient</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="c1">-- some email sending code here…</span>
+</pre></div>
+
+<p>All this function needs to know is where to send the email. How it sends it
+isn’t important here — and it’s not what we’re testing. What we care about is
+how it’s called.</p>
+<p>This function might be called from a request handler, and it would be that
+handler function’s responsibility to decide how to call the email sending
+function.</p>
+<div class="highlight"><pre><span></span><span class="nf">postThingR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">postThingR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">sendEmail</span><span class="w"> </span><span class="s">&quot;user@example.com&quot;</span>
+</pre></div>
+
+<p>We can track how a function is called with a <a href="https://martinfowler.com/bliki/TestDouble.html"><em>test spy</em></a>.</p>
+<blockquote>
+<p>Spies are stubs that also record some information based on how they were called.</p>
+</blockquote>
+<p>You can emulate a test spy using the same <a href="/2023/11/stubbing-io-in-yesod/">stubbing method</a> I wrote about
+earlier. Instead of calling <code>sendEmail</code> directly, you’ll retrieve it from
+somewhere that can be swapped out at runtime — like your application’s
+settings.</p>
+<div class="highlight"><pre><span></span><span class="nf">postThingR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">postThingR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">sendEmail</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">getsYesod</span><span class="w"> </span><span class="n">appSendEmail</span>
+<span class="w">  </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">sendEmail</span><span class="w"> </span><span class="s">&quot;user@example.com&quot;</span>
+</pre></div>
+
+<p>The idea is to swap the implementation for one that records the arguments that
+the function was called with, and then check what was recorded in the test’s
+assertion phase. We can use mutable state — such as an <code>IORef</code> or <code>TVar</code> — to
+record how the function was called. Here, we’ll keep it simple with <code>IORef</code>.</p>
+<div class="highlight"><pre><span></span><span class="nf">it</span><span class="w"> </span><span class="s">&quot;notifies the right person&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+
+<span class="w">  </span><span class="c1">-- Arrange</span>
+<span class="w">  </span><span class="n">callsRef</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">newIORef</span><span class="w"> </span><span class="kt">[]</span>
+<span class="w">  </span><span class="n">stub</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="nf">\</span><span class="n">app</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">appSendEmail</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="nf">\</span><span class="n">recipient</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">      </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">modifyIORef'</span><span class="w"> </span><span class="n">callsRef</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="nf">\</span><span class="n">cs</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">recipient</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="n">cs</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">-- Act</span>
+<span class="w">  </span><span class="n">post</span><span class="w"> </span><span class="kt">ThingR</span>
+
+<span class="w">  </span><span class="c1">-- Assert</span>
+<span class="w">  </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="n">calls</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">readIORef</span><span class="w"> </span><span class="n">callsRef</span>
+<span class="w">    </span><span class="n">calls</span><span class="w"> </span><span class="p">`</span><span class="n">shouldBe</span><span class="p">`</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;user@example.com&quot;</span><span class="p">]</span>
+</pre></div>
+
+<p>This test swaps in a fake email function, triggers the handler, and checks that
+the expected recipient was recorded.</p>
+<p>With this pattern, you can test side effects without relying on real services —
+making your tests fast, isolated, and reliable.</p>
+
+  </article>
+</div>
+</div>
+    <footer>
+  <p>&copy; 2025 Jezen Thomas</p>
+  <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+</footer>
+
+
+    <script type="text/javascript">
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+    <script type="text/javascript" src="https://www.htmlqa.com/send.js"></script>
+  </body>
+</html>

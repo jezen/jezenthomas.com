@@ -7,8 +7,79 @@
         <description><![CDATA[Thoughts on Haskell, Business, Unix, and more.]]></description>
         <atom:link href="https://jezenthomas.com/feed.xml" rel="self"
                    type="application/rss+xml" />
-        <lastBuildDate>Fri, 07 Mar 2025 00:00:00 UT</lastBuildDate>
+        <lastBuildDate>Fri, 18 Apr 2025 00:00:00 UT</lastBuildDate>
         <item>
+    <title>Test Spies in Haskell</title>
+    <link>https://jezenthomas.com/2025/04/test-spies-in-haskell/</link>
+    <description><![CDATA[<p>When testing a web application, you often want to make sure that a certain
+email <em>would</em> be sent — without actually sending it. How do you test that?</p>
+<p>Take something like a transactional email: a user signs up, resets their
+password, or completes a purchase — and your application needs to send a
+notification. You don’t care how the email gets sent — just that it was
+triggered correctly.</p>
+<p>The simplest implementation for the email-sending function might look like this.</p>
+<div class="highlight"><pre><span></span><span class="nf">sendEmail</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Recipient</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">sendEmail</span><span class="w"> </span><span class="n">recipient</span><span class="w"> </span><span class="ow">=</span>
+<span class="w">  </span><span class="c1">-- some email sending code here…</span>
+</pre></div>
+
+<p>All this function needs to know is where to send the email. How it sends it
+isn’t important here — and it’s not what we’re testing. What we care about is
+how it’s called.</p>
+<p>This function might be called from a request handler, and it would be that
+handler function’s responsibility to decide how to call the email sending
+function.</p>
+<div class="highlight"><pre><span></span><span class="nf">postThingR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">postThingR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">sendEmail</span><span class="w"> </span><span class="s">&quot;user@example.com&quot;</span>
+</pre></div>
+
+<p>We can track how a function is called with a <a href="https://martinfowler.com/bliki/TestDouble.html"><em>test spy</em></a>.</p>
+<blockquote>
+<p>Spies are stubs that also record some information based on how they were called.</p>
+</blockquote>
+<p>You can emulate a test spy using the same <a href="/2023/11/stubbing-io-in-yesod/">stubbing method</a> I wrote about
+earlier. Instead of calling <code>sendEmail</code> directly, you’ll retrieve it from
+somewhere that can be swapped out at runtime — like your application’s
+settings.</p>
+<div class="highlight"><pre><span></span><span class="nf">postThingR</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Handler</span><span class="w"> </span><span class="nb">()</span>
+<span class="nf">postThingR</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">sendEmail</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">getsYesod</span><span class="w"> </span><span class="n">appSendEmail</span>
+<span class="w">  </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">sendEmail</span><span class="w"> </span><span class="s">&quot;user@example.com&quot;</span>
+</pre></div>
+
+<p>The idea is to swap the implementation for one that records the arguments that
+the function was called with, and then check what was recorded in the test’s
+assertion phase. We can use mutable state — such as an <code>IORef</code> or <code>TVar</code> — to
+record how the function was called. Here, we’ll keep it simple with <code>IORef</code>.</p>
+<div class="highlight"><pre><span></span><span class="nf">it</span><span class="w"> </span><span class="s">&quot;notifies the right person&quot;</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+
+<span class="w">  </span><span class="c1">-- Arrange</span>
+<span class="w">  </span><span class="n">callsRef</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">newIORef</span><span class="w"> </span><span class="kt">[]</span>
+<span class="w">  </span><span class="n">stub</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="nf">\</span><span class="n">app</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">app</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="n">appSendEmail</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="nf">\</span><span class="n">recipient</span><span class="w"> </span><span class="ow">-&gt;</span>
+<span class="w">      </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="n">modifyIORef&#39;</span><span class="w"> </span><span class="n">callsRef</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="nf">\</span><span class="n">cs</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="n">recipient</span><span class="w"> </span><span class="kt">:</span><span class="w"> </span><span class="n">cs</span>
+<span class="w">    </span><span class="p">}</span>
+
+<span class="w">  </span><span class="c1">-- Act</span>
+<span class="w">  </span><span class="n">post</span><span class="w"> </span><span class="kt">ThingR</span>
+
+<span class="w">  </span><span class="c1">-- Assert</span>
+<span class="w">  </span><span class="n">liftIO</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">    </span><span class="n">calls</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">readIORef</span><span class="w"> </span><span class="n">callsRef</span>
+<span class="w">    </span><span class="n">calls</span><span class="w"> </span><span class="p">`</span><span class="n">shouldBe</span><span class="p">`</span><span class="w"> </span><span class="p">[</span><span class="s">&quot;user@example.com&quot;</span><span class="p">]</span>
+</pre></div>
+
+<p>This test swaps in a fake email function, triggers the handler, and checks that
+the expected recipient was recorded.</p>
+<p>With this pattern, you can test side effects without relying on real services —
+making your tests fast, isolated, and reliable.</p>
+]]></description>
+    <pubDate>Fri, 18 Apr 2025 00:00:00 UT</pubDate>
+    <guid>https://jezenthomas.com/2025/04/test-spies-in-haskell/</guid>
+    <dc:creator>Jezen Thomas</dc:creator>
+</item>
+<item>
     <title>A 10x Speedup in GHCi</title>
     <link>https://jezenthomas.com/2025/03/10x-speedup-in-ghci/</link>
     <description><![CDATA[<p>Many of us at Supercede use GHCi directly when developing Haskell projects. It
@@ -1397,37 +1468,6 @@ pure as far as you can help it. But sometimes you really <em>do</em> need a stub
 ]]></description>
     <pubDate>Sun, 05 Nov 2023 00:00:00 UT</pubDate>
     <guid>https://jezenthomas.com/2023/11/stubbing-io-in-yesod/</guid>
-    <dc:creator>Jezen Thomas</dc:creator>
-</item>
-<item>
-    <title>Haskell Pattern: Design for Qualified Imports</title>
-    <link>https://jezenthomas.com/2023/08/haskell-pattern-qualified-imports/</link>
-    <description><![CDATA[<p>When you’re writing library code, design for qualified imports.</p>
-<p>Let’s say we’re writing a module which is concerned with parsing email
-addresses. Inside this <code>Email</code> module, a function named <code>parseEmail</code> would be
-carrying more context in its name than is necessary. The name <code>parse</code> would be
-sufficient.</p>
-<p>When applying our parsing function in some <em>other</em> module, the name needs to be
-more descriptive so that it is more obvious what kind of thing the parsing
-function parses.</p>
-<p>We also might need to disambiguate this parsing function from another parsing
-function that may be in scope.</p>
-<p>✘ <code>Email.parseEmail</code> is redundant.</p>
-<p>✘ <code>parseEmail</code> makes it hard to know where the function is defined.</p>
-<p>✔ <code>Email.parse</code> is easy to read.</p>
-<p>✔ <code>Email.parse</code> makes it clear what kind of thing we’re parsing.</p>
-<p>✔ <code>Email.parse</code> makes it clear where that function is defined.</p>
-<div class="highlight"><pre><span></span><span class="kr">import</span><span class="w"> </span><span class="nn">Acme.Email</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">Email</span><span class="w"> </span><span class="c1">-- exports `parse`, not `parseEmail`</span>
-
-<span class="nf">main</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">IO</span><span class="w"> </span><span class="nb">()</span>
-<span class="nf">main</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">print</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">Email</span><span class="o">.</span><span class="n">parse</span><span class="w"> </span><span class="s">&quot;foo@bar.com&quot;</span>
-</pre></div>
-
-<p>The module describes the context we’re in. Sometimes we need to make
-that context clearer, and sometimes the context is already clear enough.</p>
-]]></description>
-    <pubDate>Thu, 17 Aug 2023 00:00:00 UT</pubDate>
-    <guid>https://jezenthomas.com/2023/08/haskell-pattern-qualified-imports/</guid>
     <dc:creator>Jezen Thomas</dc:creator>
 </item>
 
