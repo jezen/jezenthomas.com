@@ -149,7 +149,7 @@ consumption.
 If you can't work within an 80 column limit, then the names you're using are
 excessively verbose or you're trying to do too much all at once. Or both.
 
-![](/static/img/haskell-style-guide/linelength.gif)
+![A man reading an extremely long line of text on a widescreen display.](/static/img/haskell-style-guide/linelength.gif)
 
 ## Comments
 
