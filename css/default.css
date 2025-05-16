@@ -401,10 +401,36 @@ blockquote p em {
   position: relative;
 }
 
+.yes .haskell { background-image: url(/static/img/yes/haskell.png); }
+.yes .music { background-image: url(/static/img/yes/music.png); }
+.yes .shabo { background-image: url(/static/img/yes/wine.png); }
+.yes .office-space { background-image: url(/static/img/yes/movie.png); }
+.yes .tim-traveller { background-image: url(/static/img/yes/train.png); }
+.yes .jason-fried { background-image: url(/static/img/yes/microphone.png); }
+.yes .sapiens { background-image: url(/static/img/yes/book.png); }
+.yes .dave-chappelle { background-image: url(/static/img/yes/microphone.png); }
+.yes .the-midnight { background-image: url(/static/img/yes/music.png); }
+.yes .vim { background-image: url(/static/img/yes/vim.png); }
+.yes .max-verstappen { background-image: url(/static/img/yes/chequered-flag.png); }
+.yes .sailboat { background-image: url(/static/img/yes/sailboat.png); }
+.yes .rework { background-image: url(/static/img/yes/book.png); }
+.yes .the-return { background-image: url(/static/img/yes/movie.png); }
+.yes .markus-kleveland { background-image: url(/static/img/yes/snowboard.png); }
+.yes .sean-lock { background-image: url(/static/img/yes/microphone.png); }
+.yes .roger-federer { background-image: url(/static/img/yes/tennis.png); }
+.yes .freakonomics { background-image: url(/static/img/yes/brain.png); }
+.yes .porsche { background-image: url(/static/img/yes/porsche.png); }
+.yes .redman { background-image: url(/static/img/yes/music.png); }
+.yes .laphroaig { background-image: url(/static/img/yes/whiskey.png); }
+.yes .woke-racism { background-image: url(/static/img/yes/book.png); }
+
 .about-page .yes a {
+  background-position: 10px center;
+  background-repeat: no-repeat;
+  background-size: 18px 18px;
   border: none;
   display: block;
-  padding: 4px 8px 4px 28px;
+  padding: 4px 8px 4px 36px;
   text-decoration: none;
   transition: background-color 115ms;
 }
