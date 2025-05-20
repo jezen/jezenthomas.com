@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>Don't Skip HTML Validation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="We obsess over complex testing strategies but often forget to check if our HTML is even valid. Here’s why that matters—and how I built a tool to fix it.">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="Don't Skip HTML Validation">
+    <meta property="og:description" content="We obsess over complex testing strategies but often forget to check if our HTML is even valid. Here’s why that matters—and how I built a tool to fix it.">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/dont-skip-html-validation/cover.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="Don't Skip HTML Validation">
+    <meta name="twitter:description" content="We obsess over complex testing strategies but often forget to check if our HTML is even valid. Here’s why that matters—and how I built a tool to fix it.">
+    <meta name="twitter:image" content="/static/img/dont-skip-html-validation/cover.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="msvalidate.01" content="0BFF5F9B2745D86F899A8E0A7FB7BCE0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="/css/default.css">
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/syntax.css">
+    <link rel="stylesheet" type="text/css" href="/css/spirograph.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+    <script src="https://analytics.ahrefs.com/analytics.js" data-key="vYwTMxlPcZFRl0z1O6Ai6A" async></script>
+    <script src="https://cdn.usefathom.com/script.js" data-site="OTTAMRJZ" defer></script>
+
+    <!-- htmlqa - simple website validation and accessibility monitoring -->
+    <script src="https://www.htmlqa.com/send/mBvYEvKM" defer></script>
+    <!-- / htmlqa -->
+  </head>
+  <body>
+    <header>
+  <a class="portrait" href="/">
+    <img width="80" height="80" alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+  </a>
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+  <p class="bio">
+    CTO &amp; Co-Founder at Supercede.
+  </p>
+</header>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">Don't Skip HTML Validation</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        May 20<sup>th</sup>, 2025
+        
+        | Varna, Bulgaria
+        
+      </p>
+      <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+    </div>
+    <p>You’re probably already using a few tools to automatically check your
+software — like linters, automated tests, code formatters, or a type-checking
+compiler.</p>
+<p>These are all great, and we use them at Supercede too. The more checks we can
+run, the better. And the earlier in the development process, the better.</p>
+<p>What I’ve noticed over the years though, is that we tend to focus on
+more advanced, often esoteric forms of analysis. With training and
+practice, we can express our application’s logical constraints in the type
+system, or verify properties of functions with property-based testing.</p>
+<p>Yet with all this sophistication, we often forget to check whether the HTML
+we’re generating is even valid.</p>
+<p>Producing invalid HTML has bitten us in the past. Fixing the HTML is usually
+easy, but until it’s fixed you might have a broken page. If you’re lucky, it’ll
+be broken in an obvious way. Sometimes it might be broken in a subtle way,
+which is harder to debug (which means it costs your team more money).</p>
+<p>We’ve had online HTML validators like <a href="https://validator.w3.org/nu/">Nu HTML Checker</a> for ages. You
+can paste your HTML in there and immediately validate your HTML for free.</p>
+<p>This does get tedious though. You (or your colleagues) won’t remember to do
+this every time you update a page. And having a human do this manually just
+doesn’t scale.</p>
+<p>I’m writing a web application which validates pages across entire websites,
+automatically. It uses both a crawl-based and a push-based approach, which
+means it can validate pages that are behind a login screen.</p>
+<p>Here’s a screenshot of how it looks currently.</p>
+<figure>
+<img src="/static/img/dont-skip-html-validation/screen.png" alt="A dashboard for a website showing aggregated validation statistics." />
+<figcaption aria-hidden="true">A dashboard for a website showing aggregated validation statistics.</figcaption>
+</figure>
+<p>I’m planning to launch this as a public tool soon.</p>
+<p>Interested in trying it? Drop your email below and I’ll let you know when it’s
+ready.</p>
+<form class="html-validator-lead" action="https://formspree.io/f/xldbvpeg" method="POST">
+<label for="email-input">Your email</label>
+<div class="input-row">
+<input id="email-input" type="email" name="email" required>
+<button type="submit">Send</button>
+</div>
+<input type="hidden" name="signup" value="Show me your HTML validator">
+</form>
+
+  </article>
+</div>
+</div>
+    <footer>
+  <p>&copy; 2025 Jezen Thomas</p>
+  <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+</footer>
+
+
+    <script>
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+  </body>
+</html>
