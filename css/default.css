@@ -466,12 +466,12 @@ blockquote p em {
 /* }}} */
 /* Article -------------------------------------------------------------- {{{ */
 article {
-  padding: 0 20px;
+  padding: 0 20px 20px;
 }
 
 @media (min-width: 640px) {
   article {
-    padding: 0;
+    padding: 0 0 40px;
   }
 }
 
@@ -493,6 +493,7 @@ article blockquote,
 article #footnotes,
 article .cp_embed_wrapper,
 article .youtube-embed,
+article form,
 .post-title,
 .post-meta {
   max-width: 600px;
@@ -535,6 +536,47 @@ ol {
   list-style-type: lower-roman !important;
 }
 /* }}} */
+
+.html-validator-lead {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+}
+
+.html-validator-lead label {
+  display: block;
+  font-weight: bold;
+}
+
+.html-validator-lead .input-row {
+  display: flex;
+  gap: 10px;
+}
+
+.html-validator-lead .input-row input[type="email"] {
+  flex: 1;
+  padding: 0.5em;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  outline: none;
+}
+
+.html-validator-lead .input-row button {
+  padding: 0.5em 1em;
+  font-size: 1em;
+  border: 1px solid #ccc;
+  background-color: #ff851b;
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  border-left: none;
+  transition: all .1s;
+}
+
+.html-validator-lead .input-row button:hover {
+  background-color: #ee7b18;
+}
 
 footer {
   border-top: 1px solid rgb(var(--border-color));
