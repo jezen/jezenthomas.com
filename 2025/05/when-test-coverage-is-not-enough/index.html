@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<!--
+
+  [Please Enter New Password]
+
+  fortnight
+
+  [Error: Password is Two Week]
+
+-->
+<html lang="en">
+  <head>
+    <title>When Test Coverage Isn't Enough</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="description" content="Test‑coverage metrics can hit 100 %, yet critical bugs still slip through. Property‑based testing and type‑driven design show why – and what to do about it">
+    <meta name="author" content="Jezen Thomas">
+    <meta property="og:title" content="When Test Coverage Isn't Enough">
+    <meta property="og:description" content="Test‑coverage metrics can hit 100 %, yet critical bugs still slip through. Property‑based testing and type‑driven design show why – and what to do about it">
+    <meta property="og:type" content="article">
+    <meta property="og:image" content="/static/img/when-test-coverage-is-not-enough/cover.jpg">
+    <meta property="og:site_name" content="Jezen Thomas">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta property="twitter:domain" content="jezenthomas.com">
+    <meta name="twitter:title" content="When Test Coverage Isn't Enough">
+    <meta name="twitter:description" content="Test‑coverage metrics can hit 100 %, yet critical bugs still slip through. Property‑based testing and type‑driven design show why – and what to do about it">
+    <meta name="twitter:image" content="/static/img/when-test-coverage-is-not-enough/cover.jpg">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="msvalidate.01" content="0BFF5F9B2745D86F899A8E0A7FB7BCE0">
+    <link rel="icon" type="image/gif" href="/doom.gif">
+    <link rel="stylesheet" type="text/css" href="/css/normalize.css">
+    <link rel="stylesheet" type="text/css" href="/css/default.css">
+    <link rel="stylesheet" type="text/css" href="/css/header.css">
+    <link rel="stylesheet" type="text/css" href="/css/syntax.css">
+    <link rel="stylesheet" type="text/css" href="/css/spirograph.css">
+    <link rel="alternate" type="application/rss+xml" href="/feed.xml" title="RSS feed">
+    <script src="https://analytics.ahrefs.com/analytics.js" data-key="vYwTMxlPcZFRl0z1O6Ai6A" async></script>
+    <script src="https://cdn.usefathom.com/script.js" data-site="OTTAMRJZ" defer></script>
+
+    <!-- htmlqa - simple website validation and accessibility monitoring -->
+    <script src="https://www.htmlqa.com/send/mBvYEvKM" defer></script>
+    <!-- / htmlqa -->
+  </head>
+  <body>
+    <header>
+  <a class="portrait" href="/">
+    <img width="80" height="80" alt="Jezen Thomas" src="/static/img/jgt.jpg" loading="lazy">
+  </a>
+  <h1 class="site-title">
+    <a href="/">Jezen Thomas</a>
+  </h1>
+  <p class="bio">
+    CTO &amp; Co-Founder at Supercede.
+  </p>
+</header>
+
+    <div id="main"><div class="container">
+  <article>
+    <h1 class="post-title">When Test Coverage Isn't Enough</h1>
+    <div class="post-meta">
+      <p class="post-date">
+        May 23<sup>rd</sup>, 2025
+        
+        | Sibiu, Romania
+        
+      </p>
+      <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+    </div>
+    <p>Robert Roskam made a point on social media about the inadequacy of test
+coverage.</p>
+<blockquote>
+<p>100% test coverage is not enough. Here’s an example as to why in Python:</p>
+<div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">division</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+ <span class="k">return</span> <span class="n">x</span> <span class="o">/</span> <span class="n">y</span>
+</pre></div>
+
+<p>If you pass in <code>0</code> for <code>y</code>, it’ll raise an error. You have to know to test for
+the value specifically. Test coverage won’t save you here. With 100% line
+coverage or branch coverages, it won’t be found. That’s how 100% test
+coverage is not enough.</p>
+</blockquote>
+<p>So, if test coverage is not enough, what can we do here?</p>
+<p>Well, at least a couple of things.</p>
+<h2 id="surfacing-failure-cases-automatically">Surfacing Failure Cases Automatically</h2>
+<p>It wouldn’t be sensible to try testing our division function against every
+possible input, because the set of possible inputs is effectively unbounded.
+Fortunately, we don’t have to. We can instead use a property-based testing
+library like <a href="https://hackage.haskell.org/package/hedgehog">hedgehog</a> to generate inputs to our division function and show
+us the minimal way to reproduce an error when it occurs.</p>
+<p>This example is in Haskell, and only accounts for integral numbers. Otherwise,
+it’s a near enough direct translation of the Python version.</p>
+<div class="highlight"><pre><span></span><span class="kr">import</span><span class="w"> </span><span class="nn">Hedgehog</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Hedgehog.Gen</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">Gen</span>
+<span class="kr">import</span><span class="w"> </span><span class="nn">Hedgehog.Range</span><span class="w"> </span><span class="n">qualified</span><span class="w"> </span><span class="n">as</span><span class="w"> </span><span class="kt">Range</span>
+
+<span class="nf">division</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">`</span><span class="n">div</span><span class="p">`</span><span class="w"> </span><span class="n">y</span>
+
+<span class="nf">prop_division_identity</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">property</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kr">do</span>
+<span class="w">  </span><span class="n">x</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">forAll</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">Gen</span><span class="o">.</span><span class="n">int</span><span class="w"> </span><span class="kt">Range</span><span class="o">.</span><span class="n">linearBounded</span>
+<span class="w">  </span><span class="n">y</span><span class="w"> </span><span class="ow">&lt;-</span><span class="w"> </span><span class="n">forAll</span><span class="w"> </span><span class="o">$</span><span class="w"> </span><span class="kt">Gen</span><span class="o">.</span><span class="n">int</span><span class="w"> </span><span class="kt">Range</span><span class="o">.</span><span class="n">linearBounded</span>
+<span class="w">  </span><span class="kr">let</span><span class="w"> </span><span class="n">q</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">division</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="c1">-- quotient</span>
+<span class="w">      </span><span class="n">r</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">`</span><span class="n">mod</span><span class="p">`</span><span class="w"> </span><span class="n">y</span><span class="w">    </span><span class="c1">-- remainder</span>
+<span class="w">  </span><span class="n">q</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">r</span><span class="w"> </span><span class="o">===</span><span class="w"> </span><span class="n">x</span>
+</pre></div>
+
+<p>We’re relying on the <strong>integer division law</strong> to test our function.</p>
+<p>The integer division law says:</p>
+<blockquote>
+<p>When you divide one whole number by another, you get a <strong>quotient</strong> and a
+<strong>remainder</strong>. If you multiply the quotient by the divisor, then add the
+remainder, you get back the original number.</p>
+</blockquote>
+<p>This law holds for <code>divisor ≠ 0</code>.</p>
+<p>So, the test generates a range of integers, applies the division function to
+them, and checks that the result always adheres to the integer division law.</p>
+<p>Running this in GHCi quickly surfaces the problem.</p>
+<div class="highlight"><pre><span></span>━━━ Main ━━━
+  ✗ prop_division_identity failed at div.hs:15:13
+    after 1 test.
+    shrink path: 1:
+
+       ┏━━ div.hs ━━━
+    10 ┃ prop_division_identity = property $ do
+    11 ┃   x &lt;- forAll $ Gen.int Range.linearBounded
+       ┃   │ 0
+    12 ┃   y &lt;- forAll $ Gen.int Range.linearBounded
+       ┃   │ 0
+    13 ┃   let q = division x y -- quotient
+    14 ┃       r = x `mod` y    -- remainder
+    15 ┃   q * y + r === x
+       ┃   ^^^^^^^^^^^^^^^
+       ┃   │ ━━━ Exception (ArithException) ━━━
+       ┃   │ divide by zero
+</pre></div>
+
+<p>In this case, we didn’t have to explicitly check what happens when the divisor
+is zero.</p>
+<p>Furthermore — and perhaps more importantly — writing this test has forced us to
+<em>think</em> about both the types of the inputs and the range of those inputs. I
+didn’t want to have to specify the upper and lower bounds for the range of
+inputs, but not all numeric types have explicit bounds. That led me to choose
+to constrain my <code>division</code> function to only support integers.</p>
+<p>We can see that limitation directly in GHCi.</p>
+<div class="highlight"><pre><span></span>λ minBound :: Int
+-9223372036854775808
+
+λ minBound :: Float
+
+&lt;interactive&gt;:49:1: error: [GHC-39999]
+    • No instance for ‘Bounded Float’ arising from a use of ‘minBound’
+    • In the expression: minBound :: Float
+      In an equation for ‘it’: it = minBound :: Float
+</pre></div>
+
+<p>This also guides us towards thinking about edge cases. If we have to consider
+division on floating point numbers, then the obvious challenge is going to be
+in specifying to what degree of precision we expect to see in our results. We
+would then have to change the assertion in the test so that it accepts a result
+to a specific acceptable degree of accuracy.</p>
+<p>Again, the test encourages us to <em>think</em>, which in turn leads to better
+design. That’s true whether you’re writing a small function like <code>division</code>, or
+a larger, integrated path through your system. This is why TDD is often thought
+of as Test Driven <strong>Design</strong>, rather than just Test Driven Development.</p>
+<h2 id="making-failure-impossible">Making Failure Impossible</h2>
+<p>Now that we’ve surfaced the error, how do we design our function to make this
+kind of failure impossible?</p>
+<p>One common approach is to express the failure case in the output. This
+typically means wrapping the output in a Maybe to represent that the result may
+not exist.</p>
+<div class="highlight"><pre><span></span><span class="nf">division</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Maybe</span><span class="w"> </span><span class="kt">Int</span>
+<span class="nf">division</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Nothing</span>
+<span class="nf">division</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="kt">Just</span><span class="w"> </span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="p">`</span><span class="n">div</span><span class="p">`</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+
+<p>This works, but it necessarily implies that the caller of this code will have
+to handle the possibility of failure. This change will then ripple through the
+rest of the codebase, which is noise that you probably don’t need.</p>
+<p>Alternatively, you can use the <a href="https://kowainik.github.io/posts/haskell-mini-patterns">smart constructor</a> pattern to constrain the
+<em>input</em> and have the changes ripple back towards the boundary of your system,
+which is usually a better design choice. In the case of our <code>division</code>
+function, this would mean ensuring at compile time that the function will only
+accept a non-zero divisor.</p>
+<div class="highlight"><pre><span></span><span class="nf">division</span><span class="w"> </span><span class="ow">::</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">NonZero</span><span class="w"> </span><span class="kt">Int</span><span class="w"> </span><span class="ow">-&gt;</span><span class="w"> </span><span class="kt">Int</span>
+<span class="nf">division</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">(</span><span class="kt">NonZero</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="ow">=</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="p">`</span><span class="n">div</span><span class="p">`</span><span class="w"> </span><span class="n">y</span>
+</pre></div>
+
+<p>Finally, we could of course <a href="https://www.hillelwayne.com/post/divide-by-zero/">return zero in case of failure</a>. Which of these
+options is the right one is debatable, but the point is that both the tests and
+the types have driven us to think about the design of our system.</p>
+<hr />
+<p>Heads up! I’m writing a tool to validate HTML at scale. <a href="/2025/05/dont-skip-html-validation/">Check it out</a>.</p>
+
+  </article>
+</div>
+</div>
+    <footer>
+  <p>&copy; 2025 Jezen Thomas</p>
+  <a class="rss" href="/feed.xml">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512">
+    <path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM96 136c0-13.3 10.7-24 24-24c137 0 248 111 248 248c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-110.5-89.5-200-200-200c-13.3 0-24-10.7-24-24zm0 96c0-13.3 10.7-24 24-24c83.9 0 152 68.1 152 152c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-57.4-46.6-104-104-104c-13.3 0-24-10.7-24-24zm0 120a32 32 0 1 1 64 0 32 32 0 1 1 -64 0z"></path>
+  </svg>
+  Subscribe
+</a>
+
+</footer>
+
+
+    <script>
+      [].slice.call(document.querySelectorAll('.footnote-ref sup')).forEach(function(el) {
+        var content = el.innerText;
+        el.innerText = '[' + content + ']';
+      })
+    </script>
+  </body>
+</html>
