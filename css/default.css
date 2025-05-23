@@ -237,6 +237,12 @@ pre {
   -webkit-overflow-scrolling: touch;
 }
 
+blockquote pre {
+  margin: 0;
+  border-width: 1px;
+  border-radius: 4px;
+}
+
 @media (min-width: 920px) {
   pre {
     border-radius: 4px 0 0 4px;
