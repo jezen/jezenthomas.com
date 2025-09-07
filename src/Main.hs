@@ -94,7 +94,15 @@ main = hakyll $ do
 
   create ["about/index.html"] $ do
     route idRoute
-    compile $ makeItem $ Redirect "/"
+    compile $ do
+      let ctx =  constField "title" "Jezen Thomas | Haskell, Unix, Minimalism, and Entrepreneurship."
+              <> postCtx
+              <> boolField "page-home" (const False)
+
+      makeItem ""
+        >>= loadAndApplyTemplate "templates/about.html" ctx
+        >>= loadAndApplyTemplate "templates/default.html" ctx
+        >>= cleanIndexUrls
 
   create ["posts/index.html"] $ do
     route idRoute
