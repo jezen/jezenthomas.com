@@ -268,27 +268,6 @@
     </url>
 
     <url>
-        <loc>https://jezenthomas.com/2015/11/code-review-done-right/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://jezenthomas.com/2015/11/my-uncomplicated-git-workflow/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://jezenthomas.com/2015/11/the-worlds-most-boring-build-system/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
         <loc>https://jezenthomas.com/2015/10/visualising-code-growth-with-git-and-d3/</loc>
         <changefreq>weekly</changefreq>
         
