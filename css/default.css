@@ -328,7 +328,13 @@ blockquote p em {
   display: flex;
   flex-direction: column;
   margin: auto;
-  padding: 0
+  opacity: 0;
+  padding: 0;
+  transition: opacity .5s cubic-bezier(.33, 0, .2, 1);
+}
+
+.cover-page.loaded {
+  opacity: 1;
 }
 
 @media (min-width: 1020px) {
