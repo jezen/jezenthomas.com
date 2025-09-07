@@ -142,13 +142,6 @@
     </url>
 
     <url>
-        <loc>https://jezenthomas.com/2022/08/static-asset-hashing-in-hakyll/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
         <loc>https://jezenthomas.com/2022/05/solving-a-maths-riddle-with-bad-haskell/</loc>
         <changefreq>weekly</changefreq>
         
@@ -205,13 +198,6 @@
     </url>
 
     <url>
-        <loc>https://jezenthomas.com/2019/10/bleep-boop/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
         <loc>https://jezenthomas.com/2019/10/on-technical-debt/</loc>
         <changefreq>weekly</changefreq>
         
@@ -220,13 +206,6 @@
 
     <url>
         <loc>https://jezenthomas.com/2019/09/implementing-csp-in-yesod/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://jezenthomas.com/2019/07/tracing-user-requests-in-yesod/</loc>
         <changefreq>weekly</changefreq>
         
         <priority>0.8</priority>
@@ -247,13 +226,6 @@
     </url>
 
     <url>
-        <loc>https://jezenthomas.com/2019/01/hello-world-in-haskell/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
         <loc>https://jezenthomas.com/2019/01/keeping-css-simple/</loc>
         <changefreq>weekly</changefreq>
         
@@ -261,28 +233,7 @@
     </url>
 
     <url>
-        <loc>https://jezenthomas.com/2018/12/silence-at-last/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
         <loc>https://jezenthomas.com/2018/12/yesod-is-a-minimal-web-framework/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://jezenthomas.com/2017/02/how-many-levels-of-javascript-are-you-on/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://jezenthomas.com/2017/01/the-knowledge-is-a-scam/</loc>
         <changefreq>weekly</changefreq>
         
         <priority>0.8</priority>
@@ -303,21 +254,7 @@
     </url>
 
     <url>
-        <loc>https://jezenthomas.com/2016/05/javascript-is-not-expressive/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
         <loc>https://jezenthomas.com/2016/03/working-in-the-dark/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://jezenthomas.com/2016/02/deploying-a-haskell-web-service-with-nix/</loc>
         <changefreq>weekly</changefreq>
         
         <priority>0.8</priority>
@@ -373,13 +310,6 @@
     </url>
 
     <url>
-        <loc>https://jezenthomas.com/2015/09/how-i-find-and-replace-in-vim/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
         <loc>https://jezenthomas.com/2015/06/automatic-quality-assurance-with-git-hooks/</loc>
         <changefreq>weekly</changefreq>
         
@@ -416,13 +346,6 @@
 
     <url>
         <loc>https://jezenthomas.com/2014/10/folding-paragraphs-in-vim/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
-        <loc>https://jezenthomas.com/2014/05/red-green-wtf/</loc>
         <changefreq>weekly</changefreq>
         
         <priority>0.8</priority>
