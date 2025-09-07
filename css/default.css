@@ -365,8 +365,13 @@ blockquote p em {
 }
 
 .cover-content {
-  max-width: 480px;
+  max-width: 520px;
   margin: auto;
+  padding: 40px 20px 60px;
+}
+
+.cover-content p:first-child {
+  margin-top: 0;
 }
 /* }}} */
 /* About ---------------------------------------------------------------- {{{ */
