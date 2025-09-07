@@ -198,13 +198,6 @@
     </url>
 
     <url>
-        <loc>https://jezenthomas.com/2019/10/on-technical-debt/</loc>
-        <changefreq>weekly</changefreq>
-        
-        <priority>0.8</priority>
-    </url>
-
-    <url>
         <loc>https://jezenthomas.com/2019/09/implementing-csp-in-yesod/</loc>
         <changefreq>weekly</changefreq>
         
