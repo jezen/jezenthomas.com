@@ -244,7 +244,7 @@ blockquote pre {
   border-radius: 4px;
 }
 
-@media (min-width: 920px) {
+@media (min-width: 640px) {
   pre {
     border-radius: 4px;
     border-width: 1px;
@@ -558,12 +558,19 @@ article #footnotes,
 article .cp_embed_wrapper,
 article .youtube-embed,
 article form,
-article pre,
 .post-title,
 .post-meta {
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
+}
+
+@media (min-width: 640px) {
+  article pre {
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
 }
 
 .youtube-embed iframe {
