@@ -487,12 +487,5 @@ That's all there is to it really. I am happily employing all of the techniques
 described above in a number of Elm projects, each of which span several
 thousand lines of code. 
 
-There are a couple of other things you can do to better manage Elm applications
-as they grow. At Riskbook for example, we use [`haskell-to-elm`][2] to generate our
-Elm types, JSON encoders, and JSON decoders from our Haskell backend. This has
-worked tremendously for us and I would recommend it, though it's outside of the
-scope of this article.
-
 [0]: https://package.elm-lang.org/packages/arturopala/elm-monocle/latest/
 [1]: https://discourse.elm-lang.org/t/updating-nested-records-again/1488/9
-[2]: https://hackage.haskell.org/package/haskell-to-elm
