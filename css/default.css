@@ -365,9 +365,10 @@ blockquote p em {
 }
 
 .cover-content {
-  max-width: 520px;
+  font-size: 16px;
   margin: auto;
-  padding: 40px 20px 60px;
+  max-width: 560px;
+  padding: 40px 40px 60px;
 }
 
 .cover-content p:first-child {
