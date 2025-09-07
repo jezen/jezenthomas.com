@@ -1,3 +1,4 @@
+/* Variables ------------------------------------------------------------ {{{ */
 :root {
   --main-bg-color: #fff;
   --main-fg-color: #000;
@@ -18,7 +19,7 @@
     --inline-code-bg: #272822;
   }
 }
-
+/* }}} */
 /* Scaffold ------------------------------------------------------------- {{{ */
 *,
 *::before,
@@ -322,6 +323,52 @@ blockquote p em {
   text-decoration: none;
 }
 /* }}} */
+/* Cover ---------------------------------------------------------------- {{{ */
+.cover-page {
+  display: flex;
+  flex-direction: column;
+  margin: auto;
+  padding: 0
+}
+
+@media (min-width: 1020px) {
+  .cover-page {
+    flex-direction: row;
+  }
+}
+
+.cover {
+  background-image: url(/static/img/cover.jpg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 50vh;
+  width: 100%;
+}
+
+@media (min-width: 1020px) {
+  .cover {
+    height: 100vh;
+    width: 50%;
+  }
+}
+
+.cover-page main {
+  display: flex;
+  width: 100%;
+}
+
+@media (min-width: 1020px) {
+  .cover-page main {
+    width: 50%;
+  }
+}
+
+.cover-content {
+  max-width: 480px;
+  margin: auto;
+}
+/* }}} */
 /* About ---------------------------------------------------------------- {{{ */
 .about-page {
   margin: auto;
@@ -542,7 +589,7 @@ ol {
   list-style-type: lower-roman !important;
 }
 /* }}} */
-
+/* htmlqa lead form ----------------------------------------------------- {{{ */
 .html-validator-lead {
   border: 1px solid #ddd;
   border-radius: 8px;
@@ -583,7 +630,8 @@ ol {
 .html-validator-lead .input-row button:hover {
   background-color: #ee7b18;
 }
-
+/* }}} */
+/* Footer --------------------------------------------------------------- {{{ */
 footer {
   border-top: 1px solid rgb(var(--border-color));
   color: var(--main-fg-secondary-color);
@@ -618,6 +666,7 @@ footer .rss svg {
   margin: 1em 0;
 }
 
+/* Arcify stuff (doesn't belong here) ----------------------------------- {{{ */
 #arcify {
   background-color: #212121;
   border-radius: 10px;
@@ -792,3 +841,4 @@ footer .rss svg {
   0%  {transform: rotate(0deg);}
   100%{transform: rotate(360deg);}
 }
+/* }}} */
