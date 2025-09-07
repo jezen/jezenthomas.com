@@ -13,6 +13,21 @@ $partial("templates/header.html")$
       $partial("templates/feed.html")$
     </div>
     $body$
+
+    <nav class="post-nav">
+      $if(hasPrev)$
+        <a class="prev" href="$prevUrl$">
+          ← Previous
+          <div class="adjacent-post-title">$prevTitle$</div>
+        </a>
+      $endif$
+      $if(hasNext)$
+        <a class="next" href="$nextUrl$">
+          Next →
+          <div class="adjacent-post-title">$nextTitle$</div>
+        </a>
+      $endif$
+    </nav>
   </article>
 </div>
 

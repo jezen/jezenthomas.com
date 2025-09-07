@@ -150,9 +150,9 @@ article > hr {
 }
 
 .footnotes hr {
-  border-style: double;
-  border-width: 3px 0 0;
-  border-color: #ddd;
+  border-style: dashed;
+  border-width: 2px 0 0;
+  border-color: rgb(var(--border-color));
   max-width: 600px;
 }
 
@@ -530,13 +530,7 @@ blockquote p em {
 /* }}} */
 /* Article -------------------------------------------------------------- {{{ */
 article {
-  padding: 0 20px 20px;
-}
-
-@media (min-width: 640px) {
-  article {
-    padding: 0 0 40px;
-  }
+  padding: 0 20px;
 }
 
 article h2 {
@@ -559,7 +553,8 @@ article .cp_embed_wrapper,
 article .youtube-embed,
 article form,
 .post-title,
-.post-meta {
+.post-meta,
+.post-nav {
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
@@ -606,6 +601,26 @@ ol {
 
 #toc + ol ol {
   list-style-type: lower-roman !important;
+}
+
+.post-nav {
+  border-top: 1px solid rgb(var(--border-color));
+  margin-top: 4em;
+}
+
+.post-nav a {
+  display: block;
+  padding: 20px 0 28px;
+  text-decoration: none;
+}
+
+.post-nav a + a {
+  border-top: 1px solid rgb(var(--border-color));
+}
+
+.adjacent-post-title {
+  font-style: italic;
+  text-decoration: underline;
 }
 /* }}} */
 /* htmlqa lead form ----------------------------------------------------- {{{ */

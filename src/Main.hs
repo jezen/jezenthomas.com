@@ -8,7 +8,7 @@ import Control.Monad (forM_)
 import Data.ByteString.Char8 (pack)
 import Data.ByteString.Lazy (fromStrict)
 import Data.Digest.Pure.MD5 (md5)
-import Data.List (groupBy, intercalate, isSuffixOf, sortOn)
+import Data.List (elemIndex, groupBy, intercalate, isSuffixOf, sortOn)
 import Data.Maybe
 import Data.Monoid ((<>))
 import Data.Ord (Down(..), comparing)
@@ -19,6 +19,7 @@ import Data.Time.Format (formatTime)
 import Data.Time.Locale.Compat (defaultTimeLocale)
 import Debug.Trace
 import Hakyll hiding (host)
+import Hakyll.Core.Compiler (noResult)
 import Redirects
 import System.FilePath.Posix (takeBaseName, takeDirectory, (</>))
 import Text.Pandoc
@@ -73,11 +74,14 @@ main = hakyll $ do
   match "posts/*/*/*" $ do
     route postCleanRoute
     compile $ do
-      ident <- getUnderlying
+      let baseCtx = postCtx <> utcCtx
       blogCompiler
-        >>= loadAndApplyTemplate "templates/post-content.html" postCtx
+        >>= loadAndApplyTemplate "templates/post-content.html" baseCtx
         >>= saveSnapshot "content"
-        >>= loadAndApplyTemplate "templates/post.html" (postCtx <> utcCtx)
+        >>= \it -> do
+             let navCtx  = adjacentPostsCtx postsPattern
+                 fullCtx = baseCtx <> navCtx
+             loadAndApplyTemplate "templates/post.html" fullCtx it
         >>= loadAndApplyTemplate "templates/default.html" (postCtx <> boolField "page-blog" (const True))
         >>= cleanIndexUrls
 
@@ -262,3 +266,46 @@ getItemUTCOrdinal item = do
           | n `elem` [3,23]    = "rd"
           | otherwise          = "th"
     in suffix dayOfMonth
+
+data Direction = Older | Newer
+
+data Which = Url | Title
+
+-- Previous/Next (chronological: older = previous, newer = next)
+adjacentPostsCtx :: Pattern -> Context a
+adjacentPostsCtx pat = mconcat
+  [ field "prevUrl"   (navField Older Url)
+  , field "prevTitle" (navField Older Title)
+  , field "nextUrl"   (navField Newer Url)
+  , field "nextTitle" (navField Newer Title)
+  , field "hasPrev" $ \it -> do
+      b <- hasDir Older it
+      if b then pure "true" else noResult "hasPrev"
+  , field "hasNext" $ \it -> do
+      b <- hasDir Newer it
+      if b then pure "true" else noResult "hasNext"
+  ]
+  where
+  navField :: Direction -> Which -> Item a -> Compiler String
+  navField dir which item = do
+    mtid <- neighbor pat dir item
+    case mtid of
+      Nothing  -> pure ""
+      Just tid -> case which of
+        Url   -> maybe "" toUrl <$> getRoute tid
+        Title -> fromMaybe "" <$> getMetadataField tid "title"
+
+  -- Find previous/next post id (using the "content" snapshot to avoid cycles)
+  neighbor :: Pattern -> Direction -> Item a -> Compiler (Maybe Identifier)
+  neighbor pat dir item = do
+    posts <- (chronological =<< loadAllSnapshots pat "content" :: Compiler [Item String])
+    let ids = map itemIdentifier posts
+        cur = itemIdentifier item
+    pure $ do
+      i <- elemIndex cur ids
+      case dir of
+        Older -> if i > 0               then Just (ids !! (i - 1)) else Nothing
+        Newer -> if i < length ids - 1  then Just (ids !! (i + 1)) else Nothing
+
+  hasDir :: Direction -> Item a -> Compiler Bool
+  hasDir d it = isJust <$> neighbor postsPattern d it
